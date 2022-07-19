@@ -24,6 +24,6 @@
     </bean>
     <!--注册mapper.xml文件-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.atom.mapper"></property>
+        <property name="basePackage" value="com.atom.crm.settings.mapper"></property>
     </bean>
 </beans>
