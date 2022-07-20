@@ -1,4 +1,5 @@
 <%@page contentType="text/html; charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
 	<base href="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
@@ -7,6 +8,16 @@
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+
+    //给整个浏览器窗口添加键盘按下事件
+    $(window).keydown(function (e) {
+        //如果按的是回车键，则提交登录请求
+        if(e.keyCode == 13){
+            //模拟点击登录按钮事件
+            $("#loginBtn").click();
+        }
+    });
+
 	$(function () {
 
 		//登录判断
@@ -15,6 +26,7 @@
 			var loginAct = $.trim($("#loginAct").val());
 			var loginPwd = $.trim($("#loginPwd").val());
 			var isRemPwd = $("#isRemPwd").prop("checked");
+
 			//表单验证
 			if(loginAct == ""){
 				$("#msg").html("用户名不能为空");
@@ -24,6 +36,7 @@
 				$("#msg").html("密码不能为空");
 				return;
 			}
+
 			//发送请求
 			$.ajax({
 				url: "settings/qx/user/login.do",
@@ -41,8 +54,21 @@
 					}else{
 						//登录失败，提示信息
 						$("#msg").html(response.message);
-						return;
 					}
+				},
+				beforeSend: function(){
+					//表单验证
+					/*if(loginAct == ""){
+						$("#msg").html("用户名不能为空");
+						return false;
+					}
+					if(loginPwd == ""){
+						$("#msg").html("密码不能为空");
+						return false;
+					}
+					return true;*/
+					$("#msg").html("正在努力认证中...");
+					return true;
 				}
 			});
 		});
@@ -65,14 +91,21 @@
 			<form action="workbench/index.html" class="form-horizontal" role="form">
 				<div class="form-group form-group-lg">
 					<div style="width: 350px;">
-						<input class="form-control" id="loginAct" type="text" placeholder="用户名">
+						<input class="form-control" id="loginAct" type="text" value="${cookie.loginAct.value}"  placeholder="用户名">
 					</div>
 					<div style="width: 350px; position: relative;top: 20px;">
-						<input class="form-control" id="loginPwd" type="password" placeholder="密码">
+						<input class="form-control" id="loginPwd" type="password" value="${cookie.loginPwd.value}"  placeholder="密码">
 					</div>
 					<div class="checkbox" style="position: relative;top: 30px; left: 10px;">
 						<label>
-							<input type="checkbox" id="isRemPwd"> 十天内免登录
+							<c:if test="${not empty cookie.loginAct and not empty cookie.loginPwd}">
+								<input type="checkbox" id="isRemPwd" checked>
+							</c:if>
+
+							<c:if test="${empty cookie.loginAct or empty cookie.loginPwd}">
+								<input type="checkbox" id="isRemPwd">
+							</c:if>
+							 十天内免登录
 						</label>
 						&nbsp;&nbsp;
 						<span id="msg" style="color: red"></span>

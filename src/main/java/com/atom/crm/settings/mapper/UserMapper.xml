@@ -31,6 +31,13 @@
     createTime, create_by, edit_time, edit_by
   </sql>
 
+  <!--查询所有用户信息-->
+  <select id="selectAllUser" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_user
+    where lock_state=0
+  </select>
+
   <!--根据用户名和密码查找用户信息-->
   <select id="selectUserByLoginActAndPwd" parameterType="map" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>

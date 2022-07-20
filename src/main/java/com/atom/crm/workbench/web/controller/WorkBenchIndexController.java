@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WorkBenchIndexController {
     @RequestMapping("/workbench/index.do")
     public String index(){
+        System.out.println("跳转到工作台主页");
         return "/workbench/index";
     }
 }

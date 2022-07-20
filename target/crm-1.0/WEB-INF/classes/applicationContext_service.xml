@@ -34,7 +34,7 @@
     </tx:advice>
     <!--配置切入点+绑定-->
     <aop:config>
-        <aop:pointcut id="mycut" expression="execution(* com.atom.service.impl.*.*(..))"/>
+        <aop:pointcut id="mycut" expression="execution(* com.atom.crm.settings.service.impl.*.*(..))"/>
         <aop:advisor advice-ref="myadvice" pointcut-ref="mycut"></aop:advisor>
     </aop:config>
 </beans>
