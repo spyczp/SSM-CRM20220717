@@ -2,7 +2,24 @@ package com.atom.crm.workbench.mapper;
 
 import com.atom.crm.workbench.bean.Activity;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ActivityMapper {
+
+    /**
+     * 根据条件查询市场活动的总条数
+     * @param map
+     * @return
+     */
+    int selectCountOfActivityByCondition(Map<String, Object> map);
+
+    /**
+     * 根据条件分页查询市场活动的列表
+     * @param map
+     * @return
+     */
+    List<Activity> selectActivityByConditionForPage(Map<String, Object> map);
 
     /**
      * 创建市场活动

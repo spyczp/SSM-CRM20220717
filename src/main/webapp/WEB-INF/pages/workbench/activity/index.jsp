@@ -11,7 +11,7 @@
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
 
@@ -22,13 +22,25 @@
 			$("#createActivityModal").modal("show");
 		});
 
-		
+        //给创建市场活动模态窗口中的日期输入框添加日历插件
+        $(".mydate").datetimepicker({
+            language: "en",
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            minView: "month",
+            initialDate: new Date(),
+            todayBtn: true,
+            clearBtn: true
+        });
+
+
+		//给保存按钮添加事件：保存市场活动
 		$("#saveBtn").click(function () {
 			//收集参数
 			var owner = $("#create-marketActivityOwner").val();
 			var name = $.trim($("#create-marketActivityName").val());
-			var startdate = $("#create-startDate").val();
-			var enddate = $("#create-endDate").val();
+			var startDate = $("#create-startDate").val();
+			var endDate = $("#create-endDate").val();
 			var cost = $.trim($("#create-cost").val());
 			var description = $.trim($("#create-description").val())
 			//验证参数合法性
@@ -40,8 +52,8 @@
 				alert("名称不能为空");
 				return;
 			}
-			if(startdate != "" && enddate != ""){
-				if(startdate > enddate){
+			if(startDate != "" && endDate != ""){
+				if(startDate > endDate){
 					alert("结束日期不能比开始日期小");
 					return;
 				}
@@ -58,8 +70,8 @@
 				data:{
 					"owner": owner,
 					"name": name,
-					"startdate": startdate,
-					"enddate": enddate,
+					"startDate": startDate,
+					"endDate": endDate,
 					"cost": cost,
 					"description": description
 				},
@@ -80,11 +92,50 @@
 				}
 			});
 		});
+		//当市场活动页面加载完毕后，查询所有数据的第一页以及所有数据的总条数，默认每页显示10条数据。
+		showActivityList(1, 10);
 	});
 
 	//展示市场活动列表
-	function showActivityList() {
+	function showActivityList(pageNo, pageSize) {
 		//到后台拿市场活动列表
+		//收集参数
+		var name = $.trim($("#query-name").val());
+		var owner = $.trim($("#query-owner").val());
+		var startDate = $("#query-startDate").val();
+		var endDate = $("#query-endDate").val();
+
+		//向后台请求数据
+		$.ajax({
+			url: "workbench/activity/queryActivityByConditionForPage.do",
+			data:{
+				"name": name,
+				"owner": owner,
+				"startDate": startDate,
+				"endDate": endDate,
+				"pageNo": pageNo,
+				"pageSize": pageSize
+			},
+			type: "post",
+			dataType: "json",
+			success: function (response) {
+				//显示总条数
+				$("#totalRowsB").html(response.totalRows);
+				//显示市场活动列表
+				//遍历activityList,拼接标签
+				var html = "";
+				$.each(response.activityList, function(i, v){
+					html += '<tr class="active">';
+					html += '<td><input type="checkbox" value="'+ v.id +'"/></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href="detail.html";">'+ v.name +'</a></td>';
+					html += '<td>'+ v.owner +'</td>';
+					html += '<td>'+ v.startDate +'</td>';
+					html += '<td>'+ v.endDate +'</td>';
+					html += '</tr>';
+				});
+				$("#activityListTB").html(html);
+			}
+		});
 	}
 	
 </script>
@@ -127,11 +178,11 @@
 						<div class="form-group">
 							<label for="create-startDate" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startDate">
+								<input type="text" class="form-control mydate" id="create-startDate" readonly>
 							</div>
 							<label for="create-endDate" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endDate">
+								<input type="text" class="form-control mydate" id="create-endDate" readonly>
 							</div>
 						</div>
                         <div class="form-group">
@@ -282,14 +333,14 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="query-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="query-owner">
 				    </div>
 				  </div>
 
@@ -297,17 +348,17 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">开始日期</div>
-					  <input class="form-control" type="text" id="startTime" />
+					  <input class="form-control mydate" type="text" id="query-startDate" readonly/>
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">结束日期</div>
-					  <input class="form-control" type="text" id="endTime">
+					  <input class="form-control mydate" type="text" id="query-endDate" readonly/>
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" id="queryBtn" class="btn btn-default">查询</button>
 				  
 				</form>
 			</div>
@@ -334,8 +385,8 @@
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr class="active">
+					<tbody id="activityListTB">
+						<%--<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
                             <td>zhangsan</td>
@@ -348,14 +399,14 @@
                             <td>zhangsan</td>
                             <td>2020-10-10</td>
                             <td>2020-10-20</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
 			</div>
 			
 			<div style="height: 50px; position: relative;top: 30px;">
 				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
+					<button type="button" class="btn btn-default" style="cursor: default;">共<b id="totalRowsB">50</b>条记录</button>
 				</div>
 				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
 					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>

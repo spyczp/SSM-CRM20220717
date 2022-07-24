@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class ActivityController {
@@ -44,21 +42,22 @@ public class ActivityController {
         *   id
             owner
             name
-            enddate
-            startdate
+            endDate
+            startDate
             cost
             description
-            createtime
-            createby
+            createTime
+            createBy
         *
         * */
+        System.out.println("控制器：创建市场活动");
         //设置随机的uuid
         activity.setId(UUIDUtils.getUUID());
         //设置当前日期为创建日期
-        activity.setCreatetime(DateUtils.formatDateTime(new Date()));
+        activity.setCreateTime(DateUtils.formatDateTime(new Date()));
         //设置当前登录用户为创建者
         User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
-        activity.setCreateby(loginUser.getId());
+        activity.setCreateBy(loginUser.getId());
         ReturnObject returnObject = new ReturnObject();
         try{
             int count = activityService.createActivity(activity);
@@ -73,5 +72,27 @@ public class ActivityController {
         }
 
         return returnObject;
+    }
+
+    @RequestMapping("/workbench/activity/queryActivityByConditionForPage.do")
+    @ResponseBody
+    public Object queryActivityByConditionForPage(String name, String owner, String startDate, String endDate,
+                                                  int pageNo, int pageSize){
+        System.out.println("控制器：根据条件查询市场活动列表");
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
+        map.put("owner", owner);
+        map.put("startDate", startDate);
+        map.put("endDate", endDate);
+        map.put("beginNo", (pageNo - 1) * pageSize);
+        map.put("pageSize", pageSize);
+
+        List<Activity> activities = activityService.queryActivityByConditionForPage(map);
+        int totalRows = activityService.queryCountOfActivityByCondition(map);
+
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("activityList", activities);
+        map2.put("totalRows", totalRows);
+        return map2;
     }
 }

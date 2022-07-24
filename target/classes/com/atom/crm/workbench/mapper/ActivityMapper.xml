@@ -10,14 +10,14 @@
     <id column="id" jdbcType="CHAR" property="id" />
     <result column="owner" jdbcType="CHAR" property="owner" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="startDate" jdbcType="CHAR" property="startdate" />
-    <result column="endDate" jdbcType="CHAR" property="enddate" />
+    <result column="start_date" jdbcType="CHAR" property="startDate" />
+    <result column="end_date" jdbcType="CHAR" property="endDate" />
     <result column="cost" jdbcType="VARCHAR" property="cost" />
     <result column="description" jdbcType="VARCHAR" property="description" />
-    <result column="createTime" jdbcType="CHAR" property="createtime" />
-    <result column="createBy" jdbcType="VARCHAR" property="createby" />
-    <result column="editTime" jdbcType="CHAR" property="edittime" />
-    <result column="editBy" jdbcType="VARCHAR" property="editby" />
+    <result column="create_time" jdbcType="CHAR" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="edit_time" jdbcType="CHAR" property="editTime" />
+    <result column="edit_by" jdbcType="VARCHAR" property="editBy" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--
@@ -37,6 +37,68 @@
         edit_time,
         edit_by
   </sql>
+
+  <!--根据条件查询市场活动的总条数-->
+  <select id="selectCountOfActivityByCondition" parameterType="map" resultType="int">
+    select count(*)
+    from tbl_activity a
+    join tbl_user u
+    on a.owner=u.id
+    <where>
+      <if test="name != null and name != ''">
+        and a.name like concat('%',#{name},'%')
+      </if>
+      <if test="owner != null and owner !=''">
+        and u.name like concat('%',#{owner},'%')
+      </if>
+      <if test="startDate != null and startDate != ''">
+        and a.start_date &gt;= #{startDate}
+      </if>
+      <if test="endDate != null and endDate != ''">
+        and a.end_date &lt;= #{endDate}
+      </if>
+    </where>
+  </select>
+  
+  <!--根据条件分页查询市场活动的列表-->
+  <select id="selectActivityByConditionForPage" parameterType="map" resultMap="BaseResultMap">
+    select
+        a.id,
+        u1.name as owner,
+        a.name,
+        a.start_date,
+        a.end_date,
+        a.cost,
+        a.description,
+        a.create_time,
+        u2.name as create_by,
+        a.edit_time,
+        u3.name as edit_by
+    from tbl_activity a
+    join tbl_user u1
+    on a.owner=u1.id
+    join tbl_user u2
+    on a.create_by=u2.id
+    left join tbl_user u3
+    on a.edit_by=u3.id
+    <where>
+      <if test="name != null and name != ''">
+        and a.name like concat('%',#{name},'%')
+      </if>
+      <if test="owner != null and owner !=''">
+        and u1.name like concat('%',#{owner},'%')
+      </if>  
+      <if test="startDate != null and startDate != ''">
+        and a.start_date &gt;= #{startDate}
+      </if>
+      <if test="endDate != null and endDate != ''">
+        and a.end_date &lt;= #{endDate}
+      </if>
+    </where>
+    order by a.create_time desc
+    limit #{beginNo},#{pageSize}
+  </select>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     <!--
       WARNING - @mbggenerated
@@ -75,9 +137,9 @@
             create_time,
             create_by
             )
-    values (#{id,jdbcType=CHAR}, #{owner,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{startdate,jdbcType=CHAR}, 
-      #{enddate,jdbcType=CHAR}, #{cost,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
-      #{createtime,jdbcType=CHAR}, #{createby,jdbcType=VARCHAR})
+    values (#{id,jdbcType=CHAR}, #{owner,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{startDate,jdbcType=CHAR}, 
+      #{endDate,jdbcType=CHAR}, #{cost,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=CHAR}, #{createBy,jdbcType=VARCHAR})
   </insert>
 
   <insert id="insertSelective" parameterType="com.atom.crm.workbench.bean.Activity">
@@ -97,10 +159,10 @@
       <if test="name != null">
         name,
       </if>
-      <if test="startdate != null">
+      <if test="startDate != null">
         startDate,
       </if>
-      <if test="enddate != null">
+      <if test="endDate != null">
         endDate,
       </if>
       <if test="cost != null">
@@ -109,16 +171,16 @@
       <if test="description != null">
         description,
       </if>
-      <if test="createtime != null">
+      <if test="createTime != null">
         createTime,
       </if>
-      <if test="createby != null">
+      <if test="createBy != null">
         createBy,
       </if>
-      <if test="edittime != null">
+      <if test="editTime != null">
         editTime,
       </if>
-      <if test="editby != null">
+      <if test="editBy != null">
         editBy,
       </if>
     </trim>
@@ -132,11 +194,11 @@
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="startdate != null">
-        #{startdate,jdbcType=CHAR},
+      <if test="startDate != null">
+        #{startDate,jdbcType=CHAR},
       </if>
-      <if test="enddate != null">
-        #{enddate,jdbcType=CHAR},
+      <if test="endDate != null">
+        #{endDate,jdbcType=CHAR},
       </if>
       <if test="cost != null">
         #{cost,jdbcType=VARCHAR},
@@ -144,17 +206,17 @@
       <if test="description != null">
         #{description,jdbcType=VARCHAR},
       </if>
-      <if test="createtime != null">
-        #{createtime,jdbcType=CHAR},
+      <if test="createTime != null">
+        #{createTime,jdbcType=CHAR},
       </if>
-      <if test="createby != null">
-        #{createby,jdbcType=VARCHAR},
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
       </if>
-      <if test="edittime != null">
-        #{edittime,jdbcType=CHAR},
+      <if test="editTime != null">
+        #{editTime,jdbcType=CHAR},
       </if>
-      <if test="editby != null">
-        #{editby,jdbcType=VARCHAR},
+      <if test="editBy != null">
+        #{editBy,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -172,11 +234,11 @@
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="startdate != null">
-        startDate = #{startdate,jdbcType=CHAR},
+      <if test="startDate != null">
+        startDate = #{startDate,jdbcType=CHAR},
       </if>
-      <if test="enddate != null">
-        endDate = #{enddate,jdbcType=CHAR},
+      <if test="endDate != null">
+        endDate = #{endDate,jdbcType=CHAR},
       </if>
       <if test="cost != null">
         cost = #{cost,jdbcType=VARCHAR},
@@ -184,17 +246,17 @@
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
       </if>
-      <if test="createtime != null">
-        createTime = #{createtime,jdbcType=CHAR},
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=CHAR},
       </if>
-      <if test="createby != null">
-        createBy = #{createby,jdbcType=VARCHAR},
+      <if test="createBy != null">
+        createBy = #{createBy,jdbcType=VARCHAR},
       </if>
-      <if test="edittime != null">
-        editTime = #{edittime,jdbcType=CHAR},
+      <if test="editTime != null">
+        editTime = #{editTime,jdbcType=CHAR},
       </if>
-      <if test="editby != null">
-        editBy = #{editby,jdbcType=VARCHAR},
+      <if test="editBy != null">
+        editBy = #{editBy,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=CHAR}
@@ -208,14 +270,14 @@
     update tbl_activity
     set owner = #{owner,jdbcType=CHAR},
       name = #{name,jdbcType=VARCHAR},
-      startDate = #{startdate,jdbcType=CHAR},
-      endDate = #{enddate,jdbcType=CHAR},
+      startDate = #{startDate,jdbcType=CHAR},
+      endDate = #{endDate,jdbcType=CHAR},
       cost = #{cost,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
-      createTime = #{createtime,jdbcType=CHAR},
-      createBy = #{createby,jdbcType=VARCHAR},
-      editTime = #{edittime,jdbcType=CHAR},
-      editBy = #{editby,jdbcType=VARCHAR}
+      createTime = #{createTime,jdbcType=CHAR},
+      createBy = #{createBy,jdbcType=VARCHAR},
+      editTime = #{editTime,jdbcType=CHAR},
+      editBy = #{editBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=CHAR}
   </update>
 </mapper>
