@@ -69,6 +69,8 @@ public class ActivityController {
             }
         }catch (Exception e){
             e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("创建市场活动失败");
         }
 
         return returnObject;
@@ -94,5 +96,25 @@ public class ActivityController {
         map2.put("activityList", activities);
         map2.put("totalRows", totalRows);
         return map2;
+    }
+
+    @RequestMapping("/workbench/activity/deleteActivityByIds.do")
+    @ResponseBody
+    public Object deleteActivityByIds(String[] id){
+        ReturnObject returnObject = new ReturnObject();
+        try{
+            int count = activityService.deleteActivityByIds(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除市场活动失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除市场活动失败");
+        }
+        return returnObject;
     }
 }

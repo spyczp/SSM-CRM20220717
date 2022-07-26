@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ActivityMapper {
 
     /**
+     * 根据市场活动id组成的数组批量删除市场活动信息。
+     * @param ids
+     * @return
+     */
+    int deleteActivityByIds(String[] ids);
+
+    /**
      * 根据条件查询市场活动的总条数
      * @param map
      * @return

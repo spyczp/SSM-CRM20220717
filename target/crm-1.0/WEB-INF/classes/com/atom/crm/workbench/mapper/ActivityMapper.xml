@@ -38,6 +38,15 @@
         edit_by
   </sql>
 
+  <!--根据市场活动id组成的数组批量删除市场活动信息。-->
+  <delete id="deleteActivityByIds" parameterType="String">
+    delete from tbl_activity
+    where id in
+    <foreach collection="array" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
+
   <!--根据条件查询市场活动的总条数-->
   <select id="selectCountOfActivityByCondition" parameterType="map" resultType="int">
     select count(*)
