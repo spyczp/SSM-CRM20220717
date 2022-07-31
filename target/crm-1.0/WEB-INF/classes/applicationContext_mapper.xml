@@ -20,7 +20,7 @@
         <!--配置SqlMapConfig核心配置文件-->
         <property name="configLocation" value="classpath:SqlMapConfig.xml"></property>
         <!--注册实体类-->
-        <property name="typeAliasesPackage" value="com.atom.pojo"></property>
+        <property name="typeAliasesPackage" value="com.atom.crm.settings.bean, com.atom.crm.workbench.bean"></property>
     </bean>
     <!--注册mapper.xml文件-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">

@@ -7,6 +7,36 @@ import java.util.Map;
 
 public interface ActivityMapper {
 
+
+    int insertActivityByList(List<Activity> activities);
+
+    /**
+     * 根据1个以上的id查找市场活动信息
+     * @param ids
+     * @return 市场活动列表
+     */
+    List<Activity> selectActivityByIds(String[] ids);
+
+    /**
+     * 查询所有市场活动信息
+     * @return
+     */
+    List<Activity> selectAllActivities();
+
+    /**
+     * 根据市场活动id修改指定的市场活动数据
+     * @param activity
+     * @return
+     */
+    int updateActivityById(Activity activity);
+
+    /**
+     * 根据市场活动的id查找市场活动信息
+     * @param id
+     * @return
+     */
+    Activity selectActivityById(String id);
+
     /**
      * 根据市场活动id组成的数组批量删除市场活动信息。
      * @param ids

@@ -177,6 +177,128 @@
 				});
 			}
 		});
+
+		/*给修改市场活动按钮添加单击事件*/
+		$("#editActivityBtn").click(function () {
+			var checkedId = $("#activityListTB input[type='checkbox']:checked");
+			if(checkedId.size() != 1){
+				alert("请选中一个市场活动来进行修改");
+				return;
+			}
+			var id = checkedId.val();
+			//向后台发起请求：根据市场活动的id查找市场活动信息
+			$.ajax({
+				url: "workbench/activity/queryActivityById.do",
+				data: {
+					"id": id
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					//往“修改市场活动的模态窗口"的表格中填写市场活动的原信息。
+					$("#edit-activityId").val(response.id);
+					$("#edit-marketActivityOwner").val(response.owner);
+					$("#edit-marketActivityName").val(response.name);
+					$("#edit-startDate").val(response.startDate);
+					$("#edit-endDate").val(response.endDate);
+					$("#edit-cost").val(response.cost);
+					$("#edit-description").val(response.description);
+
+					//打开“修改市场活动的模态窗口”
+					$("#editActivityModal").modal("show");
+				}
+			});
+		});
+
+		//给”修改市场活动的模态窗口“中的”更新“按钮添加单击事件:提交修改后的市场活动数据
+		$("#updateActivityBtn").click(function () {
+			var id = $("#edit-activityId").val();
+			var owner = $("#edit-marketActivityOwner").val();
+			var name = $.trim($("#edit-marketActivityName").val());
+			var startDate = $("#edit-startDate").val();
+			var endDate = $("#edit-endDate").val();
+			var cost = $.trim($("#edit-cost").val());
+			var description = $.trim($("#edit-description").val());
+
+			//验证参数是否合法
+			if(name == ""){
+				alert("名称不能为空");
+				return;
+			}
+			if(startDate != "" && endDate != ""){
+				if(startDate > endDate){
+					alert("结束日期不能比开始日期小");
+					return;
+				}
+			}
+			//定义正则表达式：匹配非负整数
+			var regExp = /^(([1-9]\d*)|0)$/;
+			if(!regExp.test(cost)){
+				alert("成本只能为非负整数");
+				return;
+			}
+
+			//向后头发起请求，修改市场活动的数据。
+			$.ajax({
+				url: "workbench/activity/modifyActivityById.do",
+				data: {
+					"id": id,
+					"owner": owner,
+					"name": name,
+					"startDate": startDate,
+					"endDate": endDate,
+					"cost": cost,
+					"description": description
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//代表修改成功，刷新市场活动列表，且停留在当前页，每页显示条数不变。
+						showActivityList($("#paginationD").bs_pagination('getOption', 'currentPage'), $("#paginationD").bs_pagination('getOption', 'rowsPerPage'));
+						//关闭模态窗口。
+						$("#editActivityModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给“批量下载”市场活动信息按钮添加单击事件
+		$("#exportActivityAllBtn").click(function () {
+			//下载文件必须用同步请求
+			//批量下载市场活动列表excel
+			window.location.href = "workbench/activity/exportAllActivities.do";
+		});
+
+		//给“选择导出”添加点击事件，导出选择的市场活动信息
+		$("#exportActivityXzBtn").click(function () {
+			//先判断用户是否勾选了要导出的市场活动
+			var checkedId = $("#activityListTB input[type='checkbox']:checked");
+			if(checkedId.size() == 0){
+				alert("请选择需要导出的市场活动");
+				return;
+			}
+			var params = "";
+			$.each(checkedId, function(){
+				params += "id=" + this.value + "&";
+			});
+			params = params.substr(0, params.length - 1);
+			window.location.href = "workbench/activity/exportActivityByIds.do?" + params;
+		});
+
+
+		$("#importActivityBtn").click(function () {
+			//获取文件名，对文件名的后缀进行判断
+			var fileName = $("#activityFile").val();
+			//截取后缀并转为小写字母。
+			var suffix = fileName.substr(fileName.lastIndexOf(".") + 1).toLocaleLowerCase();
+			if(suffix != "xls"){
+				alert("只支持后缀为xls的excel文件");
+				return;
+			}
+		});
 	});
 
 	//展示市场活动列表
@@ -330,6 +452,8 @@
 				<div class="modal-body">
 				
 					<form class="form-horizontal" role="form">
+
+						<input type="hidden" id="edit-activityId">
 					
 						<div class="form-group">
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
@@ -350,13 +474,13 @@
 						</div>
 
 						<div class="form-group">
-							<label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
+							<label for="edit-startDate" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-startTime" value="2020-10-10">
+								<input type="text" class="form-control mydate" id="edit-startDate" readonly>
 							</div>
-							<label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
+							<label for="edit-endDate" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-endTime" value="2020-10-20">
+								<input type="text" class="form-control mydate" id="edit-endDate" readonly>
 							</div>
 						</div>
 						
@@ -368,9 +492,9 @@
 						</div>
 						
 						<div class="form-group">
-							<label for="edit-describe" class="col-sm-2 control-label">描述</label>
+							<label for="edit-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="edit-describe">市场活动Marketing，是指品牌主办或参与的展览会议与公关市场活动，包括自行主办的各类研讨会、客户交流会、演示会、新产品发布会、体验会、答谢会、年会和出席参加并布展或演讲的展览会、研讨会、行业交流会、颁奖典礼等</textarea>
+								<textarea class="form-control" rows="3" id="edit-description">市场活动Marketing，是指品牌主办或参与的展览会议与公关市场活动，包括自行主办的各类研讨会、客户交流会、演示会、新产品发布会、体验会、答谢会、年会和出席参加并布展或演讲的展览会、研讨会、行业交流会、颁奖典礼等</textarea>
 							</div>
 						</div>
 						
@@ -379,7 +503,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+					<button type="button" class="btn btn-primary" id="updateActivityBtn">更新</button>
 				</div>
 			</div>
 		</div>
@@ -472,7 +596,7 @@
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="createActivityBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-default" id="editActivityBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger" id="deleteActivityBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				<div class="btn-group" style="position: relative; top: 18%;">

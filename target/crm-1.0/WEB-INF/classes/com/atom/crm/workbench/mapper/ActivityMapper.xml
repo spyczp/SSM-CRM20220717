@@ -38,6 +38,100 @@
         edit_by
   </sql>
 
+  <insert id="insertActivityByList" parameterType="Activity">
+    insert into tbl_activity
+    values
+    <foreach collection="list" item="a" separator=",">
+       (
+          #{a.id},
+          #{a.owner},
+          #{a.name},
+          #{a.start_date},
+          #{a.end_date},
+          #{a.cost},
+          #{a.description},
+          #{a.create_time},
+          #{a.create_by},
+          #{a.edit_time},
+          #{a.edit_by}
+      )
+    </foreach>
+  </insert>
+
+  <!--根据1个以上的id查找市场活动信息-->
+  <select id="selectActivityByIds" parameterType="String" resultMap="BaseResultMap">
+    select
+        a.id,
+        u1.name as owner,
+        a.name,
+        a.start_date,
+        a.end_date,
+        a.cost,
+        a.description,
+        a.create_time,
+        u2.name as create_by,
+        a.edit_time,
+        u3.name as edit_by
+    from tbl_activity a
+    join tbl_user u1
+    on a.owner=u1.id
+    join tbl_user u2
+    on a.create_by=u2.id
+    left join tbl_user u3
+    on a.edit_by=u3.id
+    where a.id in
+    <foreach collection="array" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+    order by a.create_time desc
+  </select>
+
+  <!--查询所有市场活动信息-->
+  <select id="selectAllActivities" resultMap="BaseResultMap">
+    select
+        a.id,
+        u1.name as owner,
+        a.name,
+        a.start_date,
+        a.end_date,
+        a.cost,
+        a.description,
+        a.create_time,
+        u2.name as create_by,
+        a.edit_time,
+        u3.name as edit_by
+    from tbl_activity a
+    join tbl_user u1
+    on a.owner=u1.id
+    join tbl_user u2
+    on a.create_by=u2.id
+    left join tbl_user u3
+    on a.edit_by=u3.id
+    order by a.create_time desc
+  </select>
+
+  <!--根据市场活动id修改指定的市场活动数据-->
+  <update id="updateActivityById" parameterType="Activity">
+    update tbl_activity
+    set
+      owner=#{owner},
+      name=#{name},
+      start_date=#{startDate},
+      end_date=#{endDate},
+      cost=#{cost},
+      description=#{description},
+      edit_time=#{editTime},
+      edit_by=#{editBy}
+    where id=#{id}
+  </update>
+
+  <!--根据市场活动的id查找市场活动信息-->
+  <select id="selectActivityById"  parameterType="String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_activity
+    where id=#{id}
+  </select>
+
   <!--根据市场活动id组成的数组批量删除市场活动信息。-->
   <delete id="deleteActivityByIds" parameterType="String">
     delete from tbl_activity
