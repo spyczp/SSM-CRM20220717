@@ -371,17 +371,17 @@ public class ActivityController {
     /**
      * 批量导入市场活动
      * 问题：导入的数据是否合法
-     * @param myFile
+     * @param activityFile
      * @return
      */
     @RequestMapping("/workbench/activity/importActivity.do")
     @ResponseBody
-    public Object importActivity(MultipartFile myFile, HttpSession session){
+    public Object importActivity(MultipartFile activityFile, HttpSession session){
         //从session域中获取当前登录的用户
         User user = (User) session.getAttribute(Contants.SESSION_USER);
         //获取上传的文件的原始名称
-        String originalFilename = myFile.getOriginalFilename();
-        File file = new File("D:\\IDEA Project\\springall\\crm_ssm\\crm\\src\\main\\webapp\\WEB-INF\\pages\\workbench\\activity", originalFilename);
+        //String originalFilename = activityFile.getOriginalFilename();
+        //File file = new File("D:\\IDEA Project\\springall\\crm_ssm\\crm\\src\\main\\webapp\\WEB-INF\\pages\\workbench\\activity", originalFilename);
         //响应给浏览器的信息
         ReturnObject returnObject = new ReturnObject();
         //创建市场活动集合，用来存储所有市场活动
@@ -389,9 +389,11 @@ public class ActivityController {
 
         try {
             //把上传的文件保存到本地
-            myFile.transferTo(file);
+            //activityFile.transferTo(file);
             //读取保存到本地的excel文件
-            FileInputStream is = new FileInputStream("D:\\IDEA Project\\springall\\crm_ssm\\crm\\src\\main\\webapp\\WEB-INF\\pages\\workbench\\activity\\" + originalFilename);
+            //FileInputStream is = new FileInputStream("D:\\IDEA Project\\springall\\crm_ssm\\crm\\src\\main\\webapp\\WEB-INF\\pages\\workbench\\activity\\" + originalFilename);
+            InputStream is = activityFile.getInputStream();
+
             HSSFWorkbook wb = new HSSFWorkbook(is);
             HSSFSheet sheet = wb.getSheetAt(0);
 

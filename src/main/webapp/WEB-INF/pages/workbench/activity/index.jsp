@@ -289,6 +289,7 @@
 		});
 
 
+        //给“导入”按钮添加单击事件：导入市场活动
 		$("#importActivityBtn").click(function () {
 			//获取文件名，对文件名的后缀进行判断
 			var fileName = $("#activityFile").val();
@@ -298,6 +299,34 @@
 				alert("只支持后缀为xls的excel文件");
 				return;
 			}
+            //获取dom对象保存的文件
+            var activityFile = $("#activityFile")[0].files[0];
+            //获取文件的大小,并判断文件大小是否超过5MB
+            if(activityFile.size > 5 * 1024 * 1024){
+                alert("文件大小不超过5MB");
+                return;
+            }
+			var formData = new FormData();
+			formData.append("activityFile", activityFile);
+            //向后端发起请求
+            $.ajax({
+                url: "workbench/activity/importActivity.do",
+				data:formData,
+				processData: false, // 设置ajax向后端提交参数之前，是否把参数统一转换成字符串。true为是，false为否。默认是true。
+				contentType: false, // 设置ajax向后端提交参数之前，是否把所有的参数统一按urlencoded编码：true为是，false为否。默认为true。
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//代表上传成功，提示成功条数，刷新市场活动列表，关闭模态窗口
+						alert("共成功导入" + response.retData + "条数据");
+						showActivityList(1, $("#paginationD").bs_pagination('getOption', 'rowsPerPage'));
+						$("#importActivityModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+            });
 		});
 	});
 

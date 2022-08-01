@@ -46,14 +46,14 @@
           #{a.id},
           #{a.owner},
           #{a.name},
-          #{a.start_date},
-          #{a.end_date},
+          #{a.startDate},
+          #{a.endDate},
           #{a.cost},
           #{a.description},
-          #{a.create_time},
-          #{a.create_by},
-          #{a.edit_time},
-          #{a.edit_by}
+          #{a.createTime},
+          #{a.createBy},
+          #{a.editTime},
+          #{a.editBy}
       )
     </foreach>
   </insert>
