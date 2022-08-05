@@ -7,7 +7,18 @@ import java.util.Map;
 
 public interface ActivityMapper {
 
+    /**
+     * 根据市场活动的id查找市场活动信息
+     * @param id
+     * @return
+     */
+    Activity selectActivityForDetailById(String id);
 
+    /**
+     * 批量导入市场活动
+     * @param activities
+     * @return
+     */
     int insertActivityByList(List<Activity> activities);
 
     /**

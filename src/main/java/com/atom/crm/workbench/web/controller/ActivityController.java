@@ -8,6 +8,8 @@ import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.settings.service.UserService;
 import com.atom.crm.workbench.bean.Activity;
+import com.atom.crm.workbench.bean.ActivityRemark;
+import com.atom.crm.workbench.service.ActivityRemarkService;
 import com.atom.crm.workbench.service.ActivityService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -34,6 +36,9 @@ public class ActivityController {
 
     @Autowired
     private ActivityService activityService;
+
+    @Autowired
+    private ActivityRemarkService activityRemarkService;
 
     @RequestMapping("/workbench/activity/index.do")
     public String index(HttpServletRequest request){
@@ -430,4 +435,19 @@ public class ActivityController {
         }
         return returnObject;
     }
+
+    @RequestMapping("/workbench/activity/queryActivityForDetailById.do")
+    public String queryActivityForDetailById(String id ,HttpServletRequest request){
+        //调用业务层，根据id获取市场活动信息
+        Activity activity = activityService.queryActivityForDetailById(id);
+        //调用业务层，根据市场活动id获取市场活动备注信息列表
+        List<ActivityRemark> activityRemarks = activityRemarkService.queryActivityRemarkForDetailByActivityId(id);
+        //把市场活动信息保存到请求域中。
+        request.setAttribute("activity", activity);
+        //把市场活动备注信息保存到请求域中。
+        request.setAttribute("activityRemarks", activityRemarks);
+        //请求转发到市场活动详情页
+        return "workbench/activity/detail";
+    }
+
 }

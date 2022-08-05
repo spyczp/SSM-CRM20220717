@@ -22,14 +22,20 @@
                 minView: "month",
                 initialDate: new Date(),
                 autoclose: true
-            })
+            });
+
+            $("#afterBtn").click(function () {
+                $("#hh").after("<b>在h1之后插入</b>");
+            });
 
         });
 
     </script>
 </head>
 <body>
-<h1>日期</h1>
+<h1 id="hh">日期</h1>
 <input type="text" id="myDate">
+
+<input type="button" id="afterBtn" value="after">
 </body>
 </html>

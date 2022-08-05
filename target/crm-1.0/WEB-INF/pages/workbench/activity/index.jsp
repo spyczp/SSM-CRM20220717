@@ -361,7 +361,7 @@
 				$.each(response.activityList, function (i, v) {
 					html += '<tr class="active">';
 					html += '<td><input type="checkbox" value="' + v.id + '"/></td>';
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href="detail.html";">' + v.name + '</a></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/queryActivityForDetailById.do?id='+v.id+'\';">' + v.name + '</a></td>';
 					html += '<td>' + v.owner + '</td>';
 					html += '<td>' + v.startDate + '</td>';
 					html += '<td>' + v.endDate + '</td>';
