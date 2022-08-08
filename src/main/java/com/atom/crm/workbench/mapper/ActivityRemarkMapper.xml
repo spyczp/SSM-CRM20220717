@@ -25,7 +25,24 @@
     id, note_content, create_time, create_by, edit_time, edit_by, edit_flag, activity_id
   </sql>
 
+  <!--修改市场活动备注信息-->
+  <update id="updateActivityRemark" parameterType="ActivityRemark">
+      update tbl_activity_remark
+      set
+          note_content=#{noteContent},
+          edit_time=#{editTime},
+          edit_by=#{editBy},
+          edit_flag=#{editFlag}
+      where id=#{id}
+  </update>
 
+  <!--根据市场活动备注的id删除市场活动备注-->
+  <delete id="deleteActivityRemarkById" parameterType="String">
+      delete from tbl_activity_remark
+      where id=#{id}
+  </delete>
+
+  <!--查询市场活动备注列表-->
   <select id="selectActivityRemarkList" resultMap="BaseResultMap">
       select
           ar.id,

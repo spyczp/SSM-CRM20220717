@@ -60,4 +60,56 @@ public class ActivityRemarkController {
 
         return activityRemarks;
     }
+
+
+    @RequestMapping("/workbench/activity/deleteActivityRemarkById.do")
+    @ResponseBody
+    public Object deleteActivityRemarkById(String id){
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try {
+            int count = activityRemarkService.deleteActivityRemarkById(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/activity/saveEditActivityRemark.do")
+    @ResponseBody
+    public Object saveEditActivityRemark(ActivityRemark activityRemark, HttpSession session){
+        //封装参数
+        activityRemark.setEditTime(DateUtils.formatDateTime(new Date()));
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        activityRemark.setEditBy(loginUser.getId());
+        activityRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_YES_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            int count = activityRemarkService.saveEditActivityRemark(activityRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("修改市场活动备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改市场活动备注失败");
+        }
+
+        return returnObject;
+    }
 }

@@ -88,6 +88,73 @@
 				}
 			});
 		});
+
+		//给所有的删除图标添加单击事件
+		$("#activityRemarkListD").on("click", "a[name='deleteA']", function () {
+			//收集参数
+			var id = $(this).attr("remarkId");
+			//发起请求
+			$.ajax({
+				url: "workbench/activity/deleteActivityRemarkById.do",
+				data:{
+					"id": id
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//删除成功，刷新备注信息列表
+						showActivityRemarkList();
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给所有的修改图标添加单击事件
+		$("#activityRemarkListD").on("click", "a[name='updateA']", function () {
+			//收集参数：id，noteContent
+			var id = $(this).attr("remarkId");
+			//$("#div_"+id+" h5") ===> $("#div_f02a403b9cae4ffa822117b04ca0f3cf h5")
+			var noteContent = $("#div_"+id+" h5").text();
+			//把id和noteContent写到修改市场活动备注的模态窗口中
+            $("#edit-id").val(id);
+            $("#edit-noteContent").val(noteContent);
+            //打开模态窗口
+			$("#editRemarkModal").modal("show");
+		});
+
+		//给更新按钮添加单击事件
+		$("#updateRemarkBtn").click(function () {
+			//收集参数
+			var id = $("#edit-id").val();
+			var noteContent = $.trim($("#edit-noteContent").val());
+			//表单验证
+			if(noteContent == ""){
+				alert("备注信息不能为空");
+				return;
+			}
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/activity/saveEditActivityRemark.do",
+				data: {
+					"id": id,
+					"noteContent": noteContent
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//成功，刷新市场活动备注列表，关闭模态窗口
+						showActivityRemarkList();
+						$("#editRemarkModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
 	});
 
 	//刷新市场活动备注列表
@@ -101,22 +168,22 @@
 				//拼接html标签，展示市场活动备注列表
 				var html = "";
 				$.each(response, function(i, o){
-					html += '<div id="activityRemarkD" class="remarkDiv" style="height: 60px;">';
+					html += '<div id="div_'+o.id+'" name="activityRemarkD" class="remarkDiv" style="height: 60px;">';
 					html += '<img title="'+o.createBy+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
 					html += '<div style="position: relative; top: -40px; left: 40px;" >';
 					html += '<h5>'+o.noteContent+'</h5>';
 					html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>'+o.activityId+'</b> <small style="color: gray;"> ';
 					html += (o.editFlag == "1" ? o.editTime : o.createTime) + '由' + (o.editFlag == "1" ? o.editBy : o.createBy) + (o.editFlag == "1" ? "修改" : "创建") + '</small>';
 					html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
-					html += '<a class="myHref" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '<a class="myHref" name="updateA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
 					html += '&nbsp;&nbsp;&nbsp;&nbsp;';
-					html += '<a class="myHref" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '<a class="myHref" name="deleteA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
 					html += '</div>';
 					html += '</div>';
 					html += '</div>';
 				});
 				//清空原来的市场活动备注列表标签
-				$("#activityRemarkListD div[id='activityRemarkD']").remove();
+				$("#activityRemarkListD div[name='activityRemarkD']").remove();
 				//追加标签
 				$("#remarkDiv").before(html);
 			}
@@ -142,10 +209,11 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form">
+                        <input type="hidden" id="edit-id">
                         <div class="form-group">
-                            <label for="noteContent" class="col-sm-2 control-label">内容</label>
+                            <label for="edit-noteContent" class="col-sm-2 control-label">内容</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="3" id="noteContent"></textarea>
+                                <textarea class="form-control" rows="3" id="edit-noteContent"></textarea>
                             </div>
                         </div>
                     </form>
@@ -229,15 +297,15 @@
 		</div>
 
 		<c:forEach items="${activityRemarks}" var="remark">
-			<div id="activityRemarkD" class="remarkDiv" style="height: 60px;">
+			<div id="div_${remark.id}" name="activityRemarkD" class="remarkDiv" style="height: 60px;">
 				<img title="${remark.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 				<div style="position: relative; top: -40px; left: 40px;" >
 					<h5>${remark.noteContent}</h5>
 					<font color="gray">市场活动</font> <font color="gray">-</font> <b>${remark.activityId}</b> <small style="color: gray;"> ${remark.editFlag == "1" ? remark.editTime : remark.createTime} 由${remark.editFlag == "1" ? remark.editBy : remark.createBy}${remark.editFlag == "1" ? "修改" : "创建"}</small>
 					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-						<a class="myHref" remarkId="${remark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						<a class="myHref" name="updateA" remarkId="${remark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<a class="myHref" remarkId="${remark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						<a class="myHref" name="deleteA" remarkId="${remark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 					</div>
 				</div>
 			</div>

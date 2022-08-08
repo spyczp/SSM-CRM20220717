@@ -5,6 +5,21 @@ import com.atom.crm.workbench.bean.ActivityRemark;
 import java.util.List;
 
 public interface ActivityRemarkMapper {
+
+    /**
+     * 修改市场活动备注信息
+     * @param activityRemark
+     * @return
+     */
+    int updateActivityRemark(ActivityRemark activityRemark);
+
+    /**
+     * 根据市场活动备注的id删除市场活动备注
+     * @param id
+     * @return
+     */
+    int deleteActivityRemarkById(String id);
+
     /**
      * 查询市场活动备注列表
      * @return
