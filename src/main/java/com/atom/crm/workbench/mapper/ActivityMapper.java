@@ -7,6 +7,9 @@ import java.util.Map;
 
 public interface ActivityMapper {
 
+    /*通过线索id查询市场活动，要用到tbl_clue_activity_relation表*/
+    List<Activity> selectActivityByClueId(String clueId);
+
     /**
      * 根据市场活动的id查找市场活动信息
      * @param id

@@ -146,9 +146,6 @@
 			showClueList(1, $("#paginationD").bs_pagination('getOption', 'rowsPerPage'));
 		});
 
-		/*剩下：
-		* 	删除
-		* */
 		//全选复选框功能
 		$("#checkAll").click(function () {
 			//当全选复选框打勾后，所有线索条目复选框打勾。当全选复选框不打勾后，所有线索条目复选框不打勾。
@@ -289,7 +286,47 @@
 				}
 			});
 		});
+
+		//给删除按钮添加单击事件
+		$("#deleteClueBtn").click(function () {
+			var checkedCB = $("#clueListTB input[type='checkbox']:checked");
+			if(checkedCB.size() == 0){
+				alert("请在要删除的线索前面打勾");
+				return;
+			}
+			//询问用户是否删除
+			if(confirm("是否删除？")){
+				//拼接请求参数字符串
+				var params = "";
+
+				$.each(checkedCB, function () {
+					params += "id=" + this.value + "&";
+				});
+
+				params = params.substr(0, params.length - 1);
+
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/clue/deleteClueByIds.do",
+					data: params,
+					type: "get",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//删除成功，刷新线索列表
+							showClueList(1, $("#paginationD").bs_pagination('getOption', 'rowsPerPage'));
+						}else {
+							alert(response.message);
+						}
+					}
+				});
+			}
+		});
 	});
+
+	/*剩下：
+	* 	跳转线索详情页
+	* */
 
 	//根据条件展示线索列表
 	function showClueList(pageNo, pageSize) {
@@ -325,7 +362,7 @@
 				$.each(response.clues, function (i, o) {
 					html += '<tr>';
 					html += '<td><input type="checkbox" value="'+o.id+'"/></td>';
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">'+o.fullname+(o.appellation==null ? "": o.appellation)+'</a></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/queryClueByIdForDetail.do?id='+o.id+'\';">'+o.fullname+(o.appellation==null ? "": o.appellation)+'</a></td>';
 					html += '<td>'+o.company+'</td>';
 					html += '<td>'+o.phone+'</td>';
 					html += '<td>'+o.mphone+'</td>';
@@ -814,7 +851,7 @@
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClueModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" id="editClueBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteClueBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 				

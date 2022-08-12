@@ -25,4 +25,6 @@ public interface ActivityService {
     int saveCreateActivityByList(List<Activity> activities);
 
     Activity queryActivityForDetailById(String id);
+
+    List<Activity> queryActivityByClueId(String clueId);
 }
