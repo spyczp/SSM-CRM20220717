@@ -52,11 +52,11 @@ public class ActivityRemarkController {
         return returnObject;
     }
 
-    @RequestMapping("/workbench/activity/showActivityRemarkList.do")
+    @RequestMapping("/workbench/activity/showActivityRemarkListByActivityId.do")
     @ResponseBody
-    public Object showActivityRemarkList(){
+    public Object showActivityRemarkList(String activityId){
 
-        List<ActivityRemark> activityRemarks = activityRemarkService.queryActivityRemarkList();
+        List<ActivityRemark> activityRemarks = activityRemarkService.queryActivityRemarkForDetailByActivityId(activityId);
 
         return activityRemarks;
     }

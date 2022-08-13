@@ -42,27 +42,6 @@
       where id=#{id}
   </delete>
 
-  <!--查询市场活动备注列表-->
-  <select id="selectActivityRemarkList" resultMap="BaseResultMap">
-      select
-          ar.id,
-          ar.note_content,
-          ar.create_time,
-          u1.name as create_by,
-          ar.edit_time,
-          u2.name as edit_by,
-          ar.edit_flag,
-          a.name as activity_id
-      from tbl_activity_remark ar
-      join tbl_user u1
-      on ar.create_by=u1.id
-      left join tbl_user u2
-      on ar.edit_by=u2.id
-      join tbl_activity a
-      on ar.activity_id=a.id
-      order by ar.create_time
-  </select>
-
   <!--保存市场活动备注信息-->
   <insert id="insertActivityRemark" parameterType="ActivityRemark">
     insert into tbl_activity_remark

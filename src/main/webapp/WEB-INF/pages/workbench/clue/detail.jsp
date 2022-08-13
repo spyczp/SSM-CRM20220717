@@ -48,7 +48,43 @@
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+
+		//把线索id保存到隐藏域中
+		$("#hidden-id").val("${clue.id}");
+
+		//给保存按钮添加单击事件
+		$("#saveCreateClueRemarkBtn").click(function () {
+			//收集数据
+			var noteContent = $("#remark").val();
+			var clueId = "${clue.id}";
+
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/clue/createClueRemark.do",
+				data: {
+					"noteContent": noteContent,
+					"clueId": clueId
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//新增线索备注成功，刷新线索备注列表
+						showClueRemarkList();
+					}
+				}
+			});
+		});
 	});
+
+	//展示线索备注列表
+	function showClueRemarkList(){
+
+		//向后端发起请求
+		$.ajax({
+
+		});
+	}
 	
 </script>
 
@@ -134,6 +170,7 @@
 
 	<!-- 详细信息 -->
 	<div style="position: relative; top: -70px;">
+		<input type="hidden" id="hidden-id">
 		<div style="position: relative; left: 40px; height: 30px;">
 			<div style="width: 300px; color: gray;">名称</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${clue.fullname}${clue.appellation}</b></div>
@@ -257,7 +294,7 @@
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="saveCreateClueRemarkBtn">保存</button>
 				</p>
 			</form>
 		</div>

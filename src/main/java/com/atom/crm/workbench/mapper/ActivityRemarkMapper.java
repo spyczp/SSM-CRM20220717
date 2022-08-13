@@ -21,12 +21,6 @@ public interface ActivityRemarkMapper {
     int deleteActivityRemarkById(String id);
 
     /**
-     * 查询市场活动备注列表
-     * @return
-     */
-    List<ActivityRemark> selectActivityRemarkList();
-
-    /**
      * 保存市场活动备注信息
      * @param activityRemark
      * @return

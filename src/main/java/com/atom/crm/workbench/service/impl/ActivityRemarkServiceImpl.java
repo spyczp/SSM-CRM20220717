@@ -24,11 +24,6 @@ public class ActivityRemarkServiceImpl implements ActivityRemarkService {
     }
 
     @Override
-    public List<ActivityRemark> queryActivityRemarkList() {
-        return activityRemarkMapper.selectActivityRemarkList();
-    }
-
-    @Override
     public int deleteActivityRemarkById(String id) {
         return activityRemarkMapper.deleteActivityRemarkById(id);
     }
