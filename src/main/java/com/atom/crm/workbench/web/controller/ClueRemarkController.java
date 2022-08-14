@@ -22,6 +22,31 @@ public class ClueRemarkController {
     @Autowired
     private ClueRemarkService clueRemarkService;
 
+    @RequestMapping("/workbench/clue/deleteClueRemark.do")
+    @ResponseBody
+    public Object deleteClueRemark(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，删除线索备注
+            int count = clueRemarkService.deleteClueRemark(id);
+            if(count > 0){
+                //删除成功
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else {
+                //删除失败
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除线索备注失败");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除线索备注失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/clue/editClueRemark.do")
     @ResponseBody
     public Object editClueRemark(ClueRemark clueRemark, HttpSession session){

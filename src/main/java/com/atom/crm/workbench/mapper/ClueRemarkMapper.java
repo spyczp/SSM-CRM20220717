@@ -7,6 +7,13 @@ import java.util.List;
 public interface ClueRemarkMapper {
 
     /**
+     * 删除一条线索备注
+     * @param id
+     * @return
+     */
+    int deleteClueRemark(String id);
+
+    /**
      * 更新线索备注信息
      * @param clueRemark
      * @return

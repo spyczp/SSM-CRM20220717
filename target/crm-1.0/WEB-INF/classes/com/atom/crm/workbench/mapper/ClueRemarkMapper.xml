@@ -25,6 +25,23 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, clue_id
   </sql>
 
+  <!--删除一条线索备注-->
+  <delete id="deleteClueRemark" parameterType="String">
+      delete from tbl_clue_remark
+      where id=#{id}
+  </delete>
+
+  <!--更新线索备注信息-->
+  <update id="updateClueRemark" parameterType="ClueRemark">
+      update tbl_clue_remark
+      set
+          note_content=#{noteContent},
+          edit_by=#{editBy},
+          edit_time=#{editTime},
+          edit_flag=#{editFlag}
+      where id=#{id}
+  </update>
+
   <!--新增一条线索备注-->
   <insert id="insertClueRemark" parameterType="ClueRemark">
       insert into tbl_clue_remark

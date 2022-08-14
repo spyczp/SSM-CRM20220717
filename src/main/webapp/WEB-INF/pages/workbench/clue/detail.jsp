@@ -115,7 +115,47 @@
 			}
 			//向后端发起请求，更新备注信息
 			$.ajax({
+				url: "workbench/clue/editClueRemark.do",
+				data: {
+					"id": id,
+					"noteContent": noteContent
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//修改成功，刷新线索备注列表,关闭模态窗口
+						showClueRemarkList();
+						$("#editRemarkModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
 
+
+		//给删除线索备注的图标添加单击事件
+		$("#clueRemarkListDiv").on("click", "a[name='deleteA']", function () {
+			//收集参数
+			var id = $(this).attr("remarkId");
+
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/clue/deleteClueRemark.do",
+				data: {
+					"id": id
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//删除成功，刷新线索备注列表
+						showClueRemarkList();
+					}else{
+						alert(response.message);
+					}
+				}
 			});
 		});
 
@@ -124,8 +164,8 @@
 		* 	1.跳转到详情页时，展示线索备注列表✔
 		* 	2.跳转到详情页时，展示市场活动列表
 		* 	3.点击保存，刷新线索备注列表✔
-		* 	4.给备注增加修改功能。
-		* 	5.给备注增加删除功能。
+		* 	4.给备注增加修改功能。✔
+		* 	5.给备注增加删除功能。✔
 		* */
 
 	});
@@ -148,7 +188,7 @@
 				var html = "";
 				$.each(response, function(i, o){
 					html += '<div class="remarkDiv" id="div_'+o.id+'" style="height: 60px;">';
-					html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+					html += '<img title="'+o.createBy+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
 					html += '<div style="position: relative; top: -40px; left: 40px;" >';
 					html += '<h5>'+o.noteContent+'</h5>';
 					html += '<font color="gray">线索</font> <font color="gray">-</font> <b>'+fullname+'-'+company+'</b> <small style="color: gray;">';
@@ -381,7 +421,7 @@
 
 		<c:forEach items="${clueRemarks}" var="cr">
 			<div class="remarkDiv" id="div_${cr.id}" style="height: 60px;">
-				<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
+				<img title="${cr.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 				<div style="position: relative; top: -40px; left: 40px;" >
 					<h5>${cr.noteContent}</h5>
 					<font color="gray">线索</font> <font color="gray">-</font> <b>${clue.fullname}${clue.appellation}-${clue.company}</b> <small style="color: gray;"> ${cr.editFlag == 0 ? cr.createTime : cr.editTime} 由${cr.editFlag == 0 ? cr.createBy : cr.editBy}${cr.editFlag == 0 ? "创建" : "修改"}</small>
