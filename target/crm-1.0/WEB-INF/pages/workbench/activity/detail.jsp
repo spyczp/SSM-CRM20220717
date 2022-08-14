@@ -161,8 +161,11 @@
 	function showActivityRemarkList(){
 		//向后台获取市场活动备注信息列表
 		$.ajax({
-			url: "workbench/activity/showActivityRemarkList.do",
-			type: "get",
+			url: "workbench/activity/showActivityRemarkListByActivityId.do",
+			type: "post",
+			data: {
+				"activityId": "${activity.id}"
+			},
 			dataType: "json",
 			success: function (response) {
 				//拼接html标签，展示市场活动备注列表
