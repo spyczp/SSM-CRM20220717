@@ -25,6 +25,17 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, clue_id
   </sql>
 
+  <!--更新线索备注信息-->
+  <update id="updateClueRemark" parameterType="ClueRemark">
+      update tbl_clue_remark
+      set
+          note_content=#{noteContent},
+          edit_by=#{editBy},
+          edit_time=#{editTime},
+          editFlag=#{edit_flag}
+      where id=#{id}
+  </update>
+
   <!--新增一条线索备注-->
   <insert id="insertClueRemark" parameterType="ClueRemark">
       insert into tbl_clue_remark
@@ -57,5 +68,6 @@
     left join tbl_user u2
     on cr.edit_by=u2.id
     where cr.clue_id=#{clueId}
+    order by cr.create_time
   </select>
 </mapper>

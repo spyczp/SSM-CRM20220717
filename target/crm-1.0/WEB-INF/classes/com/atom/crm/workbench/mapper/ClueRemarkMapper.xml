@@ -57,5 +57,6 @@
     left join tbl_user u2
     on cr.edit_by=u2.id
     where cr.clue_id=#{clueId}
+    order by cr.create_time
   </select>
 </mapper>

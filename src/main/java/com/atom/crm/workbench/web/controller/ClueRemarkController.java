@@ -14,12 +14,49 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class ClueRemarkController {
 
     @Autowired
     private ClueRemarkService clueRemarkService;
+
+    @RequestMapping("/workbench/clue/editClueRemark.do")
+    @ResponseBody
+    public Object editClueRemark(ClueRemark clueRemark, HttpSession session){
+        ReturnObject returnObject = new ReturnObject();
+
+        //封装参数
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        clueRemark.setEditBy(loginUser.getId());
+        clueRemark.setEditTime(DateUtils.formatDateTime(new Date()));
+        clueRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_YES_EDITED);
+
+        try{
+            int count = clueRemarkService.editClueRemark(clueRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("修改线索备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改线索备注失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/clue/showClueRemarkList.do")
+    @ResponseBody
+    public Object showClueRemarkList(String clueId){
+        List<ClueRemark> clueRemarks = clueRemarkService.queryClueRemarkByClueId(clueId);
+
+        return clueRemarks;
+    }
 
     @RequestMapping("/workbench/clue/createClueRemark.do")
     @ResponseBody

@@ -33,23 +33,35 @@
 			cancelAndSaveBtnDefault = true;
 		});
 		
-		$(".remarkDiv").mouseover(function(){
+		/*$(".remarkDiv").mouseover(function(){
+			$(this).children("div").children("div").show();
+		});*/
+		$("#clueRemarkListDiv").on("mouseover", ".remarkDiv", function () {
 			$(this).children("div").children("div").show();
 		});
 		
-		$(".remarkDiv").mouseout(function(){
+		/*$(".remarkDiv").mouseout(function(){
+			$(this).children("div").children("div").hide();
+		});*/
+		$("#clueRemarkListDiv").on("mouseout", ".remarkDiv", function () {
 			$(this).children("div").children("div").hide();
 		});
 		
-		$(".myHref").mouseover(function(){
+		/*$(".myHref").mouseover(function(){
+			$(this).children("span").css("color","red");
+		});*/
+		$("#clueRemarkListDiv").on("mouseover", ".myHref", function () {
 			$(this).children("span").css("color","red");
 		});
 		
-		$(".myHref").mouseout(function(){
+		/*$(".myHref").mouseout(function(){
+			$(this).children("span").css("color","#E6E6E6");
+		});*/
+		$("#clueRemarkListDiv").on("mouseout", ".myHref", function () {
 			$(this).children("span").css("color","#E6E6E6");
 		});
 
-		//把线索id保存到隐藏域中
+		//把线索id保存到隐藏标签中
 		$("#hidden-id").val("${clue.id}");
 
 		//给保存按钮添加单击事件
@@ -71,25 +83,128 @@
 					if(response.code == "1"){
 						//新增线索备注成功，刷新线索备注列表
 						showClueRemarkList();
+					}else{
+						alert(response.message);
 					}
 				}
 			});
 		});
+
+		//给修改线索备注图标添加单击事件
+		$("#clueRemarkListDiv").on("click", "a[name='updateA']", function () {
+			//收集参数
+			var id = $(this).attr("remarkId");
+			//$("#div_"+id+" h5") ===> $("#div_f02a403b9cae4ffa822117b04ca0f3cf h5")
+			var noteContent = $("#div_" + id + " h5").text();
+			//填值
+			$("#remarkId").val(id);
+			$("#edit-noteContent").val(noteContent);
+			//打开修改备注的模态窗口
+			$("#editRemarkModal").modal("show");
+		});
+
+		//给修改线索备注的模态窗口中的更新按钮添加单击事件
+		$("#updateRemarkBtn").click(function () {
+			//收集参数
+			var id = $("#remarkId").val();
+			var noteContent = $.trim($("#edit-noteContent").val());
+			//验证内容
+			if(noteContent == ""){
+				alert("线索备注内容不能为空");
+				return;
+			}
+			alert(id + " " + noteContent);
+		});
+
+		/*
+		* 未完成：
+		* 	1.跳转到详情页时，展示线索备注列表✔
+		* 	2.跳转到详情页时，展示市场活动列表
+		* 	3.点击保存，刷新线索备注列表✔
+		* 	4.给备注增加修改功能。
+		* 	5.给备注增加删除功能。
+		* */
+
 	});
 
 	//展示线索备注列表
 	function showClueRemarkList(){
-
+		//收集参数
+		var clueId = $("#hidden-id").val();
+		var fullname = $("#show-fullname").text();
+		var company = $("#show-company").text();
 		//向后端发起请求
 		$.ajax({
-
+			url: "workbench/clue/showClueRemarkList.do",
+			data: {
+				"clueId": clueId
+			},
+			type: "post",
+			dataType: "json",
+			success: function (response) {
+				var html = "";
+				$.each(response, function(i, o){
+					html += '<div class="remarkDiv" id="div_'+o.id+'" style="height: 60px;">';
+					html += '<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+					html += '<div style="position: relative; top: -40px; left: 40px;" >';
+					html += '<h5>'+o.noteContent+'</h5>';
+					html += '<font color="gray">线索</font> <font color="gray">-</font> <b>'+fullname+'-'+company+'</b> <small style="color: gray;">';
+					html += o.editFlag == 0 ? (o.createTime + '由' + o.createBy + '创建</small>') : (o.editTime + '由' + o.editBy + '修改</small>');
+					html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+					html += '<a class="myHref" name="updateA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+					html += '<a class="myHref" name="deleteA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '</div>';
+					html += '</div>';
+					html += '</div>';
+				});
+				//清除原来的线索备注列表
+				$("#clueRemarkListDiv div[class='remarkDiv']").remove();
+				//追加标签
+				$("#remarkDiv").before(html);
+				//清空输入框
+				$("#remark").val("");
+			}
 		});
 	}
+
+
 	
 </script>
 
 </head>
 <body>
+
+	<!-- 修改线索备注的模态窗口 -->
+	<div class="modal fade" id="editRemarkModal" role="dialog">
+		<%-- 备注的id --%>
+		<input type="hidden" id="remarkId">
+		<div class="modal-dialog" role="document" style="width: 40%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">修改备注</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" id="edit-id">
+						<div class="form-group">
+							<label for="edit-noteContent" class="col-sm-2 control-label">内容</label>
+							<div class="col-sm-10" style="width: 81%;">
+								<textarea class="form-control" rows="3" id="edit-noteContent"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- 关联市场活动的模态窗口 -->
 	<div class="modal fade" id="bundModal" role="dialog">
@@ -173,7 +288,7 @@
 		<input type="hidden" id="hidden-id">
 		<div style="position: relative; left: 40px; height: 30px;">
 			<div style="width: 300px; color: gray;">名称</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${clue.fullname}${clue.appellation}</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="show-fullname">${clue.fullname}${clue.appellation}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">所有者</div>
 			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${clue.owner}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
@@ -181,7 +296,7 @@
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 10px;">
 			<div style="width: 300px; color: gray;">公司</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${clue.company}</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="show-company">${clue.company}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">职位</div>
 			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${clue.job}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
@@ -256,13 +371,28 @@
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 40px; left: 40px;">
+	<div style="position: relative; top: 40px; left: 40px;" id="clueRemarkListDiv">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
+
+		<c:forEach items="${clueRemarks}" var="cr">
+			<div class="remarkDiv" id="div_${cr.id}" style="height: 60px;">
+				<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
+				<div style="position: relative; top: -40px; left: 40px;" >
+					<h5>${cr.noteContent}</h5>
+					<font color="gray">线索</font> <font color="gray">-</font> <b>${clue.fullname}${clue.appellation}-${clue.company}</b> <small style="color: gray;"> ${cr.editFlag == 0 ? cr.createTime : cr.editTime} 由${cr.editFlag == 0 ? cr.createBy : cr.editBy}${cr.editFlag == 0 ? "创建" : "修改"}</small>
+					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
+						<a class="myHref" name="updateA" remarkId="${cr.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<a class="myHref" name="deleteA" remarkId="${cr.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+					</div>
+				</div>
+			</div>
+		</c:forEach>
 		
 		<!-- 备注1 -->
-		<div class="remarkDiv" style="height: 60px;">
+		<%--<div class="remarkDiv" style="height: 60px;">
 			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 			<div style="position: relative; top: -40px; left: 40px;" >
 				<h5>哎呦！</h5>
@@ -287,7 +417,7 @@
 					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 				</div>
 			</div>
-		</div>
+		</div>--%>
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">

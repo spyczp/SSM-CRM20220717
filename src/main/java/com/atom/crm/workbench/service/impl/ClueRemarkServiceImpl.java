@@ -23,4 +23,9 @@ public class ClueRemarkServiceImpl implements ClueRemarkService {
     public int createClueRemark(ClueRemark clueRemark) {
         return clueRemarkMapper.insertClueRemark(clueRemark);
     }
+
+    @Override
+    public int editClueRemark(ClueRemark clueRemark) {
+        return clueRemarkMapper.updateClueRemark(clueRemark);
+    }
 }
