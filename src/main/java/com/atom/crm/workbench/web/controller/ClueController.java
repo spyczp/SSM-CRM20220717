@@ -10,9 +10,10 @@ import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
 import com.atom.crm.workbench.bean.Activity;
 import com.atom.crm.workbench.bean.Clue;
+import com.atom.crm.workbench.bean.ClueActivityRelation;
 import com.atom.crm.workbench.bean.ClueRemark;
-import com.atom.crm.workbench.mapper.ClueRemarkMapper;
 import com.atom.crm.workbench.service.ActivityService;
+import com.atom.crm.workbench.service.ClueActivityRelationService;
 import com.atom.crm.workbench.service.ClueRemarkService;
 import com.atom.crm.workbench.service.ClueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class ClueController {
@@ -44,6 +42,54 @@ public class ClueController {
 
     @Autowired
     private ActivityService activityService;
+
+    @Autowired
+    private ClueActivityRelationService clueActivityRelationService;
+
+    @RequestMapping("/workbench/clue/showActivityList.do")
+    @ResponseBody
+    public Object showActivityList(String clueId){
+        List<Activity> activities = activityService.queryActivityByClueId(clueId);
+        return activities;
+    }
+
+    @RequestMapping("/workbench/clue/createClueActivityRelation.do")
+    @ResponseBody
+    public Object createClueActivityRelation(String clueId, String[] activityId){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            List<ClueActivityRelation> carList = new ArrayList<>();
+            for (String aId: activityId){
+                ClueActivityRelation car = new ClueActivityRelation();
+                car.setId(UUIDUtils.getUUID());
+                car.setClueId(clueId);
+                car.setActivityId(aId);
+                carList.add(car);
+            }
+            int count = clueActivityRelationService.createClueActivityRelation(carList);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("关联市场活动失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("关联市场活动失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/clue/showActivityListByName.do")
+    @ResponseBody
+    public Object showActivityListByName(String name){
+        List<Activity> activities = activityService.queryActivityByName(name);
+
+        return activities;
+    }
 
     @RequestMapping("/workbench/clue/queryClueByIdForDetail.do")
     public String queryClueByIdForDetail(String id, HttpServletRequest request){
