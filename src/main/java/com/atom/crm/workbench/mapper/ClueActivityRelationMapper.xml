@@ -21,6 +21,11 @@
         id, clue_id, activity_id
     </sql>
 
+    <delete id="deleteClueActivityRelationByClueIdAndActivityId" parameterType="map">
+        delete from tbl_clue_activity_relation
+        where clue_id=#{clueId} and activity_id=#{activityId}
+    </delete>
+
     <!--新增线索和市场活动关联数据-->
     <insert id="insertClueActivityRelation" parameterType="ClueActivityRelation">
         insert into tbl_clue_activity_relation

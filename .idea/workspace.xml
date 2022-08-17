@@ -10,75 +10,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bab3588e-bb08-49ef-884a-01cae8e85954" name="Changes" comment="20220814 线索功能-线索备注功能：修改、删除">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/crm_war.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/crm_war_exploded.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5/storage_v2/_src_/schema/mysql.osA4Bg.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5/storage_v2/_src_/schema/sys.zb4BAA.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_druid_1_1_12.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_9_6.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_9_6.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_9_6.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_protobuf_protobuf_java_3_11_4.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_codec_commons_codec_1_10.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_fileupload_commons_fileupload_1_3_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_servlet_javax_servlet_api_3_1_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_servlet_jsp_jsp_api_2_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_servlet_jsp_jstl_jstl_api_1_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_servlet_servlet_api_2_5.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_12.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_28.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_collections4_4_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_core_2_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_poi_poi_3_15.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_taglibs_taglibs_standard_impl_1_2_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_taglibs_taglibs_standard_spec_1_2_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_aspectj_aspectjweaver_1_8_9.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_3_5_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_spring_1_3_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jcl_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_oxm_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_5_2_5_RELEASE.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/crm.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueRemarkMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueRemarkMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueRemarkMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueRemarkMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/ClueRemarkService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/ClueRemarkService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/impl/ClueRemarkServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/impl/ClueRemarkServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/web/controller/ClueRemarkController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/web/controller/ClueRemarkController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/crm_war.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/crm_war.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/crm_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/crm_war_exploded.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/263573bf-3798-47cf-81fe-240a2ceaecb5.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ActivityMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ActivityMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueActivityRelationMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueActivityRelationMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueActivityRelationMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/mapper/ClueActivityRelationMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/ClueActivityRelationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/ClueActivityRelationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/impl/ClueActivityRelationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/service/impl/ClueActivityRelationServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/web/controller/ClueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/atom/crm/workbench/web/controller/ClueController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/workbench/clue/detail.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/workbench/clue/detail.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/service/ClueRemarkService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/service/ClueRemarkService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/service/impl/ClueRemarkServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/service/impl/ClueRemarkServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/web/controller/ClueRemarkController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/atom/crm/workbench/web/controller/ClueRemarkController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/crm-1.0/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/mapper/ClueRemarkMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/service/ClueRemarkService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/service/ClueRemarkService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/service/impl/ClueRemarkServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/service/impl/ClueRemarkServiceImpl.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/web/controller/ClueRemarkController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/classes/com/atom/crm/workbench/web/controller/ClueRemarkController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/pages/workbench/activity/myFile.xls" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/pages/workbench/clue/detail.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/target/crm-1.0/WEB-INF/pages/workbench/clue/detail.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +53,6 @@
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="localRepository" value="D:\Program Files\apache-maven-3.3.9-bin\repository" />
-        <option name="useMavenConfig" value="true" />
         <option name="userSettingsFile" value="D:\Program Files\apache-maven-3.3.9-bin\apache-maven-3.3.9\conf\settings.xml" />
       </MavenGeneralSettings>
     </option>
@@ -125,12 +70,14 @@
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.file-colors" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
-    <configuration name="Tomcat 9.0.64" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.64" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+    <configuration name="Tomcat 9.0.62" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.62" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="BROWSER_ID" value="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
-      <option name="UPDATING_POLICY" value="restart-server" />
+      <option name="UPDATE_ON_FRAME_DEACTIVATION" value="true" />
+      <option name="UPDATING_POLICY" value="update-resources" />
       <deployment>
         <artifact name="crm:war exploded">
           <settings>
@@ -228,6 +175,7 @@
       <workItem from="1660375628004" duration="3761000" />
       <workItem from="1660463170656" duration="292000" />
       <workItem from="1660463502534" duration="5723000" />
+      <workItem from="1660716710713" duration="6084000" />
     </task>
     <servers />
   </component>
@@ -244,6 +192,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="20220814 线索功能-线索备注功能：修改、删除" />

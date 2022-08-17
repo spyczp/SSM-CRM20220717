@@ -13,7 +13,7 @@
 
 	//默认情况下取消和保存按钮是隐藏的
 	var cancelAndSaveBtnDefault = true;
-	
+
 	$(function(){
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
@@ -24,7 +24,7 @@
 				cancelAndSaveBtnDefault = false;
 			}
 		});
-		
+
 		$("#cancelBtn").click(function(){
 			//显示
 			$("#cancelAndSaveBtn").hide();
@@ -32,28 +32,28 @@
 			$("#remarkDiv").css("height","90px");
 			cancelAndSaveBtnDefault = true;
 		});
-		
+
 		/*$(".remarkDiv").mouseover(function(){
 			$(this).children("div").children("div").show();
 		});*/
 		$("#clueRemarkListDiv").on("mouseover", ".remarkDiv", function () {
 			$(this).children("div").children("div").show();
 		});
-		
+
 		/*$(".remarkDiv").mouseout(function(){
 			$(this).children("div").children("div").hide();
 		});*/
 		$("#clueRemarkListDiv").on("mouseout", ".remarkDiv", function () {
 			$(this).children("div").children("div").hide();
 		});
-		
+
 		/*$(".myHref").mouseover(function(){
 			$(this).children("span").css("color","red");
 		});*/
 		$("#clueRemarkListDiv").on("mouseover", ".myHref", function () {
 			$(this).children("span").css("color","red");
 		});
-		
+
 		/*$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});*/
@@ -158,6 +158,8 @@
 
 		//给 关联市场活动 的a标签添加单击事件
 		$("a[name='boundActivityA']").click(function () {
+			//去掉全选复选框的勾
+			$("#checkedAll").prop("checked", false);
 			//清空市场活动列表
 			$("#activityListTB").empty();
 			//清空搜索框
@@ -245,10 +247,36 @@
 				}
 			});
 		});
+
+		//给所有 解除关联 按钮添加单击事件
+		$("#activitiesTB").on("click", "a", function () {
+			//收集参数
+			var clueId = $("#hidden-id").val();
+			var activityId = $(this).attr("activityId");
+
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/clue/unboundClueActivityRelation.do",
+				data: {
+					"clueId": clueId,
+					"activityId": activityId
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//解除关联成功，刷新市场活动列表
+						showActivityList();
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
 		/*
 		* 未完成：
 		* 	1.跳转到详情页时，展示线索备注列表✔
-		* 	2.跳转到详情页时，展示市场活动列表
+		* 	2.跳转到详情页时，展示市场活动列表√
 		* 	3.点击保存，刷新线索备注列表✔
 		* 	4.给备注增加修改功能。✔
 		* 	5.给备注增加删除功能。✔
@@ -331,7 +359,7 @@
 	}
 
 
-	
+
 </script>
 
 </head>
@@ -432,7 +460,7 @@
 	<div style="position: relative; top: 35px; left: 10px;">
 		<a href="javascript:void(0);" onclick="window.history.back();"><span class="glyphicon glyphicon-arrow-left" style="font-size: 20px; color: #DDDDDD"></span></a>
 	</div>
-	
+
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
@@ -440,10 +468,10 @@
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
 			<button type="button" class="btn btn-default" onclick="window.location.href='convert.html';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
-			
+
 		</div>
 	</div>
-	
+
 	<br/>
 	<br/>
 	<br/>
@@ -534,7 +562,7 @@
             <div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
         </div>
 	</div>
-	
+
 	<!-- 备注 -->
 	<div style="position: relative; top: 40px; left: 40px;" id="clueRemarkListDiv">
 		<div class="page-header">
@@ -555,7 +583,7 @@
 				</div>
 			</div>
 		</c:forEach>
-		
+
 		<!-- 备注1 -->
 		<%--<div class="remarkDiv" style="height: 60px;">
 			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
@@ -569,7 +597,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- 备注2 -->
 		<div class="remarkDiv" style="height: 60px;">
 			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
@@ -583,7 +611,7 @@
 				</div>
 			</div>
 		</div>--%>
-		
+
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
@@ -594,7 +622,7 @@
 			</form>
 		</div>
 	</div>
-	
+
 	<!-- 市场活动 -->
 	<div>
 		<div style="position: relative; top: 60px; left: 40px;">
@@ -639,14 +667,14 @@
 					</tbody>
 				</table>
 			</div>
-			
+
 			<div>
 				<a href="javascript:void(0);" data-toggle="modal" name="boundActivityA" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
 			</div>
 		</div>
 	</div>
-	
-	
+
+
 	<div style="height: 200px;"></div>
 </body>
 </html>

@@ -46,6 +46,34 @@ public class ClueController {
     @Autowired
     private ClueActivityRelationService clueActivityRelationService;
 
+    @RequestMapping("/workbench/clue/unboundClueActivityRelation.do")
+    @ResponseBody
+    public Object unboundClueActivityRelation(String clueId, String activityId){
+        //封装数据
+        Map<String, Object> map = new HashMap<>();
+        map.put("clueId", clueId);
+        map.put("activityId", activityId);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，传递数据，解除关联
+            int count = clueActivityRelationService.unboundClueActivityRelationByClueIdAndActivityId(map);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("解除关联失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("解除关联失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/clue/showActivityList.do")
     @ResponseBody
     public Object showActivityList(String clueId){

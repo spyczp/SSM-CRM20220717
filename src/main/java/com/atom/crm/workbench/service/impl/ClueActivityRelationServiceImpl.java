@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ClueActivityRelationServiceImpl implements ClueActivityRelationService {
@@ -17,5 +18,10 @@ public class ClueActivityRelationServiceImpl implements ClueActivityRelationServ
     @Override
     public int createClueActivityRelation(List<ClueActivityRelation> clueActivityRelationList) {
         return clueActivityRelationMapper.insertClueActivityRelation(clueActivityRelationList);
+    }
+
+    @Override
+    public int unboundClueActivityRelationByClueIdAndActivityId(Map<String, Object> map) {
+        return clueActivityRelationMapper.deleteClueActivityRelationByClueIdAndActivityId(map);
     }
 }
