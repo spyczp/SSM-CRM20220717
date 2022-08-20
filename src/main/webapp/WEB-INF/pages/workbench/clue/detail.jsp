@@ -168,8 +168,44 @@
 			$("#bundModal").modal("show");
 		});
 
+		//给搜索框添加 键盘弹起 事件
+		$("#search-activityName").keyup(function(){
+			//清除全选复选框的勾
+			$("#checkedAll").prop("checked", false);
+			//收集参数
+			var name = $.trim(this.value);
+			//验证参数
+			/*if(name == ""){
+				alert("查询内容不能为空");
+				return;
+			}*/
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/clue/showActivityListByName.do",
+				data: {
+					"name": name
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					//字符串拼接，动态创建标签，展示市场活动列表
+					var html = "";
+					$.each(response, function (i, o) {
+						html += '<tr>'
+						html += '<td><input type="checkbox" value="'+o.id+'"/></td>'
+						html += '<td>'+o.name+'</td>'
+						html += '<td>'+o.startDate+'</td>'
+						html += '<td>'+o.endDate+'</td>'
+						html += '<td>'+o.owner+'</td>'
+						html += '</tr>'
+					});
+					$("#activityListTB").html(html);
+				}
+			});
+		});
+
 		//给关联市场活动的模态窗口中的 查询按钮 添加单击事件（这个按钮是我自己加的）
-		$("#searchActivityBtn").click(function () {
+		/*$("#searchActivityBtn").click(function () {
 			//清除全选复选框的勾
 			$("#checkedAll").prop("checked", false);
 			//收集参数
@@ -202,7 +238,7 @@
 					$("#activityListTB").html(html);
 				}
 			});
-		});
+		});*/
 
 		//给全选复选框添加事件
 		$("#checkedAll").click(function () {
@@ -415,7 +451,7 @@
 						    <input type="text" id="search-activityName" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
 						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
-							<input type="button" id="searchActivityBtn" value="查询">
+							<%--<input type="button" id="searchActivityBtn" value="查询">--%>
 						</form>
 					</div>
 					<table id="activityTable" class="table table-hover" style="width: 900px; position: relative;top: 10px;">
