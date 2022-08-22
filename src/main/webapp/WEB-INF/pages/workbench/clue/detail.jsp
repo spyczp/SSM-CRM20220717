@@ -286,28 +286,31 @@
 
 		//给所有 解除关联 按钮添加单击事件
 		$("#activitiesTB").on("click", "a", function () {
-			//收集参数
-			var clueId = $("#hidden-id").val();
-			var activityId = $(this).attr("activityId");
+			//询问用户是否解除关联
+			if(confirm("是否确定解除关联？")){
+				//收集参数
+				var clueId = $("#hidden-id").val();
+				var activityId = $(this).attr("activityId");
 
-			//向后端发起请求
-			$.ajax({
-				url: "workbench/clue/unboundClueActivityRelation.do",
-				data: {
-					"clueId": clueId,
-					"activityId": activityId
-				},
-				type: "post",
-				dataType: "json",
-				success: function (response) {
-					if(response.code == "1"){
-						//解除关联成功，刷新市场活动列表
-						showActivityList();
-					}else{
-						alert(response.message);
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/clue/unboundClueActivityRelation.do",
+					data: {
+						"clueId": clueId,
+						"activityId": activityId
+					},
+					type: "post",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//解除关联成功，刷新市场活动列表
+							showActivityList();
+						}else{
+							alert(response.message);
+						}
 					}
-				}
-			});
+				});
+			}
 		});
 		/*
 		* 未完成：
