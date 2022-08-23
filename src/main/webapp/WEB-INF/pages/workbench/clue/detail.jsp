@@ -322,6 +322,11 @@
 		* 	6.搜索市场活动✔
 		* */
 
+		$("#convertClueBtn").click(function () {
+			//收集参数clueId
+			var id = $("#hidden-id").val();
+			window.location.href = "workbench/clue/toConvert.do?id=" + id;
+		});
 	});
 
 	//展示市场活动列表
@@ -506,7 +511,7 @@
 			<h3>${clue.fullname}${clue.appellation} <small>${clue.company}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
-			<button type="button" class="btn btn-default" onclick="window.location.href='convert.html';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+			<button type="button" class="btn btn-default" id="convertClueBtn"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
 
 		</div>
 	</div>

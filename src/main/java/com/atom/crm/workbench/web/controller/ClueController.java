@@ -46,6 +46,17 @@ public class ClueController {
     @Autowired
     private ClueActivityRelationService clueActivityRelationService;
 
+
+
+    @RequestMapping("/workbench/clue/toConvert.do")
+    public String toConvert(String id, HttpServletRequest request){
+        Clue clue = clueService.queryClueInfoById(id);
+        List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
+        request.setAttribute("clue", clue);
+        request.setAttribute("stageList", stageList);
+        return "workbench/clue/convert";
+    }
+
     @RequestMapping("/workbench/clue/unboundClueActivityRelation.do")
     @ResponseBody
     public Object unboundClueActivityRelation(String clueId, String activityId){
