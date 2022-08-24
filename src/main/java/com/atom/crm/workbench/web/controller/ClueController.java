@@ -46,7 +46,18 @@ public class ClueController {
     @Autowired
     private ClueActivityRelationService clueActivityRelationService;
 
+    @RequestMapping("/workbench/clue/showActivityListByNameAndClueId.do")
+    @ResponseBody
+    public Object showActivityListByNameAndClueId(String name, String clueId){
+        //封装数据
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
+        map.put("clueId", clueId);
 
+        //向业务层获取数据
+        List<Activity> activities = activityService.queryActivityByNameAndClueId(map);
+        return activities;
+    }
 
     @RequestMapping("/workbench/clue/toConvert.do")
     public String toConvert(String id, HttpServletRequest request){

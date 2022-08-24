@@ -49,4 +49,9 @@ public class ClueServiceImpl implements ClueService {
     public Clue queryClueInfoById(String id) {
         return clueMapper.selectClueByIdWithOtherTable(id);
     }
+
+    @Override
+    public void saveConvert(Map<String, Object> map) {
+        //到这里
+    }
 }

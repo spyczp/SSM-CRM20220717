@@ -38,11 +38,13 @@
 		$("#searchActivityList").keyup(function () {
 			//收集参数
 			var name = $.trim(this.value);
+			var clueId = $("#hidden-clueId").val();
 			//向后端发起请求
 			$.ajax({
-				url: "workbench/clue/showActivityListByName.do",
+				url: "workbench/clue/showActivityListByNameAndClueId.do",
 				data: {
-					"name": name
+					"name": name,
+					"clueId": clueId
 				},
 				type: "post",
 				dataType: "json",
@@ -50,8 +52,8 @@
 					var html = "";
 					$.each(response, function (i, o) {
 						html += '<tr>'
-						html += '<td><input type="radio" value="'+o.id+'" name="activity"/></td>'
-						html += '<td id="td_'+o.id+'">'+o.name+'</td>'
+						html += '<td><input type="radio" value="'+o.id+'" activityName="'+o.name+'" name="activity"/></td>'
+						html += '<td>'+o.name+'</td>'
 						html += '<td>'+o.startDate+'</td>'
 						html += '<td>'+o.endDate+'</td>'
 						html += '<td>'+o.owner+'</td>'
@@ -65,12 +67,14 @@
 
 		//给 市场活动前面的 圆圈单选框 添加单击事件
 		$("#activityListTB").on("click", "input", function () {
-			//收集参数id
-			var id = this.value;
-			//获取市场活动名称
-			var activityName = $("#td_"+id).text();
-			//显示到转换页面
+			//收集参数
+			var activityName = $(this).attr("activityName");
+			var activityId = this.value;
+			//显示到转换页面,保存id到隐藏标签
 			$("#activity").val(activityName);
+			$("#hidden-activityId").val(activityId);
+			//关闭模态窗口
+			$("#searchActivityModal").modal("hide");
 		});
 	});
 </script>
@@ -130,6 +134,7 @@
 		</div>
 	</div>
 
+	<input type="hidden" id="hidden-clueId" value="${clue.id}">
 	<div id="title" class="page-header" style="position: relative; left: 20px;">
 		<h4>转换线索 <small>${clue.fullname}${clue.appellation}-${clue.company}</small></h4>
 	</div>
@@ -178,7 +183,8 @@
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="activity">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" name="searchActivityA" style="text-decoration: none;"><span class="glyphicon glyphicon-search"></span></a></label>
-		    <input type="text" class="form-control" id="activity" placeholder="点击上面搜索" readonly>
+			  <input type="hidden" id="hidden-activityId">
+			  <input type="text" class="form-control" id="activity" placeholder="点击上面搜索" readonly>
 		  </div>
 		</form>
 		

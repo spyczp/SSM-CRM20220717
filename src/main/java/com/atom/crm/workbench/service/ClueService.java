@@ -20,4 +20,6 @@ public interface ClueService {
     int deleteClueByIds(String[] ids);
 
     Clue queryClueInfoById(String id);
+
+    void saveConvert(Map<String, Object> map);
 }

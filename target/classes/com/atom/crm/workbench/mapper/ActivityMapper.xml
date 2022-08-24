@@ -38,6 +38,34 @@
         edit_by
   </sql>
 
+  <!--根据名称和关联的线索id模糊查询市场活动-->
+  <select id="selectActivityByNameAndClueId" parameterType="map" resultMap="BaseResultMap">
+      select
+          a.id,
+          u1.name as owner,
+          a.name,
+          a.start_date,
+          a.end_date,
+          a.cost,
+          a.description,
+          a.create_time,
+          u2.name as create_by,
+          a.edit_time,
+          u3.name as edit_by
+      from tbl_activity a
+      join tbl_user u1
+      on a.owner=u1.id
+      join tbl_user u2
+      on a.create_by=u2.id
+      left join tbl_user u3
+      on a.edit_by=u3.id
+      join tbl_clue_activity_relation car
+      on a.id=car.activity_id
+      where car.clue_id=#{clueId}
+      and a.name like concat('%',#{name},'%')
+      order by a.create_time desc
+  </select>
+
   <!--根据名称模糊查询市场活动-->
   <select id="selectActivityByName" parameterType="String" resultMap="BaseResultMap">
       select
