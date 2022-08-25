@@ -57,6 +57,12 @@
             )
   </insert>
 
+  <select id="selectClueRemarkForConvertByClueId" parameterType="String" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List"></include>
+      from tbl_clue_remark
+      where clue_id=#{clueId}
+  </select>
+
   <!--根据线索id查询线索备注-->
   <select id="selectClueRemarkByClueId" parameterType="String" resultMap="BaseResultMap">
     select

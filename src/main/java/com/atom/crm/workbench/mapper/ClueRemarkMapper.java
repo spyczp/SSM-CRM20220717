@@ -28,6 +28,13 @@ public interface ClueRemarkMapper {
     int insertClueRemark(ClueRemark clueRemark);
 
     /**
+     * 根据线索id查询线索备注，用于转换
+     * @param clueId
+     * @return
+     */
+    List<ClueRemark> selectClueRemarkForConvertByClueId(String clueId);
+
+    /**
      * 根据线索id查询线索备注
      * @param clueId
      * @return

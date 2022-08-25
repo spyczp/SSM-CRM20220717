@@ -46,6 +46,37 @@ public class ClueController {
     @Autowired
     private ClueActivityRelationService clueActivityRelationService;
 
+    @RequestMapping("/workbench/clue/saveConvert.do")
+    @ResponseBody
+    public Object saveConvert(String clueId, HttpSession session, boolean isCreateTran, String money,
+                              String name, String expectedDate, String stage, String activityId){
+        //从session域中获取当前登录用户的信息
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        //封装数据
+        Map<String, Object> map = new HashMap<>();
+        map.put("clueId", clueId);
+        map.put("loginUser", loginUser);
+        map.put("isCreateTran", isCreateTran);
+        map.put("money", money);
+        map.put("name", name);
+        map.put("expectedDate", expectedDate);
+        map.put("stage", stage);
+        map.put("activityId", activityId);
+
+        ReturnObject returnObject = new ReturnObject();
+        try{
+            //调业务层方法，发起转换.
+            clueService.saveConvert(map);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("转换失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/clue/showActivityListByNameAndClueId.do")
     @ResponseBody
     public Object showActivityListByNameAndClueId(String name, String clueId){

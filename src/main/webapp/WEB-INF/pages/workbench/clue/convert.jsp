@@ -16,6 +16,18 @@
 
 <script type="text/javascript">
 	$(function(){
+
+		//添加日期插件，用作创建交易时，选择预计成交日期
+		$(".mydate").datetimepicker({
+			language: "en",
+			format: "yyyy-mm-dd",
+			autoclose: true,
+			minView: "month",
+			initialDate: new Date(),
+			todayBtn: true,
+			clearBtn: true
+		});
+
 		$("#isCreateTransaction").click(function(){
 			if(this.checked){
 				$("#create-transaction2").show(200);
@@ -75,6 +87,52 @@
 			$("#hidden-activityId").val(activityId);
 			//关闭模态窗口
 			$("#searchActivityModal").modal("hide");
+		});
+
+		//给 转换 按钮添加单击事件
+		$("#saveConvertBtn").click(function () {
+			//收集参数
+			var clueId = $("#hidden-clueId").val();
+			var isCreateTran = $("#isCreateTransaction").prop("checked");
+			var money = "";
+			var name = "";
+			var expectedDate = "";
+			var stage = "";
+			var activityId = "";
+
+			//这里勾选了创建交易，才收集参数
+			if(isCreateTran){
+				money = $.trim($("#tran-money").val());
+				name = $.trim($("#tran-name").val());
+				expectedDate = $("#tran-expectedDate").val();
+				stage = $("#stage").val();
+				activityId = $("#hidden-activityId").val();
+			}
+
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/clue/saveConvert.do",
+				data: {
+					"clueId": clueId,
+					"isCreateTran": isCreateTran,
+					"money": money,
+					"name": name,
+					"expectedDate": expectedDate,
+					"stage": stage,
+					"activityId": activityId,
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//代表转换成功，跳转到线索主页面
+						window.location.href = "workbench/clue/index.do";
+					}else{
+						//代表转换失败，提示信息,页面不跳转
+						alert(response.message);
+					}
+				}
+			});
 		});
 	});
 </script>
@@ -152,16 +210,16 @@
 	
 		<form>
 		  <div class="form-group" style="width: 400px; position: relative; left: 20px;">
-		    <label for="amountOfMoney">金额</label>
-		    <input type="text" class="form-control" id="amountOfMoney">
+		    <label for="tran-money">金额</label>
+		    <input type="text" class="form-control" id="tran-money">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
-		    <label for="tradeName">交易名称</label>
-		    <input type="text" class="form-control" id="tradeName" value="${clue.company}-">
+		    <label for="tran-name">交易名称</label>
+		    <input type="text" class="form-control" id="tran-name" value="${clue.company}-">
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
-		    <label for="expectedClosingDate">预计成交日期</label>
-		    <input type="text" class="form-control" id="expectedClosingDate">
+		    <label for="tran-expectedDate">预计成交日期</label>
+		    <input type="text" class="form-control mydate" id="tran-expectedDate" readonly>
 		  </div>
 		  <div class="form-group" style="width: 400px;position: relative; left: 20px;">
 		    <label for="stage">阶段</label>
@@ -195,7 +253,7 @@
 		<b>${clue.owner}</b>
 	</div>
 	<div id="operation" style="position: relative; left: 40px; height: 35px; top: 100px;">
-		<input class="btn btn-primary" type="button" value="转换">
+		<input class="btn btn-primary" type="button" value="转换" id="saveConvertBtn">
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		<input class="btn btn-default" type="button" value="取消">
 	</div>

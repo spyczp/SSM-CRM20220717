@@ -21,6 +21,14 @@
         id, clue_id, activity_id
     </sql>
 
+
+    <!--根据线索id查询线索和市场活动的关联关系-->
+    <select id="selectClueActivityRelationByClueId" parameterType="String" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from tbl_clue_activity_relation
+        where clue_id=#{clueId}
+    </select>
+
     <delete id="deleteClueActivityRelationByClueIdAndActivityId" parameterType="map">
         delete from tbl_clue_activity_relation
         where clue_id=#{clueId} and activity_id=#{activityId}

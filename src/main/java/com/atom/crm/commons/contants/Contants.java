@@ -6,7 +6,7 @@ public class Contants {
     public static final String RETURN_OBJECT_CODE_FAIL = "0";
 
     //保存在session作用域的用户信息对应的key
-    public static final String SESSION_USER = "sessionUser";
+    public static final String SESSION_USER = "loginUser";
 
     //备注的修改标记
     public static final String REMARK_EDIT_FLAG_NO_EDITED = "0"; //没有修改过
