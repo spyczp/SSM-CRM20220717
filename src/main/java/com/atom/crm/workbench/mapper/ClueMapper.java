@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ClueMapper {
 
     /**
+     * 根据一个线索id删除线索
+     * @param id
+     * @return
+     */
+    int deleteClueById(String id);
+
+    /**
      * 根据id删除线索
      * @param ids
      * @return

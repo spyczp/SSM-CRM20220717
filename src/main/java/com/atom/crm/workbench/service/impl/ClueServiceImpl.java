@@ -42,6 +42,12 @@ public class ClueServiceImpl implements ClueService {
     @Autowired
     private ContactsActivityRelationMapper contactsActivityRelationMapper;
 
+    @Autowired
+    private TranMapper tranMapper;
+
+    @Autowired
+    private TranRemarkMapper tranRemarkMapper;
+
     @Override
     public int saveCreateClue(Clue clue) {
         return clueMapper.insertClue(clue);
@@ -129,45 +135,99 @@ public class ClueServiceImpl implements ClueService {
         List<CustomerRemark> customerRemarks = new ArrayList<>();
         //创建联系人备注集合，保存所有联系人备注信息
         List<ContactsRemark> contactsRemarks = new ArrayList<>();
-        for(ClueRemark clueRemark: clueRemarks){
-            //创建客户备注实体类对象，封装数据
-            CustomerRemark customerRemark = new CustomerRemark();
-            customerRemark.setId(UUIDUtils.getUUID());
-            customerRemark.setNoteContent(clueRemark.getNoteContent());
-            customerRemark.setCreateBy(loginUser.getId());
-            customerRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
-            customerRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
-            customerRemark.setCustomerId(customer.getId());
-            customerRemarks.add(customerRemark);
-            //创建联系人备注实体类对象，封装数据
-            ContactsRemark contactsRemark = new ContactsRemark();
-            contactsRemark.setId(UUIDUtils.getUUID());
-            contactsRemark.setNoteContent(clueRemark.getNoteContent());
-            contactsRemark.setCreateBy(loginUser.getId());
-            contactsRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
-            contactsRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
-            contactsRemark.setContactsId(contacts.getId());
-            contactsRemarks.add(contactsRemark);
+        if(clueRemarks.size() != 0){
+            for(ClueRemark clueRemark: clueRemarks){
+                //创建客户备注实体类对象，封装数据
+                CustomerRemark customerRemark = new CustomerRemark();
+                customerRemark.setId(UUIDUtils.getUUID());
+                customerRemark.setNoteContent(clueRemark.getNoteContent());
+                customerRemark.setCreateBy(loginUser.getId());
+                customerRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+                customerRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+                customerRemark.setCustomerId(customer.getId());
+                customerRemarks.add(customerRemark);
+                //创建联系人备注实体类对象，封装数据
+                ContactsRemark contactsRemark = new ContactsRemark();
+                contactsRemark.setId(UUIDUtils.getUUID());
+                contactsRemark.setNoteContent(clueRemark.getNoteContent());
+                contactsRemark.setCreateBy(loginUser.getId());
+                contactsRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+                contactsRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+                contactsRemark.setContactsId(contacts.getId());
+                contactsRemarks.add(contactsRemark);
+            }
+            //保存客户备注信息
+            customerRemarkMapper.insertCustomerRemark(customerRemarks);
+            //保存联系人备注信息
+            contactsRemarkMapper.insertContactsRemark(contactsRemarks);
         }
-        //保存客户备注信息
-        customerRemarkMapper.insertCustomerRemark(customerRemarks);
-        //保存联系人备注信息
-        contactsRemarkMapper.insertContactsRemark(contactsRemarks);
         //把该线索和市场活动的关联关系转换联系人和市场活动的关联关系表中
         //查询线索和市场活动的关联关系
         List<ClueActivityRelation> clueActivityRelationList = clueActivityRelationMapper.selectClueActivityRelationByClueId(clueId);
         //创建联系人和市场活动的关联关系集合，保存所有关联关系数据
         List<ContactsActivityRelation> contactsActivityRelationList = new ArrayList<>();
-        for(ClueActivityRelation clueActivityRelation: clueActivityRelationList){
-            ContactsActivityRelation contactsActivityRelation = new ContactsActivityRelation();
-            contactsActivityRelation.setId(UUIDUtils.getUUID());
-            contactsActivityRelation.setContactsId(contacts.getId());
-            contactsActivityRelation.setActivityId(clueActivityRelation.getActivityId());
-            contactsActivityRelationList.add(contactsActivityRelation);
+        if(clueActivityRelationList.size() != 0){
+            for(ClueActivityRelation clueActivityRelation: clueActivityRelationList){
+                ContactsActivityRelation contactsActivityRelation = new ContactsActivityRelation();
+                contactsActivityRelation.setId(UUIDUtils.getUUID());
+                contactsActivityRelation.setContactsId(contacts.getId());
+                contactsActivityRelation.setActivityId(clueActivityRelation.getActivityId());
+                contactsActivityRelationList.add(contactsActivityRelation);
+            }
+            //保存联系人和市场活动的关联关系
+            contactsActivityRelationMapper.insertContactsActivityRelation(contactsActivityRelationList);
         }
-        //保存联系人和市场活动的关联关系
-        contactsActivityRelationMapper.insertContactsActivityRelation(contactsActivityRelationList);
         //如果需要创建交易，则往交易表中添加一条记录
-
+        boolean isCreateTran = (boolean) map.get("isCreateTran");
+        //isCreateTran 为true，则创建交易。
+        if(isCreateTran){
+            //获取数据
+            String money = (String) map.get("money");
+            String name = (String) map.get("name");
+            String expectedDate = (String) map.get("expectedDate");
+            String stage = (String) map.get("stage");
+            String activityId = (String) map.get("activityId");
+            //封装交易相关的数据
+            Tran tran = new Tran();
+            tran.setId(UUIDUtils.getUUID());
+            tran.setOwner(loginUser.getId());
+            tran.setMoney(money);
+            tran.setName(name);
+            tran.setExpectedDate(expectedDate);
+            tran.setCustomerId(customer.getId());
+            tran.setStage(stage);
+            tran.setSource(clue.getSource());
+            tran.setActivityId(activityId);
+            tran.setContactsId(contacts.getId());
+            tran.setCreateBy(loginUser.getId());
+            tran.setCreateTime(DateUtils.formatDateTime(new Date()));
+            tran.setDescription(clue.getDescription());
+            tran.setContactSummary(clue.getContactSummary());
+            tran.setNextContactTime(clue.getNextContactTime());
+            //保存交易数据
+            tranMapper.insertTran(tran);
+            //如果需要创建交易，则还需要把该线索下所有备注转换到交易备注表中一份
+            List<TranRemark> tranRemarkList = new ArrayList<>();
+            if(clueRemarks.size() != 0){
+                for(ClueRemark clueRemark: clueRemarks){
+                    TranRemark tranRemark = new TranRemark();
+                    tranRemark.setId(UUIDUtils.getUUID());
+                    tranRemark.setNoteContent(clueRemark.getNoteContent());
+                    tranRemark.setCreateBy(loginUser.getId());
+                    tranRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+                    tranRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+                    tranRemark.setTranId(tran.getId());
+                    tranRemarkList.add(tranRemark);
+                }
+                //保存线索备注信息
+                tranRemarkMapper.insertTranRemark(tranRemarkList);
+            }
+        }
+        //删除该线索下所有的备注
+        clueRemarkMapper.deleteClueRemarkByClueId(clueId);
+        //删除该线索和市场活动的关联关系
+        clueActivityRelationMapper.deleteClueActivityRelationByClueId(clueId);
+        //删除该线索
+        clueMapper.deleteClueById(clueId);
     }
 }

@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ClueActivityRelationMapper {
 
     /**
+     * 删除指定clueId对应的所有线索和市场活动关联关系
+     * @param clueId
+     * @return
+     */
+    int deleteClueActivityRelationByClueId(String clueId);
+
+    /**
      * 根据线索id查询线索和市场活动的关联关系
      * @param clueId
      * @return

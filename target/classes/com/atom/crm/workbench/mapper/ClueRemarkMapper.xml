@@ -25,6 +25,11 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, clue_id
   </sql>
 
+  <delete id="deleteClueRemarkByClueId" parameterType="String">
+      delete from tbl_clue_remark
+      where clue_id=#{clueId}
+  </delete>
+
   <!--删除一条线索备注-->
   <delete id="deleteClueRemark" parameterType="String">
       delete from tbl_clue_remark

@@ -94,45 +94,63 @@
 			//收集参数
 			var clueId = $("#hidden-clueId").val();
 			var isCreateTran = $("#isCreateTransaction").prop("checked");
-			var money = "";
-			var name = "";
-			var expectedDate = "";
-			var stage = "";
-			var activityId = "";
 
-			//这里勾选了创建交易，才收集参数
+			//这里勾选了创建交易，才收集交易相关的参数
 			if(isCreateTran){
 				money = $.trim($("#tran-money").val());
 				name = $.trim($("#tran-name").val());
 				expectedDate = $("#tran-expectedDate").val();
 				stage = $("#stage").val();
 				activityId = $("#hidden-activityId").val();
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/clue/saveConvert.do",
+					data: {
+						"clueId": clueId,
+						"isCreateTran": isCreateTran,
+						"money": money,
+						"name": name,
+						"expectedDate": expectedDate,
+						"stage": stage,
+						"activityId": activityId,
+					},
+					type: "post",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//代表转换成功，跳转到线索主页面
+							window.location.href = "workbench/clue/index.do";
+						}else{
+							//代表转换失败，提示信息,页面不跳转
+							alert(response.message);
+						}
+					}
+				});
+			}else{
+				//不需要收集交易相关的参数
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/clue/saveConvert.do",
+					data: {
+						"clueId": clueId,
+						"isCreateTran": isCreateTran,
+					},
+					type: "post",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//代表转换成功，跳转到线索主页面
+							window.location.href = "workbench/clue/index.do";
+						}else{
+							//代表转换失败，提示信息,页面不跳转
+							alert(response.message);
+						}
+					}
+				});
 			}
 
-			//向后端发起请求
-			$.ajax({
-				url: "workbench/clue/saveConvert.do",
-				data: {
-					"clueId": clueId,
-					"isCreateTran": isCreateTran,
-					"money": money,
-					"name": name,
-					"expectedDate": expectedDate,
-					"stage": stage,
-					"activityId": activityId,
-				},
-				type: "post",
-				dataType: "json",
-				success: function (response) {
-					if(response.code == "1"){
-						//代表转换成功，跳转到线索主页面
-						window.location.href = "workbench/clue/index.do";
-					}else{
-						//代表转换失败，提示信息,页面不跳转
-						alert(response.message);
-					}
-				}
-			});
+
+
 		});
 	});
 </script>
