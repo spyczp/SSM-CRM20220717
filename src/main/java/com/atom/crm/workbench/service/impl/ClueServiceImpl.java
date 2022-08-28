@@ -141,18 +141,22 @@ public class ClueServiceImpl implements ClueService {
                 CustomerRemark customerRemark = new CustomerRemark();
                 customerRemark.setId(UUIDUtils.getUUID());
                 customerRemark.setNoteContent(clueRemark.getNoteContent());
-                customerRemark.setCreateBy(loginUser.getId());
-                customerRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
-                customerRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+                customerRemark.setCreateBy(clueRemark.getCreateBy());
+                customerRemark.setCreateTime(clueRemark.getCreateTime());
+                customerRemark.setEditBy(clueRemark.getEditBy());
+                customerRemark.setEditTime(clueRemark.getEditTime());
+                customerRemark.setEditFlag(clueRemark.getEditFlag());
                 customerRemark.setCustomerId(customer.getId());
                 customerRemarks.add(customerRemark);
                 //创建联系人备注实体类对象，封装数据
                 ContactsRemark contactsRemark = new ContactsRemark();
                 contactsRemark.setId(UUIDUtils.getUUID());
                 contactsRemark.setNoteContent(clueRemark.getNoteContent());
-                contactsRemark.setCreateBy(loginUser.getId());
-                contactsRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
-                contactsRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+                contactsRemark.setCreateBy(clueRemark.getCreateBy());
+                contactsRemark.setCreateTime(clueRemark.getCreateTime());
+                contactsRemark.setEditBy(clueRemark.getEditBy());
+                contactsRemark.setEditTime(clueRemark.getEditTime());
+                contactsRemark.setEditFlag(clueRemark.getEditFlag());
                 contactsRemark.setContactsId(contacts.getId());
                 contactsRemarks.add(contactsRemark);
             }
@@ -196,14 +200,10 @@ public class ClueServiceImpl implements ClueService {
             tran.setExpectedDate(expectedDate);
             tran.setCustomerId(customer.getId());
             tran.setStage(stage);
-            tran.setSource(clue.getSource());
             tran.setActivityId(activityId);
             tran.setContactsId(contacts.getId());
             tran.setCreateBy(loginUser.getId());
             tran.setCreateTime(DateUtils.formatDateTime(new Date()));
-            tran.setDescription(clue.getDescription());
-            tran.setContactSummary(clue.getContactSummary());
-            tran.setNextContactTime(clue.getNextContactTime());
             //保存交易数据
             tranMapper.insertTran(tran);
             //如果需要创建交易，则还需要把该线索下所有备注转换到交易备注表中一份
@@ -213,9 +213,11 @@ public class ClueServiceImpl implements ClueService {
                     TranRemark tranRemark = new TranRemark();
                     tranRemark.setId(UUIDUtils.getUUID());
                     tranRemark.setNoteContent(clueRemark.getNoteContent());
-                    tranRemark.setCreateBy(loginUser.getId());
-                    tranRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
-                    tranRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+                    tranRemark.setCreateBy(clueRemark.getCreateBy());
+                    tranRemark.setCreateTime(clueRemark.getCreateTime());
+                    tranRemark.setEditBy(clueRemark.getEditBy());
+                    tranRemark.setEditTime(clueRemark.getEditTime());
+                    tranRemark.setEditFlag(clueRemark.getEditFlag());
                     tranRemark.setTranId(tran.getId());
                     tranRemarkList.add(tranRemark);
                 }

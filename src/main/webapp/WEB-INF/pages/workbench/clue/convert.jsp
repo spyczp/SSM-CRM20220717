@@ -102,6 +102,13 @@
 				expectedDate = $("#tran-expectedDate").val();
 				stage = $("#stage").val();
 				activityId = $("#hidden-activityId").val();
+				//表单验证
+				//金额是非负整数
+				var rexStr = /^(([1-9]\d*)|0)$/;
+				if(!rexStr.test(money)){
+					alert("输入的金额非法，请重新输入");
+					return;
+				}
 				//向后端发起请求
 				$.ajax({
 					url: "workbench/clue/saveConvert.do",
@@ -148,9 +155,6 @@
 					}
 				});
 			}
-
-
-
 		});
 	});
 </script>
