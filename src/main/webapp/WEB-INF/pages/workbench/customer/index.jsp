@@ -1,27 +1,155 @@
-<!DOCTYPE html>
+<%@page contentType="text/html; charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-<meta charset="UTF-8">
+	<base href="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
+	<meta charset="UTF-8">
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
 
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/localization/en.min.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
+
+		//添加日期插件
+		$(".mydate").datetimepicker({
+			language: "en",
+			format: "yyyy-mm-dd",
+			autoclose: true,
+			minView: "month",
+			initialDate: new Date(),
+			todayBtn: true,
+			clearBtn: true
+		});
 		
 		//定制字段
 		$("#definedColumns > li").click(function(e) {
 			//防止下拉菜单消失
 	        e.stopPropagation();
 	    });
-		
+
+		//页面加载完毕之后，调用方法，展示客户列表。默认显示第一页，每页显示2条数据。
+		showCustomerList(1, 2);
+
+		//给创建客户的模态窗口中的 保存按钮 添加单击事件
+		$("#saveCustomerBtn").click(function () {
+			//收集参数
+			var owner = $("#create-owner").val();
+			var name = $.trim($("#create-name").val());
+			var website = $.trim($("#create-website").val());
+			var phone = $.trim($("#create-phone").val());
+			var description = $.trim($("#create-description").val());
+			var contactSummary = $.trim($("#create-contactSummary").val());
+			var nextContactTime = $("#create-nextContactTime").val();
+			var address = $.trim($("#create-address").val());
+			//验证参数
+			if(name == ""){
+				alert("名称不能为空");
+				return;
+			}
+			var regxStr = /[a-zA-z]+:\/\/[^\s]*/;
+			if(website != "" && !regxStr.test(website)){
+				alert("网站格式不符合要求，请重新输入");
+				return;
+			}
+			regxStr = /\d{3}-\d{8}|\d{4}-\d{7}/;
+			if(phone != "" && !regxStr.test(phone)){
+				alert("公司座机不符合要求，请重新输入");
+				return;
+			}
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/saveCreateCustomer.do",
+				data: {
+					"owner": owner,
+					"name": name,
+					"website": website,
+					"phone": phone,
+					"description": description,
+					"contactSummary": contactSummary,
+					"nextContactTime": nextContactTime,
+					"address": address,
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//代表创建客户成功，刷新客户列表，，
+						showCustomerList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+						//关闭模态窗口
+						$("#createCustomerModal").modal("hide");
+						//清空模态窗口的表单数据
+						$("#createCustomerForm")[0].reset();
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
 	});
+
+	//展示客户列表的方法
+	function showCustomerList(pageNo, pageSize){
+		//收集参数
+		var name = $("#hidden-name").val();
+		var owner = $("#hidden-owner").val();
+		var phone = $("#hidden-phone").val();
+		var website = $("#hidden-website").val();
+
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/customer/showCustomerList.do",
+			data: {
+				"name": name,
+				"owner": owner,
+				"phone": phone,
+				"website": website,
+				"pageNo": pageNo,
+				"pageSize": pageSize,
+			},
+			type: "post",
+			dataType: "json",
+			success: function(response){
+				//展示客户数据
+				//字符串拼接，组装标签
+				var html = "";
+				$.each(response.customers, function (i, o) {
+					html += '<tr>';
+					html += '<td><input type="checkbox" value="'+o.id+'"/></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href="detail.html";">'+o.name+'</a></td>';
+					html += '<td>'+o.owner+'</td>';
+					html += '<td>'+o.phone+'</td>';
+					html += '<td>'+o.website+'</td>';
+					html += '</tr>';
+				});
+				$("#customerListTB").html(html);
+
+				//总页数
+				var totalPages = response.totalRows % pageSize == 0 ? response.totalRows / pageSize : parseInt(response.totalRows / pageSize) + 1;
+
+				//用容器调用分页插件函数
+				$("#paginationDiv").bs_pagination({
+					totalPages: totalPages,
+					currentPage: pageNo,
+					rowsPerPage: pageSize,
+					totalRows: response.totalRows,
+					visiblePageLinks: 5,
+					onChangePage: function (event, pageObj) { // returns page_num and rows_per_page after a link has clicked
+						showCustomerList(pageObj.currentPage, pageObj.rowsPerPage);
+					}
+				});
+			}
+		});
+	}
 	
 </script>
 </head>
@@ -38,20 +166,23 @@
 					<h4 class="modal-title" id="myModalLabel1">创建客户</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" role="form" id="createCustomerForm">
 					
 						<div class="form-group">
-							<label for="create-customerOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-customerOwner">
-								  <option>zhangsan</option>
+								<select class="form-control" id="create-owner">
+								  <%--<option>zhangsan</option>
 								  <option>lisi</option>
-								  <option>wangwu</option>
+								  <option>wangwu</option>--%>
+									<c:forEach items="${users}" var="user">
+										<option value="${user.id}">${user.name}</option>
+									</c:forEach>
 								</select>
 							</div>
-							<label for="create-customerName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-name" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-customerName">
+								<input type="text" class="form-control" id="create-name">
 							</div>
 						</div>
 						
@@ -66,9 +197,9 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="create-describe" class="col-sm-2 control-label">描述</label>
+							<label for="create-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-description"></textarea>
 							</div>
 						</div>
 						<div style="height: 1px; width: 103%; background-color: #D5D5D5; left: -13px; position: relative;"></div>
@@ -83,7 +214,7 @@
                             <div class="form-group">
                                 <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="create-nextContactTime">
+                                    <input type="text" class="form-control mydate" id="create-nextContactTime" readonly>
                                 </div>
                             </div>
                         </div>
@@ -92,9 +223,9 @@
 
                         <div style="position: relative;top: 20px;">
                             <div class="form-group">
-                                <label for="create-address1" class="col-sm-2 control-label">详细地址</label>
+                                <label for="create-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="create-address1"></textarea>
+                                    <textarea class="form-control" rows="1" id="create-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +234,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveCustomerBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -123,17 +254,17 @@
 					<form class="form-horizontal" role="form">
 					
 						<div class="form-group">
-							<label for="edit-customerOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="edit-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="edit-customerOwner">
+								<select class="form-control" id="edit-owner">
 								  <option>zhangsan</option>
 								  <option>lisi</option>
 								  <option>wangwu</option>
 								</select>
 							</div>
-							<label for="edit-customerName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="edit-name" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-customerName" value="动力节点">
+								<input type="text" class="form-control" id="edit-name" value="动力节点">
 							</div>
 						</div>
 						
@@ -149,9 +280,9 @@
 						</div>
 						
 						<div class="form-group">
-							<label for="edit-describe" class="col-sm-2 control-label">描述</label>
+							<label for="edit-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="edit-describe"></textarea>
+								<textarea class="form-control" rows="3" id="edit-description"></textarea>
 							</div>
 						</div>
 						
@@ -159,15 +290,15 @@
 
                         <div style="position: relative;top: 15px;">
                             <div class="form-group">
-                                <label for="create-contactSummary1" class="col-sm-2 control-label">联系纪要</label>
+                                <label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="3" id="create-contactSummary1"></textarea>
+                                    <textarea class="form-control" rows="3" id="edit-contactSummary"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="create-nextContactTime2" class="col-sm-2 control-label">下次联系时间</label>
+                                <label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="create-nextContactTime2">
+                                    <input type="text" class="form-control mydate" id="edit-nextContactTime" readonly>
                                 </div>
                             </div>
                         </div>
@@ -176,9 +307,9 @@
 
                         <div style="position: relative;top: 20px;">
                             <div class="form-group">
-                                <label for="create-address" class="col-sm-2 control-label">详细地址</label>
+                                <label for="edit-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="create-address">北京大兴大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="edit-address">北京大兴大族企业湾</textarea>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +334,11 @@
 			</div>
 		</div>
 	</div>
-	
+	<input type="hidden" id="hidden-name">
+	<input type="hidden" id="hidden-owner">
+	<input type="hidden" id="hidden-phone">
+	<input type="hidden" id="hidden-website">
+
 	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
 	
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
@@ -214,28 +349,28 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-owner">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司座机</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-phone">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">公司网站</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-website">
 				    </div>
 				  </div>
 				  
@@ -262,8 +397,8 @@
 							<td>公司网站</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
+					<tbody id="customerListTB">
+						<%--<tr>
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">动力节点</a></td>
 							<td>zhangsan</td>
@@ -276,12 +411,14 @@
                             <td>zhangsan</td>
                             <td>010-84846003</td>
                             <td>http://www.bjpowernode.com</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
 			</div>
+			&nbsp;&nbsp;
+			<div id="paginationDiv"></div>
 			
-			<div style="height: 50px; position: relative;top: 30px;">
+			<%--<div style="height: 50px; position: relative;top: 30px;">
 				<div>
 					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
 				</div>
@@ -314,7 +451,7 @@
 						</ul>
 					</nav>
 				</div>
-			</div>
+			</div>--%>
 			
 		</div>
 		

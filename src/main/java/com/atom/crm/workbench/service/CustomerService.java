@@ -1,0 +1,15 @@
+package com.atom.crm.workbench.service;
+
+import com.atom.crm.workbench.bean.Customer;
+
+import java.util.List;
+import java.util.Map;
+
+public interface CustomerService {
+
+    int createCustomer(Customer customer);
+
+    List<Customer> queryCustomerByCondition(Map<String, Object> map);
+
+    int queryCountByCondition(Map<String, Object> map);
+}
