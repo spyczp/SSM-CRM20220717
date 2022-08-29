@@ -40,6 +40,21 @@
 		//页面加载完毕之后，调用方法，展示客户列表。默认显示第一页，每页显示2条数据。
 		showCustomerList(1, 2);
 
+		//给 全选框 添加单击事件。
+		//当全选框打勾后，所有单选框打勾
+		$("#checkedAll").click(function(){
+			$("#customerListTB input[type='checkbox']").prop("checked", this.checked);
+		});
+		//给 单选框 添加单击事件
+		//当所有 单选框 打勾后，全选框也打勾。至少有一个单选框没有打勾，则全选框不打勾。
+		$("#customerListTB").on("click", "input[type='checkbox']", function(){
+			if($("#customerListTB input[type='checkbox']").size() == $("#customerListTB input[type='checkbox']:checked").size()){
+				$("#checkedAll").prop("checked", true);
+			}else{
+				$("#checkedAll").prop("checked", false);
+			}
+		});
+
 		//给创建客户的模态窗口中的 保存按钮 添加单击事件
 		$("#saveCustomerBtn").click(function () {
 			//收集参数
@@ -95,10 +110,139 @@
 				}
 			});
 		});
+
+		//给 修改 按钮添加单击事件
+		$("#editCustomerBtn").click(function () {
+			//拿到用户勾选的客户信息
+			//判断用户是否只选了一个客户信息进行修改
+			if($("#customerListTB input[type='checkbox']:checked").size() != 1){
+				alert("必须且只能选择一个客户信息进行修改");
+				return;
+			}
+			//收集参数
+			var id = $("#customerListTB input[type='checkbox']:checked").val();
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/queryCustomerById.do",
+				data: {
+					"id": id
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					//把数据填写到 修改客户的模态窗口 中的 表单 里。
+					$("#edit-id").val(response.id);
+					$("#edit-owner").val(response.owner);
+					$("#edit-name").val(response.name);
+					$("#edit-website").val(response.website);
+					$("#edit-phone").val(response.phone);
+					$("#edit-description").val(response.description);
+					$("#edit-contactSummary").val(response.contactSummary);
+					$("#edit-nextContactTime").val(response.nextContactTime);
+					$("#edit-address").val(response.address);
+					//打开 修改客户的模态窗口
+					$("#editCustomerModal").modal("show");
+				}
+			});
+		});
+
+		//给 修改客户的模态窗口 中的 更新 按钮添加单击事件
+		$("#saveEditBtn").click(function () {
+			//收集参数
+			var id = $("#edit-id").val();
+			var owner = $("#edit-owner").val();
+			var name = $.trim($("#edit-name").val());
+			var website = $.trim($("#edit-website").val());
+			var phone = $.trim($("#edit-phone").val());
+			var description = $.trim($("#edit-description").val());
+			var contactSummary = $.trim($("#edit-contactSummary").val());
+			var nextContactTime = $("#edit-nextContactTime").val();
+			var address = $("#edit-address").val();
+			//验证参数合法性
+			if(name == ""){
+				alert("名称不能为空");
+				return;
+			}
+			var regxStr = /[a-zA-z]+:\/\/[^\s]*/;
+			if(website != "" && !regxStr.test(website)){
+				alert("网站格式不符合要求，请重新输入");
+				return;
+			}
+			regxStr = /\d{3}-\d{8}|\d{4}-\d{7}/;
+			if(phone != "" && !regxStr.test(phone)){
+				alert("公司座机格式不符合要求，请重新输入");
+				return;
+			}
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/saveEditCustomer.do",
+				data: {
+					"id": id,
+					"owner": owner,
+					"name": name,
+					"website": website,
+					"phone": phone,
+					"description": description,
+					"contactSummary": contactSummary,
+					"nextContactTime": nextContactTime,
+					"address": address
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//更新客户信息成功
+						//刷新客户列表
+						showCustomerList($("#paginationDiv").bs_pagination('getOption', 'currentPage'), $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+						//关闭模态窗口
+						$("#editCustomerModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给 删除 按钮添加单击事件
+		$("#deleteCustomerBtn").click(function () {
+			//收集参数
+			var checkedBox = $("#customerListTB input[type='checkbox']:checked");
+			if(checkedBox.size() == 0){
+				alert("请至少选择一条客户信息进行删除操作");
+				return;
+			}
+			//询问用户是否确认删除
+			if(confirm("请确认是否删除？数据将不可恢复")){
+				//获取所有选择的客户id，进行请求参数拼接
+				var param = "";
+				$.each(checkedBox, function(){
+					param += "id=" + this.value + "&";
+				});
+				param = param.substr(0, param.length -1);
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/customer/deleteCustomerByIds.do",
+					data: param,
+					type: "get",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//删除成功
+							//刷新客户列表
+							showCustomerList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+						}else{
+							alert(response.message);
+						}
+					}
+				});
+			}
+		});
 	});
 
 	//展示客户列表的方法
 	function showCustomerList(pageNo, pageSize){
+		//取消勾选 全选框
+		$("#checkedAll").prop("checked", false);
 		//收集参数
 		var name = $("#hidden-name").val();
 		var owner = $("#hidden-owner").val();
@@ -252,30 +396,35 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form">
-					
+
+						<input type="hidden" id="edit-id">
+
 						<div class="form-group">
 							<label for="edit-owner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-owner">
-								  <option>zhangsan</option>
+								  <%--<option>zhangsan</option>
 								  <option>lisi</option>
-								  <option>wangwu</option>
+								  <option>wangwu</option>--%>
+									  <c:forEach items="${users}" var="user">
+										  <option value="${user.id}">${user.name}</option>
+									  </c:forEach>
 								</select>
 							</div>
 							<label for="edit-name" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-name" value="动力节点">
+								<input type="text" class="form-control" id="edit-name">
 							</div>
 						</div>
 						
 						<div class="form-group">
                             <label for="edit-website" class="col-sm-2 control-label">公司网站</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-website" value="http://www.bjpowernode.com">
+                                <input type="text" class="form-control" id="edit-website">
                             </div>
 							<label for="edit-phone" class="col-sm-2 control-label">公司座机</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-phone" value="010-84846003">
+								<input type="text" class="form-control" id="edit-phone">
 							</div>
 						</div>
 						
@@ -309,7 +458,7 @@
                             <div class="form-group">
                                 <label for="edit-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="edit-address">北京大兴大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="edit-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -318,7 +467,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+					<button type="button" class="btn btn-primary" id="saveEditBtn">更新</button>
 				</div>
 			</div>
 		</div>
@@ -381,8 +530,8 @@
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createCustomerModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editCustomerModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-default" id="editCustomerBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-danger" id="deleteCustomerBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 			</div>
@@ -390,7 +539,7 @@
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="checkedAll"/></td>
 							<td>名称</td>
 							<td>所有者</td>
 							<td>公司座机</td>

@@ -5,10 +5,8 @@ import com.atom.crm.commons.domain.ReturnObject;
 import com.atom.crm.commons.utils.DateUtils;
 import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.User;
-import com.atom.crm.settings.mapper.UserMapper;
 import com.atom.crm.settings.service.UserService;
 import com.atom.crm.workbench.bean.Customer;
-import com.atom.crm.workbench.mapper.CustomerMapper;
 import com.atom.crm.workbench.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +28,62 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @RequestMapping("/workbench/customer/deleteCustomerByIds.do")
+    @ResponseBody
+    public Object deleteCustomerByIds(String[] id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，根据id删除客户信息
+            int count = customerService.deleteCustomerByIds(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除客户信息失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除客户信息失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/saveEditCustomer.do")
+    @ResponseBody
+    public Object saveEditCustomer(Customer customer, HttpSession session){
+        ReturnObject returnObject = new ReturnObject();
+
+        try {
+            User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+            customer.setEditBy(loginUser.getId());
+            customer.setEditTime(DateUtils.formatDateTime(new Date()));
+            //调用业务层，修改客户信息
+            int count = customerService.editCustomerInfo(customer);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("更新客户信息失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("更新客户信息失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/queryCustomerById.do")
+    @ResponseBody
+    public Object queryCustomerById(String id){
+        Customer customer = customerService.queryCustomerById(id);
+        return customer;
+    }
 
     @RequestMapping("/workbench/customer/showCustomerList.do")
     @ResponseBody

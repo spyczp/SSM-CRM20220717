@@ -29,4 +29,19 @@ public class CustomerServiceImpl implements CustomerService {
     public int queryCountByCondition(Map<String, Object> map) {
         return customerMapper.selectCountByCondition(map);
     }
+
+    @Override
+    public Customer queryCustomerById(String id) {
+        return customerMapper.selectCustomerById(id);
+    }
+
+    @Override
+    public int editCustomerInfo(Customer customer) {
+        return customerMapper.updateCustomer(customer);
+    }
+
+    @Override
+    public int deleteCustomerByIds(String[] id) {
+        return customerMapper.deleteCustomerByIds(id);
+    }
 }

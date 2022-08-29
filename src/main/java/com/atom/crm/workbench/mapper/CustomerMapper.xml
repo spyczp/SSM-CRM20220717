@@ -31,6 +31,36 @@
     next_contact_time, description, address
   </sql>
 
+  <delete id="deleteCustomerByIds" parameterType="String">
+    delete from tbl_customer
+    where id in
+    <foreach collection="array" item="id" separator="," open="(" close=")">
+      #{id} /*(id,id,id,id)*/
+    </foreach>
+  </delete>
+
+  <update id="updateCustomer" parameterType="Customer">
+    update tbl_customer
+    set
+      owner=#{owner},
+      name=#{name},
+      website=#{website},
+      phone=#{phone},
+      edit_by=#{editBy},
+      edit_time=#{editTime},
+      contact_summary=#{contactSummary},
+      next_contact_time=#{nextContactTime},
+      description=#{description},
+      address=#{address}
+    where id=#{id}
+  </update>
+
+  <select id="selectCustomerById" parameterType="String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_customer
+    where id=#{id}
+  </select>
+
   <select id="selectCountByCondition" parameterType="map" resultType="int">
     select count(*)
     from tbl_customer c

@@ -12,4 +12,10 @@ public interface CustomerService {
     List<Customer> queryCustomerByCondition(Map<String, Object> map);
 
     int queryCountByCondition(Map<String, Object> map);
+
+    Customer queryCustomerById(String id);
+
+    int editCustomerInfo(Customer customer);
+
+    int deleteCustomerByIds(String[] id);
 }
