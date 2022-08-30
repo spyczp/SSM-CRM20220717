@@ -6,8 +6,14 @@ import com.atom.crm.commons.utils.DateUtils;
 import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.settings.service.UserService;
+import com.atom.crm.workbench.bean.Contacts;
 import com.atom.crm.workbench.bean.Customer;
+import com.atom.crm.workbench.bean.CustomerRemark;
+import com.atom.crm.workbench.bean.Tran;
+import com.atom.crm.workbench.service.ContactsService;
+import com.atom.crm.workbench.service.CustomerRemarkService;
 import com.atom.crm.workbench.service.CustomerService;
+import com.atom.crm.workbench.service.TranService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +34,37 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private CustomerRemarkService customerRemarkService;
+
+    @Autowired
+    private TranService tranService;
+
+    @Autowired
+    private ContactsService contactsService;
+
+    @RequestMapping("/workbench/customer/showCustomerDetail.do")
+    public String showCustomerDetail(String id, HttpServletRequest request){
+        /*
+        *
+        * 1.客户详情 ✔
+        * 2.备注列表 ✔
+        * 3.交易列表 ✔
+        * 4.联系人列表 ✔
+        * */
+        Customer customer = customerService.queryCustomerByIdForDetail(id);
+        List<CustomerRemark> customerRemarkList = customerRemarkService.queryCustomerRemarkByCustomerId(id);
+        List<Tran> tranList = tranService.queryTranByCustomerId(id);
+        List<Contacts> contactsList = contactsService.queryContactsByCustomerId(id);
+
+        request.setAttribute("customer", customer);
+        request.setAttribute("customerRemarkList", customerRemarkList);
+        request.setAttribute("tranList", tranList);
+        request.setAttribute("contactsList", contactsList);
+
+        return "workbench/customer/detail";
+    }
 
     @RequestMapping("/workbench/customer/deleteCustomerByIds.do")
     @ResponseBody

@@ -237,6 +237,24 @@
 				});
 			}
 		});
+
+		//给 查询 按钮添加单击事件
+		$("#searchCustomerBtn").click(function () {
+			//收集参数
+			var name = $.trim($("#search-name").val());
+			var owner = $.trim($("#search-owner").val());
+			var phone = $.trim($("#search-phone").val());
+			var website = $.trim($("#search-website").val());
+
+			//把这些参数保存到隐藏标签中
+			$("#hidden-name").val(name);
+			$("#hidden-owner").val(owner);
+			$("#hidden-phone").val(phone);
+			$("#hidden-website").val(website);
+
+			//调用 展示客户列表的方法
+			showCustomerList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+		});
 	});
 
 	//展示客户列表的方法
@@ -269,7 +287,7 @@
 				$.each(response.customers, function (i, o) {
 					html += '<tr>';
 					html += '<td><input type="checkbox" value="'+o.id+'"/></td>';
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href="detail.html";">'+o.name+'</a></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/customer/showCustomerDetail.do?id='+o.id+'\';">'+o.name+'</a></td>';
 					html += '<td>'+o.owner+'</td>';
 					html += '<td>'+o.phone+'</td>';
 					html += '<td>'+o.website+'</td>';
@@ -523,7 +541,7 @@
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" class="btn btn-default" id="searchCustomerBtn">查询</button>
 				  
 				</form>
 			</div>

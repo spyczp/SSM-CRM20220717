@@ -22,6 +22,13 @@ public interface CustomerMapper {
     int updateCustomer(Customer customer);
 
     /**
+     * 根据客户id查询客户信息，会进行表连接，把一些字段是uuid的值转为名称
+     * @param id
+     * @return
+     */
+    Customer selectCustomerByIdConnectOtherTable(String id);
+
+    /**
      * 根据客户id查询客户信息
      * @param id
      * @return

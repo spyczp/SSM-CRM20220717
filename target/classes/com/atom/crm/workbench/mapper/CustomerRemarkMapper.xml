@@ -25,6 +25,27 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, customer_id
   </sql>
 
+  <select id="selectCustomerRemarkByCustomerId" parameterType="String" resultMap="BaseResultMap">
+    select
+      cr.id,
+      cr.note_content,
+      u1.name as create_by,
+      cr.create_time,
+      u2.name as edit_by,
+      cr.edit_time,
+      cr.edit_flag,
+      c.name as customer_id
+    from tbl_customer_remark cr
+    join tbl_user u1
+    on cr.create_by=u1.id
+    left join tbl_user u2
+    on cr.edit_by=u2.id
+    join tbl_customer c
+    on cr.customer_id=c.id
+    where cr.customer_id=#{customerId}
+    order by cr.create_time
+  </select>
+
   <!--新增客户备注-->
   <insert id="insertCustomerRemark" parameterType="CustomerRemark">
     insert into tbl_customer_remark

@@ -44,4 +44,9 @@ public class CustomerServiceImpl implements CustomerService {
     public int deleteCustomerByIds(String[] id) {
         return customerMapper.deleteCustomerByIds(id);
     }
+
+    @Override
+    public Customer queryCustomerByIdForDetail(String id) {
+        return customerMapper.selectCustomerByIdConnectOtherTable(id);
+    }
 }

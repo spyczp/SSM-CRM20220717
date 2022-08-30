@@ -18,4 +18,6 @@ public interface CustomerService {
     int editCustomerInfo(Customer customer);
 
     int deleteCustomerByIds(String[] id);
+
+    Customer queryCustomerByIdForDetail(String id);
 }

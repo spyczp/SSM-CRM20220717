@@ -7,6 +7,13 @@ import java.util.List;
 public interface CustomerRemarkMapper {
 
     /**
+     * 根据客户id查询客户备注
+     * @param customerId
+     * @return
+     */
+    List<CustomerRemark> selectCustomerRemarkByCustomerId(String customerId);
+
+    /**
      * 新增客户备注
      * @param customerRemarks
      * @return
