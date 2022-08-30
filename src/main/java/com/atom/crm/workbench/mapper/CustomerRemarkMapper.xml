@@ -25,6 +25,20 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, customer_id
   </sql>
 
+  <insert id="insertCustomerRemarkOne" parameterType="CustomerRemark">
+    insert into tbl_customer_remark
+    values(
+      #{id},
+      #{noteContent},
+      #{createBy},
+      #{createTime},
+      #{editBy},
+      #{editTime},
+      #{editFlag},
+      #{customerId}
+          )
+  </insert>
+
   <select id="selectCustomerRemarkByCustomerId" parameterType="String" resultMap="BaseResultMap">
     select
       cr.id,

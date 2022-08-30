@@ -18,4 +18,9 @@ public class CustomerRemarkServiceImpl implements CustomerRemarkService {
     public List<CustomerRemark> queryCustomerRemarkByCustomerId(String customerId) {
         return customerRemarkMapper.selectCustomerRemarkByCustomerId(customerId);
     }
+
+    @Override
+    public int saveCreateCustomerRemark(CustomerRemark customerRemark) {
+        return customerRemarkMapper.insertCustomerRemarkOne(customerRemark);
+    }
 }

@@ -14,6 +14,7 @@ import com.atom.crm.workbench.service.ContactsService;
 import com.atom.crm.workbench.service.CustomerRemarkService;
 import com.atom.crm.workbench.service.CustomerService;
 import com.atom.crm.workbench.service.TranService;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +44,42 @@ public class CustomerController {
 
     @Autowired
     private ContactsService contactsService;
+
+    @RequestMapping("/workbench/customer/saveCreateCustomerRemark.do")
+    @ResponseBody
+    public Object saveCreateCustomerRemark(CustomerRemark customerRemark, HttpSession session){
+        //封装数据
+        customerRemark.setId(UUIDUtils.getUUID());
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        customerRemark.setCreateBy(loginUser.getId());
+        customerRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+        customerRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+        try{
+            //访问业务层，保存客户备注信息
+            int count = customerRemarkService.saveCreateCustomerRemark(customerRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("保存客户备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("保存客户备注失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/showCustomerRemarkListInCustomerDetail.do")
+    @ResponseBody
+    public Object showCustomerRemarkListInCustomerDetail(String customerId){
+        List<CustomerRemark> customerRemarkList = customerRemarkService.queryCustomerRemarkByCustomerId(customerId);
+        return customerRemarkList;
+    }
 
     @RequestMapping("/workbench/customer/showCustomerDetail.do")
     public String showCustomerDetail(String id, HttpServletRequest request){

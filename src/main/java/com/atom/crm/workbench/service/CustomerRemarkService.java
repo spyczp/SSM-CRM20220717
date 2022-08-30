@@ -7,4 +7,6 @@ import java.util.List;
 public interface CustomerRemarkService {
 
     List<CustomerRemark> queryCustomerRemarkByCustomerId(String customerId);
+
+    int saveCreateCustomerRemark(CustomerRemark customerRemark);
 }

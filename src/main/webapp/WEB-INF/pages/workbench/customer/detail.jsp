@@ -32,23 +32,105 @@
 			$("#remarkDiv").css("height","90px");
 			cancelAndSaveBtnDefault = true;
 		});
-		
-		$(".remarkDiv").mouseover(function(){
+
+		$("#customerRemarkListDiv").on("mouseover", ".remarkDiv", function () {
 			$(this).children("div").children("div").show();
 		});
-		
-		$(".remarkDiv").mouseout(function(){
+
+		/*$(".remarkDiv").mouseover(function(){
+			$(this).children("div").children("div").show();
+		});*/
+
+		$("#customerRemarkListDiv").on("mouseout", ".remarkDiv", function () {
 			$(this).children("div").children("div").hide();
 		});
-		
-		$(".myHref").mouseover(function(){
+
+		/*$(".remarkDiv").mouseout(function(){
+			$(this).children("div").children("div").hide();
+		});*/
+
+		$("#customerRemarkListDiv").on("mouseover", ".myHref", function () {
 			$(this).children("span").css("color","red");
 		});
 		
-		$(".myHref").mouseout(function(){
+		/*$(".myHref").mouseover(function(){
+			$(this).children("span").css("color","red");
+		});*/
+
+		$("#customerRemarkListDiv").on("mouseout", ".myHref", function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+		
+		/*$(".myHref").mouseout(function(){
+			$(this).children("span").css("color","#E6E6E6");
+		});*/
+
+		//给创建客户备注的 保存 按钮添加单击事件
+		$("#saveCreateCustomerRemarkBtn").click(function () {
+			//收集参数：备注信息、客户id
+			var customerId = $("#hidden-customerId").val();
+			var noteContent = $.trim($("#remark").val());
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/saveCreateCustomerRemark.do",
+				data: {
+					"customerId": customerId,
+					"noteContent": noteContent
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//保存客户备注成功
+						//刷新客户备注列表
+						showCustomerRemarkList();
+						//清空文本框
+						$("#remark").val("");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
 	});
+
+	//展示客户备注列表
+	function showCustomerRemarkList(){
+		//收集参数：客户id
+		var customerId = $("#hidden-customerId").val();
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/customer/showCustomerRemarkListInCustomerDetail.do",
+			data: {
+				"customerId": customerId
+			},
+			type: "post",
+			dataType: "json",
+			success: function (response) {
+				//字符串拼接，组装html标签，展示客户备注列表
+				var html = "";
+				$.each(response, function (i, o) {
+					html += '<div class="remarkDiv" style="height: 60px;">';
+					html += '<img title="'+o.createBy+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+					html += '<div style="position: relative; top: -40px; left: 40px;" >';
+					html += '<h5>'+o.noteContent+'</h5>';
+					html += '<font color="gray">客户</font> <font color="gray">-</font> <b>'+o.customerId+'</b> <small style="color: gray;">';
+					html += (o.editFlag == 0 ? o.createTime : o.editTime)+' 由'+(o.editFlag == 0 ? o.createBy : o.editBy)+(o.editFlag == 0 ? "创建" : "修改")+'</small>';
+					html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+					html += '<a class="myHref" name="updateA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+					html += '<a class="myHref" name="deleteA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '</div>';
+					html += '</div>';
+					html += '</div>';
+				});
+				//清楚原来的备注列表标签
+				$("#customerRemarkListDiv div[class='remarkDiv']").remove();
+				//填充标签,展示新的备注列表
+				$("#remarkDiv").before(html);
+			}
+		});
+	}
 	
 </script>
 
@@ -258,6 +340,7 @@
 
 	<!-- 详细信息 -->
 	<div style="position: relative; top: -70px;">
+		<input type="hidden" id="hidden-customerId" value="${customer.id}">
 		<div style="position: relative; left: 40px; height: 30px;">
 			<div style="width: 300px; color: gray;">所有者</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${customer.owner}</b></div>
@@ -319,7 +402,7 @@
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 10px; left: 40px;">
+	<div id="customerRemarkListDiv" style="position: relative; top: 10px; left: 40px;">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
@@ -371,7 +454,7 @@
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" id="saveCreateCustomerRemarkBtn" class="btn btn-primary">保存</button>
 				</p>
 			</form>
 		</div>
