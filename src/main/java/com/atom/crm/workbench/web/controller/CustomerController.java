@@ -14,7 +14,6 @@ import com.atom.crm.workbench.service.ContactsService;
 import com.atom.crm.workbench.service.CustomerRemarkService;
 import com.atom.crm.workbench.service.CustomerService;
 import com.atom.crm.workbench.service.TranService;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +43,58 @@ public class CustomerController {
 
     @Autowired
     private ContactsService contactsService;
+
+    @RequestMapping("/workbench/customer/deleteCustomerRemarkById.do")
+    @ResponseBody
+    public Object deleteCustomerRemarkById(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，根据客户备注id删除客户备注信息
+            int count = customerRemarkService.deleteCustomerRemarkById(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除客户备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除客户备注失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/editCustomerRemarkInCustomerDetail.do")
+    @ResponseBody
+    public Object editCustomerRemarkInCustomerDetail(CustomerRemark customerRemark, HttpSession session){
+        //封装参数
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        customerRemark.setEditBy(loginUser.getId());
+        customerRemark.setEditTime(DateUtils.formatDateTime(new Date()));
+        customerRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_YES_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，把修改后的客户备注信息传递进去，进行修改。
+            int count = customerRemarkService.editCustomerRemark(customerRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("修改客户备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改客户备注失败");
+        }
+
+        return returnObject;
+    }
 
     @RequestMapping("/workbench/customer/saveCreateCustomerRemark.do")
     @ResponseBody

@@ -92,6 +92,72 @@
 				}
 			});
 		});
+
+		//给修改客户备注的图标添加单击事件
+		$("#customerRemarkListDiv").on("click", "a[name='updateA']", function(){
+			//拿到备注id并保存到隐藏标签中
+			var remarkId = $(this).attr("remarkId");
+			$("#hidden-customerRemarkId").val(remarkId);
+			//获取需要修改的备注内容，并填写到修改备注的模态窗口中的文本框中
+			var noteConent = $("#div_"+remarkId+" h5").text(); //$("#div_4408fa357cae44058c83a0b2090455a1 h5").text()
+			$("#edit-noteContent").val(noteConent);
+			//打开修改客户备注的模态窗口
+			$("#editRemarkModal").modal("show");
+		});
+
+		//给 修改客户备注的模态窗口中的 更新 按钮添加单击事件
+		$("#updateRemarkBtn").click(function () {
+			//收集参数
+			var id = $("#hidden-customerRemarkId").val();
+			var noteContent = $.trim($("#edit-noteContent").val());
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/editCustomerRemarkInCustomerDetail.do",
+				data: {
+					"id": id,
+					"noteContent": noteContent
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//修改成功
+						//刷新客户备注列表
+						showCustomerRemarkList();
+						//关闭模态窗口
+						$("#editRemarkModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给所有删除客户备注的 图标 添加单击事件
+		$("#customerRemarkListDiv").on("click", "a[name='deleteA']", function () {
+			if(confirm("确认删除客户备注信息吗？")){
+				//收集参数
+				var id = $(this).attr("remarkId");
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/customer/deleteCustomerRemarkById.do",
+					data: {
+						"id": id
+					},
+					type: "post",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//删除客户备注成功
+							//刷新客户备注列表
+							showCustomerRemarkList();
+						}else{
+							alert(response.message);
+						}
+					}
+				});
+			}
+		});
 	});
 
 	//展示客户备注列表
@@ -110,7 +176,7 @@
 				//字符串拼接，组装html标签，展示客户备注列表
 				var html = "";
 				$.each(response, function (i, o) {
-					html += '<div class="remarkDiv" style="height: 60px;">';
+					html += '<div class="remarkDiv" id="div_'+o.id+'" style="height: 60px;">';
 					html += '<img title="'+o.createBy+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
 					html += '<div style="position: relative; top: -40px; left: 40px;" >';
 					html += '<h5>'+o.noteContent+'</h5>';
@@ -136,6 +202,37 @@
 
 </head>
 <body>
+
+	<%--修改客户备注的模态窗口--%>
+	<div class="modal fade" id="editRemarkModal" role="dialog">
+		<%-- 客户备注的id --%>
+		<input type="hidden" id="hidden-customerRemarkId">
+		<div class="modal-dialog" role="document" style="width: 40%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">修改备注</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" id="edit-id">
+						<div class="form-group">
+							<label for="edit-noteContent" class="col-sm-2 control-label">内容</label>
+							<div class="col-sm-10" style="width: 81%;">
+								<textarea class="form-control" rows="3" id="edit-noteContent"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- 删除联系人的模态窗口 -->
 	<div class="modal fade" id="removeContactsModal" role="dialog">
@@ -435,7 +532,7 @@
 			</div>
 		</div>--%>
 		<c:forEach items="${customerRemarkList}" var="cr">
-			<div class="remarkDiv" style="height: 60px;">
+			<div class="remarkDiv" id="div_${cr.id}" style="height: 60px;">
 				<img title="${cr.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 				<div style="position: relative; top: -40px; left: 40px;" >
 					<h5>${cr.noteContent}</h5>

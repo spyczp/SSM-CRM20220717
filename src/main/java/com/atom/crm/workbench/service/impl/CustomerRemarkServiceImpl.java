@@ -23,4 +23,14 @@ public class CustomerRemarkServiceImpl implements CustomerRemarkService {
     public int saveCreateCustomerRemark(CustomerRemark customerRemark) {
         return customerRemarkMapper.insertCustomerRemarkOne(customerRemark);
     }
+
+    @Override
+    public int editCustomerRemark(CustomerRemark customerRemark) {
+        return customerRemarkMapper.updateCustomerRemark(customerRemark);
+    }
+
+    @Override
+    public int deleteCustomerRemarkById(String id) {
+        return customerRemarkMapper.deleteCustomerRemarkById(id);
+    }
 }
