@@ -4,7 +4,9 @@ import com.atom.crm.commons.contants.Contants;
 import com.atom.crm.commons.domain.ReturnObject;
 import com.atom.crm.commons.utils.DateUtils;
 import com.atom.crm.commons.utils.UUIDUtils;
+import com.atom.crm.settings.bean.DicValue;
 import com.atom.crm.settings.bean.User;
+import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
 import com.atom.crm.workbench.bean.Contacts;
 import com.atom.crm.workbench.bean.Customer;
@@ -43,6 +45,27 @@ public class CustomerController {
 
     @Autowired
     private ContactsService contactsService;
+
+    @Autowired
+    private DicValueService dicValueService;
+
+    @RequestMapping("/workbench/customer/toCreateTran.do")
+    public String toCreateTranInCustomerDetail(HttpServletRequest request){
+        //查询用户信息和字典，用来给前端生成下拉标签
+        List<User> userList = userService.queryAllUser();
+        List<DicValue> transactionTypeList = dicValueService.queryDicValueByTypeCode("transactionType");
+        List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
+        List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
+
+         //把数据保存到请求域中
+        request.setAttribute("userList", userList);
+        request.setAttribute("transactionTypeList", transactionTypeList);
+        request.setAttribute("stageList", stageList);
+        request.setAttribute("sourceList", sourceList);
+
+        //请求转发到 创建交易 的页面
+        return "workbench/transaction/save";
+    }
 
     @RequestMapping("/workbench/customer/deleteCustomerRemarkById.do")
     @ResponseBody

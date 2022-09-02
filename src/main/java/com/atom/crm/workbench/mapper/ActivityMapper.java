@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ActivityMapper {
 
     /**
+     * 根据名称模糊查询市场活动列表
+     * @param name
+     * @return
+     */
+    List<Activity> selectActivityListByName(String name);
+
+    /**
      * 根据名称和关联的线索id模糊查询市场活动
      * @param map
      * @return

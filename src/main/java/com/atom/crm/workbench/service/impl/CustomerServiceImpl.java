@@ -49,4 +49,9 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer queryCustomerByIdForDetail(String id) {
         return customerMapper.selectCustomerByIdConnectOtherTable(id);
     }
+
+    @Override
+    public List<String> queryCustomerNameListByName(String name) {
+        return customerMapper.selectCustomerNameListByName(name);
+    }
 }

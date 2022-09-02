@@ -7,4 +7,6 @@ import java.util.List;
 public interface ContactsService {
 
     List<Contacts> queryContactsByCustomerId(String customerId);
+
+    List<Contacts> queryContactsListByName(String name);
 }

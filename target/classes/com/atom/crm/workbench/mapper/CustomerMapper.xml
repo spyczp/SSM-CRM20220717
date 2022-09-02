@@ -31,6 +31,12 @@
     next_contact_time, description, address
   </sql>
 
+  <select id="selectCustomerNameListByName" parameterType="String" resultType="String">
+    select name
+    from tbl_customer
+    where name like concat('%',#{name},'%')
+  </select>
+
   <select id="selectCustomerByIdConnectOtherTable" parameterType="String" resultMap="BaseResultMap">
     select
       c.id,

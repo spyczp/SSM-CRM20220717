@@ -8,6 +8,13 @@ import java.util.Map;
 public interface CustomerMapper {
 
     /**
+     * 根据用户输入的名称查询客户名称列表
+     * @param name
+     * @return
+     */
+    List<String> selectCustomerNameListByName(String name);
+
+    /**
      * 删除 指定一些id 的客户信息
      * @param id
      * @return

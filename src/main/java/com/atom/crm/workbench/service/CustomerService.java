@@ -20,4 +20,6 @@ public interface CustomerService {
     int deleteCustomerByIds(String[] id);
 
     Customer queryCustomerByIdForDetail(String id);
+
+    List<String> queryCustomerNameListByName(String name);
 }
