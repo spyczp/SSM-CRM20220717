@@ -22,4 +22,6 @@ public interface CustomerService {
     Customer queryCustomerByIdForDetail(String id);
 
     List<String> queryCustomerNameListByName(String name);
+
+    Customer queryCustomerByName(String name);
 }

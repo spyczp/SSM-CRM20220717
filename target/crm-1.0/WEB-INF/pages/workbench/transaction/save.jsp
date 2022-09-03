@@ -155,7 +155,8 @@
 			var money = $.trim($("#create-money").val());
 			var name = $.trim($("#create-name").val());
 			var expectedDate = $("#create-expectedDate").val();
-			var customerName = $.trim($("#create-customerName").val());
+			//这里取名customerId，是方便后端把客户名称临时保存到实体类对象Tran中。
+			var customerId = $.trim($("#create-customerName").val());
 			var stage = $("#create-stage").val();
 			var type = $("#create-type").val();
 			var source = $("#create-source").val();
@@ -180,7 +181,7 @@
 				alert("预计成交日期不能为空");
 				return;
 			}
-			if(customerName == ""){
+			if(customerId == ""){
 				alert("客户名称不能为空");
 				return;
 			}
@@ -189,7 +190,34 @@
 				return;
 			}
 			//向后端发起请求
-			
+			$.ajax({
+				url: "workbench/transaction/saveCreateTran.do",
+				data: {
+					"owner": owner,
+					"money": money,
+					"name": name,
+					"expectedDate": expectedDate,
+					"customerId": customerId,
+					"stage": stage,
+					"type": type,
+					"source": source,
+					"activityId": activityId,
+					"contactsId": contactsId,
+					"description": description,
+					"contactSummary": contactSummary,
+					"nextContactTime": nextContactTime
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//成功，返回上一页
+						window.history.back();
+					}else{
+						alert(response.message);
+					}
+				}
+			});
 		});
  });
 </script>
