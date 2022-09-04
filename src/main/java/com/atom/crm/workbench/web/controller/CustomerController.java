@@ -49,6 +49,72 @@ public class CustomerController {
     @Autowired
     private DicValueService dicValueService;
 
+    @RequestMapping("/workbench/customer/saveCreateContactsAtCustomerDetail.do")
+    @ResponseBody
+    public Object saveCreateContactsAtCustomerDetail(Contacts contacts, HttpSession session){
+        ReturnObject returnObject = new ReturnObject();
+
+        //封装数据
+        contacts.setId(UUIDUtils.getUUID());
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        contacts.setCreateBy(loginUser.getId());
+        contacts.setCreateTime(DateUtils.formatDateTime(new Date()));
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("contacts", contacts);
+        map.put("loginUser", loginUser);
+
+        try{
+            //调用业务层，新建联系人
+            contactsService.saveCreateContacts(map);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("新建联系人失败");
+        }
+
+        return returnObject;
+    }
+
+
+    @RequestMapping("/workbench/customer/showCustomerNameListByNameForContactCreate.do")
+    @ResponseBody
+    public Object showCustomerNameListByNameForContactCreate(String name){
+        List<String> nameList = customerService.queryCustomerNameListByName(name);
+        return nameList;
+    }
+
+    @RequestMapping("/workbench/customer/showTranListByCustomerId.do")
+    @ResponseBody
+    public Object showTranListByCustomerId(String customerId){
+        List<Tran> tranList = tranService.queryTranByCustomerId(customerId);
+        return tranList;
+    }
+
+    @RequestMapping("/workbench/customer/deleteTranAtCustomerDetail.do")
+    @ResponseBody
+    public Object deleteTranAtCustomerDetail(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try {
+            //调用业务层，根据id删除交易
+            int count = tranService.deleteTranById(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除交易失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除交易失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/customer/toCreateTran.do")
     public String toCreateTranInCustomerDetail(HttpServletRequest request){
         //查询用户信息和字典，用来给前端生成下拉标签
@@ -168,11 +234,17 @@ public class CustomerController {
         List<CustomerRemark> customerRemarkList = customerRemarkService.queryCustomerRemarkByCustomerId(id);
         List<Tran> tranList = tranService.queryTranByCustomerId(id);
         List<Contacts> contactsList = contactsService.queryContactsByCustomerId(id);
+        List<User> userList = userService.queryAllUser();
+        List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
+        List<DicValue> appellationList = dicValueService.queryDicValueByTypeCode("appellation");
 
         request.setAttribute("customer", customer);
         request.setAttribute("customerRemarkList", customerRemarkList);
         request.setAttribute("tranList", tranList);
         request.setAttribute("contactsList", contactsList);
+        request.setAttribute("userList", userList);
+        request.setAttribute("sourceList", sourceList);
+        request.setAttribute("appellationList", appellationList);
 
         return "workbench/customer/detail";
     }

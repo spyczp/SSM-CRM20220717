@@ -7,6 +7,13 @@ import java.util.List;
 public interface TranMapper {
 
     /**
+     * 根据交易id删除交易
+     * @param id
+     * @return
+     */
+    int deleteTranById(String id);
+
+    /**
      * 根据客户id查询交易信息
      * @param customerId
      * @return

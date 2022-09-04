@@ -22,6 +22,7 @@
             <tx:method name="*insert*" propagation="REQUIRED"/>
             <tx:method name="*add*" propagation="REQUIRED"/>
             <tx:method name="*save*" propagation="REQUIRED"/>
+            <tx:method name="*create*" propagation="REQUIRED"/>
             <tx:method name="*set*" propagation="REQUIRED"/>
             <tx:method name="*update*" propagation="REQUIRED"/>
             <tx:method name="*change*" propagation="REQUIRED"/>

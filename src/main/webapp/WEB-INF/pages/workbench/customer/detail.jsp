@@ -6,15 +6,47 @@
 	<meta charset="UTF-8">
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet">
+
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/bs_typeahead/bootstrap3-typeahead.min.js"></script>
 <script type="text/javascript">
 
 	//默认情况下取消和保存按钮是隐藏的
 	var cancelAndSaveBtnDefault = true;
 	
 	$(function(){
+
+		//添加日期插件
+		$(".mydate").datetimepicker({
+			language: "en",
+			format: "yyyy-mm-dd",
+			autoclose: true,
+			minView: "month",
+			initialDate: new Date(),
+			todayBtn: true,
+			clearBtn: true
+		});
+
+		//客户名称添加自动补全插件
+		$("#create-customerName").typeahead({
+			source: function (query, process) {
+				$.post(
+						"workbench/customer/showCustomerNameListByNameForContactCreate.do",
+						{ "name" : query },
+						function (data) {
+							//alert(data);
+							process(data);
+						},
+						"json"
+				);
+			},
+			delay: 1500
+		});
+
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
 				//设置remarkDiv的高度为130px
@@ -158,7 +190,146 @@
 				});
 			}
 		});
+
+		//给交易的 删除 按钮添加单击事件
+		$("#tranListTB").on("click", "a[name='deleteTranA']", function () {
+			//收集参数
+			var id = $(this).attr("tranId");
+			//把值保存到模态窗口中的隐藏标签中
+			$("#hidden-tranId").val(id);
+			//打开模态窗口
+			$("#removeTransactionModal").modal("show");
+		});
+
+		//给删除交易模态窗口中的 删除 按钮添加单击事件
+		$("#deleteTranBtn").click(function () {
+			//收集参数
+			var id = $("#hidden-tranId").val();
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/deleteTranAtCustomerDetail.do",
+				data: {
+					"id": id
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//成功，刷新交易列表
+						showTranList();
+						//关闭模态窗口
+						$("#removeTransactionModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给 创建联系人模态窗口 中的 保存 按钮添加单击事件
+		$("#saveCreateCustomerBtn").click(function () {
+			//收集参数
+			var owner = $("#create-contactsOwner").val();
+			var source = $("#create-clueSource").val();
+			var fullname = $.trim($("#create-fullname").val());
+			var appellation = $("#create-appellation").val();
+			var job = $.trim($("#create-job").val());
+			var mphone = $.trim($("#create-mphone").val());
+			var email = $.trim($("#create-email").val());
+			//临时放在customerId中，方便后端存取数据
+			var customerId = $.trim($("#create-customerName").val());
+			var description = $.trim($("#create-description").val());
+			var contactSummary = $.trim($("#create-contactSummary").val());
+			var nextContactTime = $.trim($("#create-nextContactTime").val());
+			var address = $.trim($("#create-address").val());
+
+			//验证数据合法性
+			if(fullname == ""){
+				alert("姓名不能为空");
+				return;
+			}
+			var regxStr = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+			if(mphone != "" && !regxStr.test(mphone)){
+				alert("手机格式有误，请重新输入");
+				return;
+			}
+			regxStr = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+			if(email != "" && !regxStr.test(email)){
+				alert("邮箱格式有误，请重新输入");
+				return;
+			}
+
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/saveCreateContactsAtCustomerDetail.do",
+				data: {
+					"owner": owner,
+					"source": source,
+					"fullname": fullname,
+					"appellation": appellation,
+					"job": job,
+					"mphone": mphone,
+					"email": email,
+					"customerId": customerId,
+					"description": description,
+					"contactSummary": contactSummary,
+					"nextContactTime": nextContactTime,
+					"address": address
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//新建联系人成功
+						//刷新联系人列表
+						showContactsList();
+						//关闭模态窗口
+						$("#createContactsModal").modal("hide");
+					}else {
+						alert(response.message);
+					}
+				}
+			});
+		});
 	});
+
+	//展示联系人列表
+	function showContactsList(){
+
+
+	}
+
+	//展示交易列表
+	function showTranList() {
+		//收集参数
+		var customerId = $("#hidden-customerId").val();
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/customer/showTranListByCustomerId.do",
+			data: {
+				"customerId": customerId
+			},
+			type: "post",
+			dataType: "json",
+			success: function (response) {
+				//字符串拼接，组装html标签，
+				var html = "";
+				$.each(response, function (i, o) {
+					html += '<tr>';
+					html += '<td><a href="transaction/detail.html" style="text-decoration: none;">'+o.name+'</a></td>';
+					html += '<td>'+o.money+'</td>';
+					html += '<td>'+o.stage+'</td>';
+					html += '<td>90</td>';
+					html += '<td>'+o.expectedDate+'</td>';
+					html += '<td>'+o.type+'</td>';
+					html += '<td><a href="javascript:void(0);" name="deleteTranA" tranId="'+o.id+'" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>';
+					html += '</tr>';
+				});
+				//展示交易列表
+				$("#tranListTB").html(html);
+			}
+		});
+	}
 
 	//展示客户备注列表
 	function showCustomerRemarkList(){
@@ -259,6 +430,7 @@
     <div class="modal fade" id="removeTransactionModal" role="dialog">
         <div class="modal-dialog" role="document" style="width: 30%;">
             <div class="modal-content">
+				<input type="hidden" id="hidden-tranId">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true">×</span>
@@ -270,7 +442,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">删除</button>
+                    <button type="button" class="btn btn-danger" id="deleteTranBtn">删除</button>
                 </div>
             </div>
         </div>
@@ -293,16 +465,19 @@
 							<label for="create-contactsOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-contactsOwner">
-								  <option>zhangsan</option>
+								  <%--<option>zhangsan</option>
 								  <option>lisi</option>
-								  <option>wangwu</option>
+								  <option>wangwu</option>--%>
+									<c:forEach items="${userList}" var="user">
+										<option value="${user.id}">${user.name}</option>
+									</c:forEach>
 								</select>
 							</div>
 							<label for="create-clueSource" class="col-sm-2 control-label">来源</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="create-clueSource">
 								  <option></option>
-								  <option>广告</option>
+								  <%--<option>广告</option>
 								  <option>推销电话</option>
 								  <option>员工介绍</option>
 								  <option>外部介绍</option>
@@ -315,25 +490,31 @@
 								  <option>交易会</option>
 								  <option>web下载</option>
 								  <option>web调研</option>
-								  <option>聊天</option>
+								  <option>聊天</option>--%>
+									<c:forEach items="${sourceList}" var="source">
+										<option value="${source.id}">${source.value}</option>
+									</c:forEach>
 								</select>
 							</div>
 						</div>
 						
 						<div class="form-group">
-							<label for="create-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
+							<label for="create-fullname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-surname">
+								<input type="text" class="form-control" id="create-fullname">
 							</div>
-							<label for="create-call" class="col-sm-2 control-label">称呼</label>
+							<label for="create-appellation" class="col-sm-2 control-label">称呼</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-call">
+								<select class="form-control" id="create-appellation">
 								  <option></option>
-								  <option>先生</option>
+								  <%--<option>先生</option>
 								  <option>夫人</option>
 								  <option>女士</option>
 								  <option>博士</option>
-								  <option>教授</option>
+								  <option>教授</option>--%>
+									<c:forEach items="${appellationList}" var="appellation">
+										<option value="${appellation.id}">${appellation.value}</option>
+									</c:forEach>
 								</select>
 							</div>
 							
@@ -357,7 +538,7 @@
 							</div>
 							<label for="create-birth" class="col-sm-2 control-label">生日</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-birth">
+								<input type="text" class="form-control mydate" id="create-birth" readonly>
 							</div>
 						</div>
 						
@@ -369,9 +550,9 @@
 						</div>
 						
 						<div class="form-group" style="position: relative;">
-							<label for="create-describe" class="col-sm-2 control-label">描述</label>
+							<label for="create-description" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-description"></textarea>
 							</div>
 						</div>
 						
@@ -379,15 +560,15 @@
 
                         <div style="position: relative;top: 15px;">
                             <div class="form-group">
-                                <label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
+                                <label for="create-contactSummary" class="col-sm-2 control-label">联系纪要</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="3" id="edit-contactSummary">这个线索即将被转换</textarea>
+                                    <textarea class="form-control" rows="3" id="create-contactSummary"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
+                                <label for="create-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="edit-nextContactTime" value="2017-05-01">
+                                    <input type="text" class="form-control mydate" id="create-nextContactTime" readonly>
                                 </div>
                             </div>
                         </div>
@@ -396,9 +577,9 @@
 
                         <div style="position: relative;top: 20px;">
                             <div class="form-group">
-                                <label for="edit-address1" class="col-sm-2 control-label">详细地址</label>
+                                <label for="create-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="edit-address1">北京大兴区大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="create-address"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -407,7 +588,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveCreateCustomerBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -576,7 +757,7 @@
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="tranListTB">
 						<%--<tr>
 							<td><a href="transaction/detail.html" style="text-decoration: none;">动力节点-交易01</a></td>
 							<td>5,000</td>
@@ -594,7 +775,7 @@
 								<td>90</td>
 								<td>${t.expectedDate}</td>
 								<td>${t.type}</td>
-								<td><a href="javascript:void(0);" name="deleteA" data-toggle="modal" data-target="#removeTransactionModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
+								<td><a href="javascript:void(0);" name="deleteTranA" tranId="${t.id}" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
 							</tr>
 						</c:forEach>
 					</tbody>

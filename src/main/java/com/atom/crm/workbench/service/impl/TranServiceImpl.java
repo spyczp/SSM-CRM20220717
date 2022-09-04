@@ -54,4 +54,9 @@ public class TranServiceImpl implements TranService {
         tranMapper.insertTran(tran);
 
     }
+
+    @Override
+    public int deleteTranById(String id) {
+        return tranMapper.deleteTranById(id);
+    }
 }

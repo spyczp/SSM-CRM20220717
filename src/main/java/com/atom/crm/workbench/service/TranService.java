@@ -10,4 +10,6 @@ public interface TranService {
     List<Tran> queryTranByCustomerId(String customerId);
 
     void saveCreateTran(Map<String, Object> map);
+
+    int deleteTranById(String id);
 }

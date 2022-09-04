@@ -37,6 +37,11 @@
     next_contact_time
   </sql>
 
+  <delete id="deleteTranById" parameterType="String">
+    delete from tbl_tran
+    where id=#{id}
+  </delete>
+
   <select id="selectTranByCustomerId" parameterType="String" resultMap="BaseResultMap">
     select
       t.id,
