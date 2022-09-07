@@ -12,4 +12,10 @@ public interface TranService {
     void saveCreateTran(Map<String, Object> map);
 
     int deleteTranById(String id);
+
+    List<Tran> queryAllTranForIndex();
+
+    List<Tran> queryTranByCondition(Map<String, Object> map);
+
+    int queryCountByCondition(Map<String, Object> map);
 }

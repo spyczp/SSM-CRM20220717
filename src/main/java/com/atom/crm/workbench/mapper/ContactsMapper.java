@@ -7,6 +7,13 @@ import java.util.List;
 public interface ContactsMapper {
 
     /**
+     * 根据联系人的id删除联系人信息
+     * @param id
+     * @return
+     */
+    int deleteContactsById(String id);
+
+    /**
      * 根据名称模糊查询联系人列表
      * @param name
      * @return

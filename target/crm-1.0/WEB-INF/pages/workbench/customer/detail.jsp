@@ -283,9 +283,47 @@
 						//新建联系人成功
 						//刷新联系人列表
 						showContactsList();
+						//清空模态窗口中的表单内容
+						$("#createContactsForm")[0].reset();
 						//关闭模态窗口
 						$("#createContactsModal").modal("hide");
 					}else {
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给联系人列表中的 删除 按钮添加单击事件
+		$("#contactsListTB").on("click", "a[name='deleteContactsA']", function () {
+			//收集参数
+			var contactsId = $(this).attr("contactsId");
+			//把contactsId保存到隐藏标签中
+			$("#hidden-contactsId").val(contactsId);
+			//打开模态窗口
+			$("#removeContactsModal").modal("show");
+		});
+
+		//给 删除联系人模态窗口中的 删除 按钮添加单击事件
+		$("#deleteContactsBtn").click(function () {
+			//收集参数
+			var id = $("#hidden-contactsId").val();
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/customer/deleteContactsById.do",
+				data: {
+					"id": id
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//删除成功
+						//刷新联系人列表
+						showContactsList();
+						//关闭模态窗口
+						$("#removeContactsModal").modal("hide");
+					}else{
 						alert(response.message);
 					}
 				}
@@ -295,7 +333,30 @@
 
 	//展示联系人列表
 	function showContactsList(){
-
+		//收集参数
+		var customerId = $("#hidden-customerId").val();
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/customer/showContactsList.do",
+			data: {
+				"customerId": customerId
+			},
+			type: "post",
+			dataType: "json",
+			success: function (response) {
+				//拼接字符串，组装html标签
+				var html = "";
+				$.each(response, function(i, o){
+					html += '<tr>';
+					html += '<td><a href="contacts/detail.html" style="text-decoration: none;">'+o.fullname+'</a></td>';
+					html += '<td>'+o.email+'</td>';
+					html += '<td>'+o.mphone+'</td>';
+					html += '<td><a href="javascript:void(0);" name="deleteContactsA" contactsId="'+o.id+'" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>';
+					html += '</tr>';
+				});
+				$("#contactsListTB").html(html);
+			}
+		});
 
 	}
 
@@ -409,6 +470,7 @@
 	<div class="modal fade" id="removeContactsModal" role="dialog">
 		<div class="modal-dialog" role="document" style="width: 30%;">
 			<div class="modal-content">
+				<input type="hidden" id="hidden-contactsId">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">
 						<span aria-hidden="true">×</span>
@@ -420,7 +482,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-danger" data-dismiss="modal">删除</button>
+					<button type="button" class="btn btn-danger" id="deleteContactsBtn">删除</button>
 				</div>
 			</div>
 		</div>
@@ -459,7 +521,7 @@
 					<h4 class="modal-title" id="myModalLabel1">创建联系人</h4>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" role="form" id="createContactsForm">
 					
 						<div class="form-group">
 							<label for="create-contactsOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
@@ -804,7 +866,7 @@
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="contactsListTB">
 						<%--<tr>
 							<td><a href="contacts/detail.html" style="text-decoration: none;">李四</a></td>
 							<td>lisi@bjpowernode.com</td>
@@ -816,7 +878,7 @@
 								<td><a href="contacts/detail.html" style="text-decoration: none;">${c.fullname}</a></td>
 								<td>${c.email}</td>
 								<td>${c.mphone}</td>
-								<td><a href="javascript:void(0);" data-toggle="modal" data-target="#removeContactsModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
+								<td><a href="javascript:void(0);" name="deleteContactsA" contactsId="${c.id}" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
 							</tr>
 						</c:forEach>
 					</tbody>

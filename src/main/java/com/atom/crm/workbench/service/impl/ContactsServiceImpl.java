@@ -66,4 +66,9 @@ public class ContactsServiceImpl implements ContactsService {
         //调用数据访问层，新建联系人
         contactsMapper.insertContacts(contacts);
     }
+
+    @Override
+    public int deleteContactsById(String id) {
+        return contactsMapper.deleteContactsById(id);
+    }
 }

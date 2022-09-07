@@ -36,6 +36,11 @@
     address
   </sql>
 
+  <delete id="deleteContactsById" parameterType="String">
+    delete from tbl_contacts
+    where id=#{id}
+  </delete>
+
   <select id="selectContactsListByName" parameterType="String" resultMap="BaseResultMap">
     select
       c.id,

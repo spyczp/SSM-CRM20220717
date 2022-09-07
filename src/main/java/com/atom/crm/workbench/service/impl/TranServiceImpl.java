@@ -59,4 +59,19 @@ public class TranServiceImpl implements TranService {
     public int deleteTranById(String id) {
         return tranMapper.deleteTranById(id);
     }
+
+    @Override
+    public List<Tran> queryAllTranForIndex() {
+        return tranMapper.selectAllTranForIndex();
+    }
+
+    @Override
+    public List<Tran> queryTranByCondition(Map<String, Object> map) {
+        return tranMapper.selectTranByCondition(map);
+    }
+
+    @Override
+    public int queryCountByCondition(Map<String, Object> map) {
+        return tranMapper.selectCountByCondition(map);
+    }
 }

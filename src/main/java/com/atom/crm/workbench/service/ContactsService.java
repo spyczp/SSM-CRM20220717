@@ -12,4 +12,6 @@ public interface ContactsService {
     List<Contacts> queryContactsListByName(String name);
 
     void saveCreateContacts(Map<String, Object> map);
+
+    int deleteContactsById(String id);
 }

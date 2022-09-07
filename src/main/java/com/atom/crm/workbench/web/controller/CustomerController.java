@@ -49,6 +49,36 @@ public class CustomerController {
     @Autowired
     private DicValueService dicValueService;
 
+    @RequestMapping("/workbench/customer/deleteContactsById.do")
+    @ResponseBody
+    public Object deleteContactsById(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，传递联系人id，删除联系人信息
+            int count = contactsService.deleteContactsById(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除联系人失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除联系人失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/customer/showContactsList.do")
+    @ResponseBody
+    public Object showContactsList(String customerId){
+        List<Contacts> contactsList = contactsService.queryContactsByCustomerId(customerId);
+        return contactsList;
+    }
+
     @RequestMapping("/workbench/customer/saveCreateContactsAtCustomerDetail.do")
     @ResponseBody
     public Object saveCreateContactsAtCustomerDetail(Contacts contacts, HttpSession session){
