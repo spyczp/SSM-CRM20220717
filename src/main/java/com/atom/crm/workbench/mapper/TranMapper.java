@@ -8,6 +8,13 @@ import java.util.Map;
 public interface TranMapper {
 
     /**
+     * 根据交易的id查询交易信息
+     * @param id
+     * @return
+     */
+    Tran selectTranById(String id);
+
+    /**
      * 查询 符合条件的交易 的数量
      * @param map
      * @return

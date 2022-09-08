@@ -18,4 +18,6 @@ public interface TranService {
     List<Tran> queryTranByCondition(Map<String, Object> map);
 
     int queryCountByCondition(Map<String, Object> map);
+
+    Tran queryTranById(String id);
 }

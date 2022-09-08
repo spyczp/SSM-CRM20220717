@@ -5,7 +5,9 @@ import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.workbench.bean.Customer;
 import com.atom.crm.workbench.bean.Tran;
+import com.atom.crm.workbench.bean.TranHistory;
 import com.atom.crm.workbench.mapper.CustomerMapper;
+import com.atom.crm.workbench.mapper.TranHistoryMapper;
 import com.atom.crm.workbench.mapper.TranMapper;
 import com.atom.crm.workbench.service.TranService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class TranServiceImpl implements TranService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private TranHistoryMapper tranHistoryMapper;
 
     @Override
     public List<Tran> queryTranByCustomerId(String customerId) {
@@ -53,6 +58,16 @@ public class TranServiceImpl implements TranService {
 
         tranMapper.insertTran(tran);
 
+        //新增一条交易历史
+        TranHistory tranHistory = new TranHistory();
+        tranHistory.setId(UUIDUtils.getUUID());
+        tranHistory.setStage(tran.getStage());
+        tranHistory.setMoney(tran.getMoney());
+        tranHistory.setExpectedDate(tran.getExpectedDate());
+        tranHistory.setCreateTime(DateUtils.formatDateTime(new Date()));
+        tranHistory.setCreateBy(loginUser.getId());
+        tranHistory.setTranId(tran.getId());
+        tranHistoryMapper.insertATranHistory(tranHistory);
     }
 
     @Override
@@ -73,5 +88,10 @@ public class TranServiceImpl implements TranService {
     @Override
     public int queryCountByCondition(Map<String, Object> map) {
         return tranMapper.selectCountByCondition(map);
+    }
+
+    @Override
+    public Tran queryTranById(String id) {
+        return tranMapper.selectTranById(id);
     }
 }

@@ -8,14 +8,8 @@ import com.atom.crm.settings.bean.DicValue;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
-import com.atom.crm.workbench.bean.Activity;
-import com.atom.crm.workbench.bean.Contacts;
-import com.atom.crm.workbench.bean.Customer;
-import com.atom.crm.workbench.bean.Tran;
-import com.atom.crm.workbench.service.ActivityService;
-import com.atom.crm.workbench.service.ContactsService;
-import com.atom.crm.workbench.service.CustomerService;
-import com.atom.crm.workbench.service.TranService;
+import com.atom.crm.workbench.bean.*;
+import com.atom.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,10 +17,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.*;
 
 @Controller
 public class TranController {
@@ -48,6 +42,62 @@ public class TranController {
 
     @Autowired
     private DicValueService dicValueService;
+
+    @Autowired
+    private TranRemarkService tranRemarkService;
+
+    @Autowired
+    private TranHistoryService tranHistoryService;
+
+    @RequestMapping("/workbench/transaction/showStageIcon.do")
+    @ResponseBody
+    public Object getStageList(){
+        List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
+
+        //获取可能性数据列表
+        Properties possibilityList = new Properties();
+        try {
+            InputStream is = new FileInputStream("D:\\IDEA Project\\springall\\crm_ssm\\crm\\src\\main\\resources\\possibility.properties");
+            possibilityList.load(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("stageList", stageList);
+        map.put("possibilityList", possibilityList);
+
+        return map;
+    }
+
+    @RequestMapping("/workbench/transaction/toTranDetail.do")
+    public String toTranDetail(String id, HttpServletRequest request){
+        //访问业务层，获取数据
+        Tran tran = tranService.queryTranById(id);
+        List<TranRemark> tranRemarkList = tranRemarkService.queryTranRemarkListByTranId(id);
+        List<TranHistory> tranHistoryList = tranHistoryService.queryTranHistoryListByTranId(id);
+
+        //获取可能性数据
+        ResourceBundle bundle = ResourceBundle.getBundle("possibility");
+        String possibility = bundle.getString(tran.getStage());
+
+        //保存数据到请求域中
+        request.setAttribute("tran", tran);
+        request.setAttribute("tranRemarkList", tranRemarkList);
+        request.setAttribute("tranHistoryList", tranHistoryList);
+        request.setAttribute("possibility", possibility);
+
+        //请求转发到交易详情页
+        return "workbench/transaction/detail";
+    }
+
+    @RequestMapping("/workbench/transaction/showPossibilityOfTran.do")
+    @ResponseBody
+    public Object showPossibilityOfTran(String stageValue){
+        ResourceBundle b = ResourceBundle.getBundle("possibility");
+        String possibility = b.getString(stageValue);
+        return possibility;
+    }
 
     @RequestMapping("/workbench/transaction/toTranSave.do")
     public String toTranSave(HttpServletRequest request){

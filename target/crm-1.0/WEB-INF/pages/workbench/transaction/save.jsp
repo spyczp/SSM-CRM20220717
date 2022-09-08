@@ -148,6 +148,32 @@
 			$("#findContacts").modal("hide");
 		});
 
+		//给 阶段 下拉框添加选中事件
+		$("#create-stage").change(function () {
+			//收集参数,阶段名称
+			var stageValue = $(this).find("option:selected").text();
+			//验证参数是否为空
+			if(stageValue == ""){
+				//清空 可能性 输入框标签的值
+				$("#create-possibility").val("");
+				//执行到这里结束，不向后端发起请求
+				return;
+			}
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/transaction/showPossibilityOfTran.do",
+				data: {
+					"stageValue": stageValue
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					//填充 可能性 输入框标签的值
+					$("#create-possibility").val(response + "%");
+				}
+			});
+		});
+
 		//给 保存 按钮添加单击事件
 		$("#saveCreateTranBtn").click(function () {
 			//收集参数
@@ -401,7 +427,7 @@
 			</div>
 			<label for="create-possibility" class="col-sm-2 control-label">可能性</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-possibility">
+				<input type="text" class="form-control" id="create-possibility" readonly>
 			</div>
 		</div>
 		
