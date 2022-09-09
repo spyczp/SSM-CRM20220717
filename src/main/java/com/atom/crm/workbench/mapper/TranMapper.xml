@@ -37,6 +37,21 @@
     next_contact_time
   </sql>
 
+  <select id="selectTranById02" parameterType="String" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_tran
+    where id=#{id}
+  </select>
+
+  <update id="updateATranStage" parameterType="Tran">
+    update tbl_tran
+    set
+      stage=#{stage},
+      edit_by=#{editBy},
+      edit_time=#{editTime}
+    where id=#{id}
+  </update>
+
   <select id="selectTranById" parameterType="String" resultMap="BaseResultMap">
     select
       t.id,

@@ -13,6 +13,7 @@ import com.atom.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +49,37 @@ public class TranController {
 
     @Autowired
     private TranHistoryService tranHistoryService;
+
+    @RequestMapping("/workbench/transaction/showTranHistoryList.do")
+    @ResponseBody
+    public Object showTranHistoryList(String tranId){
+        List<TranHistory> tranHistoryList = tranHistoryService.queryTranHistoryListByTranId(tranId);
+        return tranHistoryList;
+    }
+
+    @RequestMapping("/workbench/transaction/saveChangeATranStage.do")
+    @ResponseBody
+    public Object saveChangeATranStage(String stageId, String tranId, HttpSession session){
+        //封装参数
+        Map<String, Object> map = new HashMap<>();
+        map.put("stageId", stageId);
+        map.put("tranId", tranId);
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        map.put("loginUser", loginUser);
+
+        ReturnObject returnObject = new ReturnObject();
+        try {
+            //调用业务层，修改交易 阶段数据
+            tranService.editATranStage(map);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改交易阶段失败");
+        }
+
+        return returnObject;
+    }
 
     @RequestMapping("/workbench/transaction/showStageIcon.do")
     @ResponseBody

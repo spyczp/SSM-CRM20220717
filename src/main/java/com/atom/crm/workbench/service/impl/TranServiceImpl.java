@@ -94,4 +94,29 @@ public class TranServiceImpl implements TranService {
     public Tran queryTranById(String id) {
         return tranMapper.selectTranById(id);
     }
+
+    @Override
+    public void editATranStage(Map<String, Object> map) {
+        //封装数据
+        Tran tran = new Tran();
+        tran.setId((String) map.get("tranId"));
+        tran.setStage((String) map.get("stageId"));
+        User loginUser = (User) map.get("loginUser");
+        tran.setEditBy(loginUser.getId());
+        tran.setEditTime(DateUtils.formatDateTime(new Date()));
+        //修改交易的阶段数据
+        tranMapper.updateATranStage(tran);
+
+        //新增一条交易记录
+        tran = tranMapper.selectTranById02((String) map.get("tranId"));
+        TranHistory tranHistory = new TranHistory();
+        tranHistory.setId(UUIDUtils.getUUID());
+        tranHistory.setStage(tran.getStage());
+        tranHistory.setMoney(tran.getMoney());
+        tranHistory.setExpectedDate(tran.getExpectedDate());
+        tranHistory.setCreateTime(DateUtils.formatDateTime(new Date()));
+        tranHistory.setCreateBy(loginUser.getId());
+        tranHistory.setTranId(tran.getId());
+        tranHistoryMapper.insertATranHistory(tranHistory);
+    }
 }

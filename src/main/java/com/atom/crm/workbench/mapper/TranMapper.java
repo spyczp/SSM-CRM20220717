@@ -8,7 +8,21 @@ import java.util.Map;
 public interface TranMapper {
 
     /**
-     * 根据交易的id查询交易信息
+     * 修改一条交易的阶段数据。同时要改edit_by，edit_time
+     * @param tran
+     * @return
+     */
+    int updateATranStage(Tran tran);
+
+    /**
+     * 根据交易id查询交易数据，不连表
+     * @param id
+     * @return
+     */
+    Tran selectTranById02(String id);
+
+    /**
+     * 根据交易的id查询交易信息,连表解析id
      * @param id
      * @return
      */
