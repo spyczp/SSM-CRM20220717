@@ -25,6 +25,9 @@
 
 <script type="text/javascript">
 
+	//展示阶段图标
+	showTranStageIcon("${tran.stage}");
+
 	//默认情况下取消和保存按钮是隐藏的
 	var cancelAndSaveBtnDefault = true;
 	
@@ -63,9 +66,38 @@
 			$(this).children("span").css("color","#E6E6E6");
 		});
 
+		//阶段提示框
+		$("#stageIconDiv").on("mouseenter", "span[name='stageIcon']", function () {
+			$(this).popover({
+				trigger:'manual',
+				placement : 'bottom',
+				html: 'true',
+				animation: false
+			});
+			var _this = this;
+			$(this).popover("show");
+			$(this).siblings(".popover").on("mouseleave", function () {
+				$(_this).popover('hide');
+			});
+		});
+		//阶段提示框
+		$("#stageIconDiv").on("mouseleave", "span[name='stageIcon']", function () {
+			$(this).popover({
+				trigger:'manual',
+				placement : 'bottom',
+				html: 'true',
+				animation: false
+			});
+			var _this = this;
+			setTimeout(function () {
+				if (!$(".popover:hover").length) {
+					$(_this).popover("hide")
+				}
+			}, 100);
+		});
 
 		//阶段提示框
-		$(".mystage").popover({
+		/*$(".mystage").popover({
             trigger:'manual',
             placement : 'bottom',
             html: 'true',
@@ -83,10 +115,8 @@
                             $(_this).popover("hide")
                         }
                     }, 100);
-                });
+                });*/
 
-		//展示阶段图标
-		showTranStageIcon("${tran.stage}");
 
 		//给 阶段图标 添加单击事件
 		$("#stageIconDiv").on("click", "span[name='stageIcon']", function () {
@@ -120,9 +150,9 @@
 		});
 
 		//测试生成图标
-		$("#testBtn").click(function () {
+		/*$("#testBtn").click(function () {
 			showTranHistoryList();
-		});
+		});*/
 	});
 
 	//展示阶段历史列表
