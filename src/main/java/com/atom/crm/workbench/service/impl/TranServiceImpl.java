@@ -4,6 +4,7 @@ import com.atom.crm.commons.utils.DateUtils;
 import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.workbench.bean.Customer;
+import com.atom.crm.workbench.bean.FunnelVO;
 import com.atom.crm.workbench.bean.Tran;
 import com.atom.crm.workbench.bean.TranHistory;
 import com.atom.crm.workbench.mapper.CustomerMapper;
@@ -118,5 +119,15 @@ public class TranServiceImpl implements TranService {
         tranHistory.setCreateBy(loginUser.getId());
         tranHistory.setTranId(tran.getId());
         tranHistoryMapper.insertATranHistory(tranHistory);
+    }
+
+    @Override
+    public List<FunnelVO> queryStageNameAndCountList() {
+        return tranMapper.selectStageNameAndCountList();
+    }
+
+    @Override
+    public List<String> queryTranStageNameList() {
+        return tranMapper.selectTranStageNameList();
     }
 }

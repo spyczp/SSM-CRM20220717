@@ -1,11 +1,24 @@
 package com.atom.crm.workbench.mapper;
 
+import com.atom.crm.workbench.bean.FunnelVO;
 import com.atom.crm.workbench.bean.Tran;
 
 import java.util.List;
 import java.util.Map;
 
 public interface TranMapper {
+
+    /**
+     * 查询存在的交易阶段名称
+     * @return
+     */
+    List<String> selectTranStageNameList();
+
+    /**
+     * 查询各个交易阶段的数量
+     * @return [{"name": 阶段, "value": 数量},{"name": 阶段, "value": 数量},{"name": 阶段, "value": 数量},...]
+     */
+    List<FunnelVO> selectStageNameAndCountList();
 
     /**
      * 修改一条交易的阶段数据。同时要改edit_by，edit_time

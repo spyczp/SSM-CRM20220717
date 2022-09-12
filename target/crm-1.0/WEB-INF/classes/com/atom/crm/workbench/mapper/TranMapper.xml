@@ -37,6 +37,21 @@
     next_contact_time
   </sql>
 
+  <select id="selectTranStageNameList" resultType="String">
+    select distinct dv.value
+    from tbl_tran t
+    join tbl_dic_value dv
+    on t.stage=dv.id;
+  </select>
+
+  <select id="selectStageNameAndCountList" resultType="FunnelVO">
+    select count(*) as value, dv.value as name
+    from tbl_tran t
+    join tbl_dic_value dv
+    on t.stage=dv.id
+    group by t.stage
+  </select>
+
   <select id="selectTranById02" parameterType="String" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"></include>
     from tbl_tran

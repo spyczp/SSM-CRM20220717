@@ -1,5 +1,6 @@
 package com.atom.crm.workbench.service;
 
+import com.atom.crm.workbench.bean.FunnelVO;
 import com.atom.crm.workbench.bean.Tran;
 
 import java.util.List;
@@ -22,4 +23,8 @@ public interface TranService {
     Tran queryTranById(String id);
 
     void editATranStage(Map<String, Object> map);
+
+    List<FunnelVO> queryStageNameAndCountList();
+
+    List<String> queryTranStageNameList();
 }
