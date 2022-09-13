@@ -14,4 +14,8 @@ public interface ContactsService {
     void saveCreateContacts(Map<String, Object> map);
 
     int deleteContactsById(String id);
+
+    List<Contacts> queryContactsListByCondition(Map<String, Object> map);
+
+    int queryContactsCountByCondition(Map<String, Object> map);
 }

@@ -1,19 +1,36 @@
-<!DOCTYPE html>
+<%@page contentType="text/html; charset=UTF-8" language="java" %>
 <html>
 <head>
-<meta charset="UTF-8">
+	<base href="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
+	<meta charset="UTF-8">
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
 
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
-
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	<!--  PAGINATION plugin -->
+<script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+<script type="text/javascript" src="jquery/bs_pagination-master/localization/en.min.js"></script>
 <script type="text/javascript">
 
 	$(function(){
+		//添加日期插件
+		$(".mydate").datetimepicker({
+			language: "en",
+			format: "yyyy-mm-dd",
+			autoclose: true,
+			minView: "month",
+			initialDate: new Date(),
+			todayBtn: true,
+			clearBtn: true
+		});
+
+		//展示联系人列表
+		showContactsList(1, 2);
 		
 		//定制字段
 		$("#definedColumns > li").click(function(e) {
@@ -22,10 +39,75 @@
 	    });
 		
 	});
+
+	//展示联系人列表
+	function showContactsList(pageNo, pageSize){
+		//获取作为查询条件的参数
+		var owner = $.trim($("#hidden-searchOwner").val());
+		var fullname = $.trim($("#hidden-searchFullname").val());
+		var customerName = $.trim($("#hidden-searchCustomerName").val());
+		var source = $("#hidden-searchSource").val();
+		var nextContactTime = $.trim($("#hidden-searchNextContactTime").val());
+
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/contacts/showContactsList.do",
+			data: {
+				"owner": owner,
+				"fullname": fullname,
+				"customerName": customerName,
+				"source": source,
+				"nextContactTime": nextContactTime,
+				"pageNo": pageNo,
+				"pageSize": pageSize
+			},
+			type: "post",
+			dataType: "json",
+			success: function (response) {
+				//字符串拼接，组装html标签，展示联系人列表
+				var html = "";
+				$.each(response.contactsList, function (i, o) {
+					html += '<tr>';
+					html += '<td><input type="checkbox" id="'+o.id+'"/></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">'+o.fullname+'</a></td>';
+					html += '<td>'+(o.customerId == null ? '' : o.customerId)+'</td>';
+					html += '<td>'+o.owner+'</td>';
+					html += '<td>'+o.source+'</td>';
+					html += '<td>'+o.nextContactTime+'</td>';
+					html += '</tr>';
+				});
+				//展示联系人列表
+				$("#contactsListTB").html(html);
+
+				//计算总页数
+				var totalPages = response.totalRows % pageSize == 0 ? response.totalRows / pageSize : parseInt(response.totalRows / pageSize) + 1;
+
+				//调用分页插件
+				$("#paginationDiv").bs_pagination({
+					totalPages: totalPages,
+					currentPage: pageNo,
+					rowsPerPage: pageSize,
+					totalRows: response.totalRows,
+					visiblePageLinks: 5,
+					onChangePage: function (event, pageObj) { // returns page_num and rows_per_page after a link has clicked
+						showContactsList(pageObj.currentPage, pageObj.rowsPerPage);
+					}
+				});
+			}
+		});
+
+	}
 	
 </script>
 </head>
 <body>
+
+	<%--隐藏标签，用于保存用户的查询条件--%>
+	<input type="hidden" id="hidden-searchOwner">
+	<input type="hidden" id="hidden-searchFullname">
+	<input type="hidden" id="hidden-searchCustomerName">
+	<input type="hidden" id="hidden-searchSource">
+	<input type="hidden" id="hidden-searchNextContactTime">
 
 	
 	<!-- 创建联系人的模态窗口 -->
@@ -112,23 +194,23 @@
 								<input type="text" class="form-control" id="create-birth">
 							</div>
 						</div>
-						
+
 						<div class="form-group" style="position: relative;">
 							<label for="create-customerName" class="col-sm-2 control-label">客户名称</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<input type="text" class="form-control" id="create-customerName" placeholder="支持自动补全，输入客户不存在则新建">
 							</div>
 						</div>
-						
+
 						<div class="form-group" style="position: relative;">
 							<label for="create-describe" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
 								<textarea class="form-control" rows="3" id="create-describe"></textarea>
 							</div>
 						</div>
-						
+
 						<div style="height: 1px; width: 103%; background-color: #D5D5D5; left: -13px; position: relative;"></div>
-						
+
 						<div style="position: relative;top: 15px;">
 							<div class="form-group">
 								<label for="create-contactSummary1" class="col-sm-2 control-label">联系纪要</label>
@@ -155,7 +237,7 @@
                             </div>
                         </div>
 					</form>
-					
+
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -164,7 +246,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- 修改联系人的模态窗口 -->
 	<div class="modal fade" id="editContactsModal" role="dialog">
 		<div class="modal-dialog" role="document" style="width: 85%;">
@@ -177,7 +259,7 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form">
-					
+
 						<div class="form-group">
 							<label for="edit-contactsOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -208,7 +290,7 @@
 								</select>
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="edit-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -226,7 +308,7 @@
 								</select>
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="edit-job" class="col-sm-2 control-label">职位</label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -237,7 +319,7 @@
 								<input type="text" class="form-control" id="edit-mphone" value="12345678901">
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="edit-email" class="col-sm-2 control-label">邮箱</label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -248,23 +330,23 @@
 								<input type="text" class="form-control" id="edit-birth">
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="edit-customerName" class="col-sm-2 control-label">客户名称</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<input type="text" class="form-control" id="edit-customerName" placeholder="支持自动补全，输入客户不存在则新建" value="动力节点">
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="edit-describe" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
 								<textarea class="form-control" rows="3" id="edit-describe">这是一条线索的描述信息</textarea>
 							</div>
 						</div>
-						
+
 						<div style="height: 1px; width: 103%; background-color: #D5D5D5; left: -13px; position: relative;"></div>
-						
+
 						<div style="position: relative;top: 15px;">
 							<div class="form-group">
 								<label for="create-contactSummary" class="col-sm-2 control-label">联系纪要</label>
@@ -279,7 +361,7 @@
 								</div>
 							</div>
 						</div>
-						
+
 						<div style="height: 1px; width: 103%; background-color: #D5D5D5; left: -13px; position: relative; top : 10px;"></div>
 
                         <div style="position: relative;top: 20px;">
@@ -291,7 +373,7 @@
                             </div>
                         </div>
 					</form>
-					
+
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -300,11 +382,11 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	
-	
-	
+
+
+
+
+
 	<div>
 		<div style="position: relative; left: 10px; top: -10px;">
 			<div class="page-header">
@@ -312,37 +394,37 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
-	
+
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
-		
+
 			<div class="btn-toolbar" role="toolbar" style="height: 80px;">
 				<form class="form-inline" role="form" style="position: relative;top: 8%; left: 5px;">
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">姓名</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">客户名称</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
-				  
+
 				  <br>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">来源</div>
@@ -365,16 +447,16 @@
 						</select>
 				    </div>
 				  </div>
-				  
+
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">生日</div>
-				      <input class="form-control" type="text">
+				      <div class="input-group-addon">下次联系时间</div>
+				      <input class="form-control mydate" type="text" readonly>
 				    </div>
 				  </div>
-				  
+
 				  <button type="submit" class="btn btn-default">查询</button>
-				  
+
 				</form>
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 10px;">
@@ -383,8 +465,8 @@
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editContactsModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
-				
-				
+
+
 			</div>
 			<div style="position: relative;top: 20px;">
 				<table class="table table-hover">
@@ -395,11 +477,11 @@
 							<td>客户名称</td>
 							<td>所有者</td>
 							<td>来源</td>
-							<td>生日</td>
+							<td>下次联系时间</td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
+					<tbody id="contactsListTB">
+						<%--<tr>
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">李四</a></td>
 							<td>动力节点</td>
@@ -414,12 +496,14 @@
                             <td>zhangsan</td>
                             <td>广告</td>
                             <td>2000-10-10</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
 			</div>
+
+			<div id="paginationDiv"></div>
 			
-			<div style="height: 50px; position: relative;top: 10px;">
+			<%--<div style="height: 50px; position: relative;top: 10px;">
 				<div>
 					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
 				</div>
@@ -452,7 +536,7 @@
 						</ul>
 					</nav>
 				</div>
-			</div>
+			</div>--%>
 			
 		</div>
 		

@@ -377,7 +377,7 @@
 				var html = "";
 				$.each(response, function (i, o) {
 					html += '<tr>';
-					html += '<td><a href="transaction/detail.html" style="text-decoration: none;">'+o.name+'</a></td>';
+					html += '<td><a href="workbench/transaction/toTranDetail.do?id='+o.id+'" style="text-decoration: none;">'+o.name+'</a></td>';
 					html += '<td>'+o.money+'</td>';
 					html += '<td>'+o.stage+'</td>';
 					html += '<td>90</td>';
@@ -831,7 +831,7 @@
 						</tr>--%>
 						<c:forEach items="${tranList}" var="t">
 							<tr>
-								<td><a href="transaction/detail.html" style="text-decoration: none;">${t.name}</a></td>
+								<td><a href="workbench/transaction/toTranDetail.do?id=${t.id}" style="text-decoration: none;">${t.name}</a></td>
 								<td>${t.money}</td>
 								<td>${t.stage}</td>
 								<td>90</td>

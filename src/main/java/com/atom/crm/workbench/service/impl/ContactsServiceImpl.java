@@ -71,4 +71,14 @@ public class ContactsServiceImpl implements ContactsService {
     public int deleteContactsById(String id) {
         return contactsMapper.deleteContactsById(id);
     }
+
+    @Override
+    public List<Contacts> queryContactsListByCondition(Map<String, Object> map) {
+        return contactsMapper.selectContactsListByCondition(map);
+    }
+
+    @Override
+    public int queryContactsCountByCondition(Map<String, Object> map) {
+        return contactsMapper.selectContactsCountByCondition(map);
+    }
 }
