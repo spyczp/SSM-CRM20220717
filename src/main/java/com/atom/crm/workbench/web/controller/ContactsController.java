@@ -1,5 +1,10 @@
 package com.atom.crm.workbench.web.controller;
 
+import com.atom.crm.settings.bean.DicValue;
+import com.atom.crm.settings.bean.User;
+import com.atom.crm.settings.service.DicValueService;
+import com.atom.crm.settings.service.UserService;
+import com.atom.crm.settings.service.impl.UserServiceImpl;
 import com.atom.crm.workbench.bean.Contacts;
 import com.atom.crm.workbench.service.ContactsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +23,19 @@ public class ContactsController {
 
     @Autowired
     private ContactsService contactsService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private DicValueService dicValueService;
+
+    @RequestMapping("/workbench/contacts/toCreateContacts.do")
+    @ResponseBody
+    public Object toCreateContacts(){
+        //访问业务层，获取数据
+        return null;
+    }
 
     @RequestMapping("/workbench/contacts/showContactsList.do")
     @ResponseBody
@@ -46,7 +65,18 @@ public class ContactsController {
     }
 
     @RequestMapping("/workbench/contacts/goToContactsIndex.do")
-    public String goToContactsIndex(){
+    public String goToContactsIndex(HttpServletRequest request){
+        //访问业务层，获取数据，填充前端联系人页面的所有下拉列表
+        List<User> userList = userService.queryAllUser();
+        List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
+        List<DicValue> appellationList = dicValueService.queryDicValueByTypeCode("appellation");
+
+        //把数据保存到请求域中
+        request.setAttribute("userList", userList);
+        request.setAttribute("sourceList", sourceList);
+        request.setAttribute("appellationList", appellationList);
+
+        //请求转发
         return "workbench/contacts/index";
     }
 }
