@@ -1,19 +1,25 @@
 package com.atom.crm.workbench.web.controller;
 
+import com.atom.crm.commons.contants.Contants;
+import com.atom.crm.commons.domain.ReturnObject;
+import com.atom.crm.commons.utils.DateUtils;
+import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.DicValue;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
-import com.atom.crm.settings.service.impl.UserServiceImpl;
 import com.atom.crm.workbench.bean.Contacts;
 import com.atom.crm.workbench.service.ContactsService;
+import com.atom.crm.workbench.service.CustomerService;
+import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +36,49 @@ public class ContactsController {
     @Autowired
     private DicValueService dicValueService;
 
+    @Autowired
+    private CustomerService customerService;
+
     @RequestMapping("/workbench/contacts/toCreateContacts.do")
     @ResponseBody
     public Object toCreateContacts(){
         //访问业务层，获取数据
         return null;
+    }
+
+    @RequestMapping("/workbench/contacts/saveCreateContacts.do")
+    @ResponseBody
+    public Object saveCreateContacts(Contacts contacts, HttpSession session){
+        //封装数据
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        contacts.setId(UUIDUtils.getUUID());
+        contacts.setCreateBy(loginUser.getId());
+        contacts.setCreateTime(DateUtils.formatDateTime(new Date()));
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("contacts", contacts);
+        map.put("loginUser", loginUser);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，新建联系人
+            contactsService.saveCreateContacts(map);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("创建联系人失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/contacts/showCustomerNameListByNameForContactsCreate.do")
+    @ResponseBody
+    public Object showCustomerNameListByNameForContactsCreate(String name){
+        List<String> customerNameList = customerService.queryCustomerNameListByName(name);
+        return customerNameList;
     }
 
     @RequestMapping("/workbench/contacts/showContactsList.do")
