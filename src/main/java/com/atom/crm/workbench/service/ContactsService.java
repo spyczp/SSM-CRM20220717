@@ -18,4 +18,8 @@ public interface ContactsService {
     List<Contacts> queryContactsListByCondition(Map<String, Object> map);
 
     int queryContactsCountByCondition(Map<String, Object> map);
+
+    Contacts queryContactsById(String id);
+
+    void saveEditContacts(Map<String, Object> map);
 }

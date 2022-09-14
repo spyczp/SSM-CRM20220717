@@ -36,6 +36,37 @@
     address
   </sql>
 
+  <update id="updateAContacts" parameterType="Contacts">
+    update tbl_contacts
+    set
+        
+  </update>
+
+  <select id="selectContactsById" parameterType="String" resultMap="BaseResultMap">
+    select
+      con.id,
+      con.owner,
+      con.source,
+      cus.name as customer_id,
+      con.fullname,
+      con.appellation,
+      con.email,
+      con.mphone,
+      con.job,
+      con.create_by,
+      con.create_time,
+      con.edit_by,
+      con.edit_time,
+      con.description,
+      con.contact_summary,
+      con.next_contact_time,
+      con.address
+    from tbl_contacts con
+    left join tbl_customer cus
+    on con.customer_id=cus.id
+    where con.id=#{id}
+  </select>
+
   <select id="selectContactsCountByCondition" parameterType="map" resultType="int">
     select count(*)
     from tbl_contacts con

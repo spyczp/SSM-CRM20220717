@@ -81,4 +81,39 @@ public class ContactsServiceImpl implements ContactsService {
     public int queryContactsCountByCondition(Map<String, Object> map) {
         return contactsMapper.selectContactsCountByCondition(map);
     }
+
+    @Override
+    public Contacts queryContactsById(String id) {
+        return contactsMapper.selectContactsById(id);
+    }
+
+    @Override
+    public void saveEditContacts(Map<String, Object> map) {
+        //获取当前登录用户的信息
+        User loginUser = (User) map.get("loginUser");
+        //获取客户名称
+        String customerName = (String) map.get("customerName");
+        //到数据访问层，查询客户名称是否存在，存在，则返回客户id；不存在，则新建客户
+        Customer customer = customerMapper.selectCustomerByName(customerName);
+        if(customer == null){
+            //不存在，则新建客户
+            customer = new Customer();
+            customer.setId(UUIDUtils.getUUID());
+            customer.setOwner(loginUser.getId());
+            customer.setName(customerName);
+            customer.setCreateBy(loginUser.getId());
+            customer.setCreateTime(DateUtils.formatDateTime(new Date()));
+            customer.setContactSummary((String) map.get("contactSummary"));
+            customer.setNextContactTime((String) map.get("nextContactTime"));
+            customer.setDescription((String) map.get("description"));
+            customer.setAddress((String) map.get("address"));
+            //访问数据访问层，新建客户
+            customerMapper.insertCustomer(customer);
+        }
+        //修改联系人信息
+        map.put("editBy", loginUser.getId());
+        map.put("editTime", DateUtils.formatDateTime(new Date()));
+        map.put("customerId", customer.getId());
+        contactsMapper.updateAContacts(map);
+    }
 }

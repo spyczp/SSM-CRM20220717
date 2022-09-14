@@ -8,6 +8,20 @@ import java.util.Map;
 public interface ContactsMapper {
 
     /**
+     * 修改联系人信息
+     * @param map
+     * @return
+     */
+    int updateAContacts(Map<String, Object> map);
+
+    /**
+     * 根据id查询联系人信息
+     * @param id
+     * @return
+     */
+    Contacts selectContactsById(String id);
+
+    /**
      * 根据条件查询匹配的联系人的数量，用于分页功能：总条数
      * @return
      */
