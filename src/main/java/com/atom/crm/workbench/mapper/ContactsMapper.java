@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ContactsMapper {
 
     /**
+     * 根据数个id删除数个联系人信息
+     * @param ids
+     * @return
+     */
+    int deleteContactsByIds(String[] ids);
+
+    /**
      * 修改联系人信息
      * @param map
      * @return

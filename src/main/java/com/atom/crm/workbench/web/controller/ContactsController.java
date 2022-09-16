@@ -11,7 +11,6 @@ import com.atom.crm.settings.service.UserService;
 import com.atom.crm.workbench.bean.Contacts;
 import com.atom.crm.workbench.service.ContactsService;
 import com.atom.crm.workbench.service.CustomerService;
-import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +38,24 @@ public class ContactsController {
 
     @Autowired
     private CustomerService customerService;
+
+    @RequestMapping("/workbench/contacts/deleteContacts.do")
+    @ResponseBody
+    public Object deleteContacts(String[] id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，删除联系人信息
+            contactsService.deleteContactsByIds(id);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除联系人失败");
+        }
+
+        return returnObject;
+    }
 
     @RequestMapping("/workbench/contacts/saveEditContacts.do")
     @ResponseBody

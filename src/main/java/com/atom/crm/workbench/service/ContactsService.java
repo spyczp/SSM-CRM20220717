@@ -22,4 +22,6 @@ public interface ContactsService {
     Contacts queryContactsById(String id);
 
     void saveEditContacts(Map<String, Object> map);
+
+    void deleteContactsByIds(String[] ids);
 }

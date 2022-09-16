@@ -20,6 +20,14 @@
     id, contacts_id, activity_id
   </sql>
 
+  <delete id="deleteContactsActivityRelationByContactsIds" parameterType="String">
+    delete from tbl_contacts_activity_relation
+    where contacts_id in
+    <foreach collection="array" item="contactsId" open="(" close=")" separator=",">
+      #{contactsId}
+    </foreach>
+  </delete>
+
   <!--新增联系人和市场活动的关联关系-->
   <insert id="insertContactsActivityRelation" parameterType="ContactsActivityRelation">
     insert into tbl_contacts_activity_relation

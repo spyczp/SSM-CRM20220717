@@ -195,18 +195,107 @@
 			var address = $("#edit-address").val();
 
 			//向后端发起请求，修改联系人数据
-
+            $.ajax({
+                url: "workbench/contacts/saveEditContacts.do",
+                data: {
+                    "id": id,
+                    "owner": owner,
+                    "source": source,
+                    "fullname": fullname,
+                    "appellation": appellation,
+                    "job": job,
+                    "mphone": mphone,
+                    "email": email,
+                    "customerName": customerName,
+                    "description": description,
+                    "contactSummary": contactSummary,
+                    "nextContactTime": nextContactTime,
+                    "address": address
+                },
+                type: "post",
+                dataType: "json",
+                success: function (response) {
+                    if(response.code == "1"){
+                        //修改联系人信息成功，
+                        // 刷新联系人列表
+                        showContactsList($("#paginationDiv").bs_pagination('getOption', 'currentPage'), $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+                        //关闭模态窗口
+                        $("#editContactsModal").modal("hide");
+                    }else{
+                        alert(response.message);
+                    }
+                }
+            });
 		});
+
+        //给 删除按钮 添加单击事件
+        $("#deleteContactsBtn").click(function () {
+            //收集参数，获取用户选择的联系人的id
+            var checkedBoxList = $("#contactsListTB input:checked");
+            if(checkedBoxList.size() == 0){
+                alert("请选择需要删除的联系人");
+                return;
+            }
+
+            if(confirm("是否删除联系人？")){
+                var param = "";
+
+                $.each(checkedBoxList, function () {
+                    //遍历选中的checkbox标签，获取联系人id，拼接请求参数
+                    param += "id=" + this.value + "&";
+                });
+                param = param.substr(0, param.length - 1);
+
+                //向后端发起请求
+                $.ajax({
+                    url: "workbench/contacts/deleteContacts.do",
+                    data: param,
+                    type: "get",
+                    dataType: "json",
+                    success: function (response) {
+                        if(response.code == "1"){
+                            //删除成功
+                            //刷新联系人列表
+                            showContactsList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+                        }else{
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
+
+        //给 查询按钮 添加单击事件
+        $("#searchContactsBtn").click(function () {
+            //收集参数：查询条件 参数
+            var owner = $.trim($("#search-owner").val());
+            var fullname = $.trim($("#search-fullname").val());
+            var customerName = $.trim($("#search-customerName").val());
+            var source = $("#search-source").val();
+            var nextContactTime = $("#search-nextContactTime").val();
+
+            //把参数保存到隐藏标签中
+            $("#hidden-searchOwner").val(owner);
+            $("#hidden-searchFullname").val(fullname);
+            $("#hidden-searchCustomerName").val(customerName);
+            $("#hidden-searchSource").val(source);
+            $("#hidden-searchNextContactTime").val(nextContactTime);
+
+            //调用方法，重新展示联系人列表
+            showContactsList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+        });
 	});
 
 	//展示联系人列表
 	function showContactsList(pageNo, pageSize){
+        //清空 全选框 的勾
+        $("#qx").prop("checked", false);
 		//获取作为查询条件的参数
-		var owner = $.trim($("#hidden-searchOwner").val());
-		var fullname = $.trim($("#hidden-searchFullname").val());
-		var customerName = $.trim($("#hidden-searchCustomerName").val());
+		var owner = $("#hidden-searchOwner").val();
+		var fullname = $("#hidden-searchFullname").val();
+		var customerName = $("#hidden-searchCustomerName").val();
 		var source = $("#hidden-searchSource").val();
-		var nextContactTime = $.trim($("#hidden-searchNextContactTime").val());
+		var nextContactTime = $("#hidden-searchNextContactTime").val();
 
 		//向后端发起请求
 		$.ajax({
@@ -261,7 +350,7 @@
 </head>
 <body>
 
-	<%--隐藏标签，用于保存用户的查询条件--%>
+	<%--隐藏标签，用于保存联系人的查询条件--%>
 	<input type="hidden" id="hidden-searchOwner">
 	<input type="hidden" id="hidden-searchFullname">
 	<input type="hidden" id="hidden-searchCustomerName">
@@ -584,21 +673,21 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-owner">
 				    </div>
 				  </div>
 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">姓名</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-fullname">
 				    </div>
 				  </div>
 
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">客户名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-customerName">
 				    </div>
 				  </div>
 
@@ -607,9 +696,12 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">来源</div>
-				      <select class="form-control" id="edit-clueSource">
+				      <select class="form-control" id="search-source">
 						  <option></option>
-						  <option>广告</option>
+                          <c:forEach items="${sourceList}" var="source">
+                              <option value="${source.id}">${source.value}</option>
+                          </c:forEach>
+						  <%--<option>广告</option>
 						  <option>推销电话</option>
 						  <option>员工介绍</option>
 						  <option>外部介绍</option>
@@ -622,7 +714,7 @@
 						  <option>交易会</option>
 						  <option>web下载</option>
 						  <option>web调研</option>
-						  <option>聊天</option>
+						  <option>聊天</option>--%>
 						</select>
 				    </div>
 				  </div>
@@ -630,11 +722,11 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">下次联系时间</div>
-				      <input class="form-control mydate" type="text" readonly>
+				      <input class="form-control mydate" id="search-nextContactTime" type="text" readonly>
 				    </div>
 				  </div>
 
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" id="searchContactsBtn" class="btn btn-default">查询</button>
 
 				</form>
 			</div>
@@ -642,7 +734,7 @@
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createContactsModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" id="editContactsBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteContactsBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 
 

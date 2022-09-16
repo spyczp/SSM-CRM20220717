@@ -25,6 +25,14 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, contacts_id
   </sql>
 
+  <delete id="deleteContactsRemarkByContactsIds" parameterType="String">
+    delete from tbl_contacts_remark
+    where contacts_id in
+    <foreach collection="array" item="contactsId" open="(" close=")" separator=",">
+      #{contactsId}
+    </foreach>
+  </delete>
+
   <!--新增联系人备注-->
   <insert id="insertContactsRemark" parameterType="ContactsRemark">
     insert into tbl_contacts_remark

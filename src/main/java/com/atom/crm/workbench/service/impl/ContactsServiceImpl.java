@@ -5,7 +5,9 @@ import com.atom.crm.commons.utils.UUIDUtils;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.workbench.bean.Contacts;
 import com.atom.crm.workbench.bean.Customer;
+import com.atom.crm.workbench.mapper.ContactsActivityRelationMapper;
 import com.atom.crm.workbench.mapper.ContactsMapper;
+import com.atom.crm.workbench.mapper.ContactsRemarkMapper;
 import com.atom.crm.workbench.mapper.CustomerMapper;
 import com.atom.crm.workbench.service.ContactsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,12 @@ public class ContactsServiceImpl implements ContactsService {
 
     @Autowired
     private CustomerMapper customerMapper;
+
+    @Autowired
+    private ContactsRemarkMapper contactsRemarkMapper;
+
+    @Autowired
+    private ContactsActivityRelationMapper contactsActivityRelationMapper;
 
     @Override
     public List<Contacts> queryContactsByCustomerId(String customerId) {
@@ -115,5 +123,19 @@ public class ContactsServiceImpl implements ContactsService {
         map.put("editTime", DateUtils.formatDateTime(new Date()));
         map.put("customerId", customer.getId());
         contactsMapper.updateAContacts(map);
+    }
+
+    @Override
+    public void deleteContactsByIds(String[] ids) {
+        /**
+         * 1.删除联系人备注
+         * 2.删除联系人和市场活动关联关系
+         * 3.删除联系人
+         */
+        contactsRemarkMapper.deleteContactsRemarkByContactsIds(ids);
+
+        contactsActivityRelationMapper.deleteContactsActivityRelationByContactsIds(ids);
+
+        contactsMapper.deleteContactsByIds(ids);
     }
 }

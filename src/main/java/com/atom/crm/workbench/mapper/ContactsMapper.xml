@@ -36,6 +36,14 @@
     address
   </sql>
 
+  <delete id="deleteContactsByIds" parameterType="String">
+    delete from tbl_contacts
+    where id in
+    <foreach collection="array" open="(" close=")" item="id" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
   <update id="updateAContacts" parameterType="map">
     update tbl_contacts
     set
