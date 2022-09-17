@@ -25,6 +25,24 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, contacts_id
   </sql>
 
+  <select id="selectContactsRemarkListByContactsIdForDetail" parameterType="String" resultMap="BaseResultMap">
+    select
+      cr.id,
+      cr.note_content,
+      u1.name as create_by,
+      cr.create_time,
+      u2.name as edit_by,
+      cr.edit_time,
+      cr.edit_flag,
+      cr.contacts_id
+    from tbl_contacts_remark cr
+    join tbl_user u1
+    on cr.create_by=u1.id
+    left join tbl_user u2
+    on cr.edit_by=u2.id
+    where cr.contacts_id=#{contactsId}
+  </select>
+
   <delete id="deleteContactsRemarkByContactsIds" parameterType="String">
     delete from tbl_contacts_remark
     where contacts_id in

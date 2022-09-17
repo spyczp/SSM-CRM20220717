@@ -27,4 +27,6 @@ public interface TranService {
     List<FunnelVO> queryStageNameAndCountList();
 
     List<String> queryTranStageNameList();
+
+    List<Tran> queryTranByContactsIdForDetail(String contactsId);
 }

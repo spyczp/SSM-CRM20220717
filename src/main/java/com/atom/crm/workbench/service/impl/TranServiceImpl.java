@@ -130,4 +130,9 @@ public class TranServiceImpl implements TranService {
     public List<String> queryTranStageNameList() {
         return tranMapper.selectTranStageNameList();
     }
+
+    @Override
+    public List<Tran> queryTranByContactsIdForDetail(String contactsId) {
+        return tranMapper.selectTranByContactsIdForDetail(contactsId);
+    }
 }

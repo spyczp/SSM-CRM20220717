@@ -37,6 +37,22 @@
     next_contact_time
   </sql>
 
+  <select id="selectTranByContactsIdForDetail" parameterType="String" resultMap="BaseResultMap">
+    select
+      t.id,
+      t.money,
+      t.name,
+      t.expected_date,
+      dv1.value as stage,
+      dv2.value as type
+    from tbl_tran t
+    join tbl_dic_value dv1
+    on t.stage=dv1.id
+    left join tbl_dic_value dv2
+    on t.type=dv2.id
+    where t.contacts_id=#{contactsId}
+  </select>
+
   <select id="selectTranStageNameList" resultType="String">
     select distinct dv.value
     from tbl_tran t

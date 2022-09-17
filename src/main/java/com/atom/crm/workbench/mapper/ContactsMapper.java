@@ -22,6 +22,13 @@ public interface ContactsMapper {
     int updateAContacts(Map<String, Object> map);
 
     /**
+     * 根据id查询联系人信息，连表转义所有uuid
+     * @param id
+     * @return
+     */
+    Contacts selectContactsByIdForDetail(String id);
+
+    /**
      * 根据id查询联系人信息
      * @param id
      * @return

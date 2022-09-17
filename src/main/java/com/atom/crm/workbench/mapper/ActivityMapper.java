@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ActivityMapper {
 
     /**
+     * 根据联系人id查询市场活动列表
+     * @param contactsId
+     * @return
+     */
+    List<Activity> selectActivityListByContactsIdForDetail(String contactsId);
+
+    /**
      * 根据名称模糊查询市场活动列表
      * @param name
      * @return

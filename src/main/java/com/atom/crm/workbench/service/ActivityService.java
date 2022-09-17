@@ -33,4 +33,6 @@ public interface ActivityService {
     List<Activity> queryActivityByNameAndClueId(Map<String, Object> map);
 
     List<Activity> queryActivityListByName(String name);
+
+    List<Activity> queryActivityListByContactsIdForDetail(String contactsId);
 }

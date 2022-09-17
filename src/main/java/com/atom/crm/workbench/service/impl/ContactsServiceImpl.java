@@ -138,4 +138,9 @@ public class ContactsServiceImpl implements ContactsService {
 
         contactsMapper.deleteContactsByIds(ids);
     }
+
+    @Override
+    public Contacts queryContactsByIdForDetail(String id) {
+        return contactsMapper.selectContactsByIdForDetail(id);
+    }
 }

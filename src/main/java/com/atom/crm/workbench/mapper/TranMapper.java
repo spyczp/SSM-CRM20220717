@@ -9,6 +9,13 @@ import java.util.Map;
 public interface TranMapper {
 
     /**
+     * 根据联系人id查询交易列表
+     * @param contactsId
+     * @return
+     */
+    List<Tran> selectTranByContactsIdForDetail(String contactsId);
+
+    /**
      * 查询存在的交易阶段名称
      * @return
      */

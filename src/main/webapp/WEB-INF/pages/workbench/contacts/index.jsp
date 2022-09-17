@@ -317,7 +317,7 @@
 				$.each(response.contactsList, function (i, o) {
 					html += '<tr>';
 					html += '<td><input type="checkbox" value="'+o.id+'"/></td>';
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.html\';">'+o.fullname+'</a></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/contacts/toContactsDetail.do?id='+o.id+'\';">'+o.fullname+'</a></td>';
 					html += '<td>'+(o.customerId == null ? '' : o.customerId)+'</td>';
 					html += '<td>'+o.owner+'</td>';
 					html += '<td>'+o.source+'</td>';

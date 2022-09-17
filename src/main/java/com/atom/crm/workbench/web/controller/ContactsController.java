@@ -8,9 +8,11 @@ import com.atom.crm.settings.bean.DicValue;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
+import com.atom.crm.workbench.bean.Activity;
 import com.atom.crm.workbench.bean.Contacts;
-import com.atom.crm.workbench.service.ContactsService;
-import com.atom.crm.workbench.service.CustomerService;
+import com.atom.crm.workbench.bean.ContactsRemark;
+import com.atom.crm.workbench.bean.Tran;
+import com.atom.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class ContactsController {
@@ -38,6 +37,40 @@ public class ContactsController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private ContactsRemarkService contactsRemarkService;
+
+    @Autowired
+    private TranService tranService;
+
+    @Autowired
+    private ActivityService activityService;
+
+    @RequestMapping("/workbench/contacts/toContactsDetail.do")
+    public String toContactsDetail(String id, HttpServletRequest request){
+        //访问业务层，获取数据：联系人信息、联系人备注、交易、关联的市场活动
+        Contacts contacts = contactsService.queryContactsByIdForDetail(id);
+        List<ContactsRemark> contactsRemarkList = contactsRemarkService.queryContactsRemarkListByContactsIdForDetail(id);
+        List<Tran> tranList = tranService.queryTranByContactsIdForDetail(id);
+        List<Activity> activityList = activityService.queryActivityListByContactsIdForDetail(id);
+
+        //查询交易阶段可能性数据
+        ResourceBundle possibilityBundle = ResourceBundle.getBundle("possibility");
+        for(Tran tran: tranList){
+            String possibility = possibilityBundle.getString(tran.getStage());
+            tran.setPossibility(possibility);
+        }
+
+        //保存数据到请求域中
+        request.setAttribute("contacts", contacts);
+        request.setAttribute("contactsRemarkList", contactsRemarkList);
+        request.setAttribute("tranList", tranList);
+        request.setAttribute("activityList", activityList);
+
+        //请求转发
+        return "workbench/contacts/detail";
+    }
 
     @RequestMapping("/workbench/contacts/deleteContacts.do")
     @ResponseBody

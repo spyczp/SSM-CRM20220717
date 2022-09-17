@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html; charset=UTF-8" language="java" %>
 <html>
 <head>
-<meta charset="UTF-8">
+	<base href="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
+	<meta charset="UTF-8">
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 
@@ -274,7 +276,7 @@
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
-			<h3>李四先生 <small> - 动力节点</small></h3>
+			<h3>${contacts.fullname}${contacts.appellation} <small> - ${contacts.customerId}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editContactsModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
@@ -290,31 +292,31 @@
 	<div style="position: relative; top: -70px;">
 		<div style="position: relative; left: 40px; height: 30px;">
 			<div style="width: 300px; color: gray;">所有者</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>zhangsan</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${contacts.owner}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">来源</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>广告</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${contacts.source}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 10px;">
 			<div style="width: 300px; color: gray;">客户名称</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>动力节点</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${contacts.customerId}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">姓名</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>李四先生</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${contacts.fullname}${contacts.appellation}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 20px;">
 			<div style="width: 300px; color: gray;">邮箱</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>lisi@bjpowernode.com</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${contacts.email}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">手机</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>12345678901</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${contacts.mphone}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 30px;">
 			<div style="width: 300px; color: gray;">职位</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>CTO</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${contacts.job}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">生日</div>
 			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>&nbsp;</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
@@ -322,19 +324,19 @@
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 40px;">
 			<div style="width: 300px; color: gray;">创建者</div>
-			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>zhangsan&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">2017-01-18 10:10:10</small></div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${contacts.createBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${contacts.createTime}</small></div>
 			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 50px;">
 			<div style="width: 300px; color: gray;">修改者</div>
-			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>zhangsan&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">2017-01-19 10:10:10</small></div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${contacts.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${contacts.editTime}</small></div>
 			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 60px;">
 			<div style="width: 300px; color: gray;">描述</div>
 			<div style="width: 630px;position: relative; left: 200px; top: -20px;">
 				<b>
-					这是一条线索的描述信息 （线索转换之后会将线索的描述转换到联系人的描述中）
+					${contacts.description}
 				</b>
 			</div>
 			<div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
@@ -343,21 +345,21 @@
 			<div style="width: 300px; color: gray;">联系纪要</div>
 			<div style="width: 630px;position: relative; left: 200px; top: -20px;">
 				<b>
-					&nbsp;
+					${contacts.contactSummary}
 				</b>
 			</div>
 			<div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 80px;">
 			<div style="width: 300px; color: gray;">下次联系时间</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>&nbsp;</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${contacts.nextContactTime}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
         <div style="position: relative; left: 40px; height: 30px; top: 90px;">
             <div style="width: 300px; color: gray;">详细地址</div>
             <div style="width: 630px;position: relative; left: 200px; top: -20px;">
                 <b>
-                    大族企业湾
+                    ${contacts.address}
                 </b>
             </div>
             <div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
@@ -368,10 +370,25 @@
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
+
+		<c:forEach items="${contactsRemarkList}" var="contactsRemark">
+			<div class="remarkDiv" style="height: 60px;">
+				<img title="${contactsRemark.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
+				<div style="position: relative; top: -40px; left: 40px;" >
+					<h5>${contactsRemark.noteContent}</h5>
+					<font color="gray">联系人</font> <font color="gray">-</font> <b>${contacts.fullname}${contacts.appellation}-${contacts.customerId}</b> <small style="color: gray;"> ${contactsRemark.editFlag == "0" ? contactsRemark.createTime : contactsRemark.editTime} 由${contactsRemark.editFlag == "0" ? contactsRemark.createby : contactsRemark.editby}${contactsRemark.editFlag == "0" ? "创建" : "修改"}</small>
+					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
+						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+					</div>
+				</div>
+			</div>
+		</c:forEach>
 		
 		<!-- 备注1 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="../../image/user-thumbnail.png" style="width: 30px; height:30px;">
+		<%--<div class="remarkDiv" style="height: 60px;">
+			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 			<div style="position: relative; top: -40px; left: 40px;" >
 				<h5>哎呦！</h5>
 				<font color="gray">联系人</font> <font color="gray">-</font> <b>李四先生-北京动力节点</b> <small style="color: gray;"> 2017-01-22 10:10:10 由zhangsan</small>
@@ -381,11 +398,11 @@
 					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 				</div>
 			</div>
-		</div>
+		</div>--%>
 		
 		<!-- 备注2 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="../../image/user-thumbnail.png" style="width: 30px; height:30px;">
+		<%--<div class="remarkDiv" style="height: 60px;">
+			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 			<div style="position: relative; top: -40px; left: 40px;" >
 				<h5>呵呵！</h5>
 				<font color="gray">联系人</font> <font color="gray">-</font> <b>李四先生-北京动力节点</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>
@@ -395,7 +412,7 @@
 					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 				</div>
 			</div>
-		</div>
+		</div>--%>
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
@@ -428,21 +445,32 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td><a href="../transaction/detail.html" style="text-decoration: none;">动力节点-交易01</a></td>
+						<c:forEach items="${tranList}" var="tran">
+							<tr>
+								<td><a href="transaction/detail.html" style="text-decoration: none;">${tran.name}</a></td>
+								<td>${tran.money}</td>
+								<td>${tran.stage}</td>
+								<td>${tran.possibility}</td>
+								<td>${tran.expectedDate}</td>
+								<td>${tran.type}</td>
+								<td><a href="javascript:void(0);" data-toggle="modal" data-target="#unbundModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
+							</tr>
+						</c:forEach>
+						<%--<tr>
+							<td><a href="transaction/detail.html" style="text-decoration: none;">动力节点-交易01</a></td>
 							<td>5,000</td>
 							<td>谈判/复审</td>
 							<td>90</td>
 							<td>2017-02-07</td>
 							<td>新业务</td>
 							<td><a href="javascript:void(0);" data-toggle="modal" data-target="#unbundModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
-						</tr>
+						</tr>--%>
 					</tbody>
 				</table>
 			</div>
 			
 			<div>
-				<a href="../transaction/save.html" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建交易</a>
+				<a href="transaction/save.html" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建交易</a>
 			</div>
 		</div>
 	</div>
@@ -465,13 +493,22 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td><a href="../activity/detail.html" style="text-decoration: none;">发传单</a></td>
+						<c:forEach items="${activityList}" var="activity">
+							<tr>
+								<td><a href="activity/detail.html" style="text-decoration: none;">${activity.name}</a></td>
+								<td>${activity.startDate}</td>
+								<td>${activity.endDate}</td>
+								<td>${activity.owner}</td>
+								<td><a href="javascript:void(0);" data-toggle="modal" data-target="#unbundActivityModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>
+							</tr>
+						</c:forEach>
+						<%--<tr>
+							<td><a href="activity/detail.html" style="text-decoration: none;">发传单</a></td>
 							<td>2020-10-10</td>
 							<td>2020-10-20</td>
 							<td>zhangsan</td>
 							<td><a href="javascript:void(0);" data-toggle="modal" data-target="#unbundActivityModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>
-						</tr>
+						</tr>--%>
 					</tbody>
 				</table>
 			</div>

@@ -38,6 +38,21 @@
         edit_by
   </sql>
 
+  <select id="selectActivityListByContactsIdForDetail" parameterType="String" resultMap="BaseResultMap">
+    select
+        a.id,
+        u1.name as owner,
+        a.name,
+        a.start_date,
+        a.end_date
+    from tbl_activity a
+    join tbl_user u1
+    on a.owner=u1.id
+    join tbl_contacts_activity_relation car
+    on a.id=car.activity_id
+    where car.contacts_id=#{contactsId}
+  </select>
+
   <select id="selectActivityListByName" parameterType="String" resultMap="BaseResultMap">
       select
           a.id,
