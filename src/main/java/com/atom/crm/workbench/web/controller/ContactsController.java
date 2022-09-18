@@ -47,6 +47,43 @@ public class ContactsController {
     @Autowired
     private ActivityService activityService;
 
+    @RequestMapping("/workbench/contacts/showContactsRemarkList.do")
+    @ResponseBody
+    public Object showContactsRemarkList(String contactsId){
+        List<ContactsRemark> contactsRemarkList = contactsRemarkService.queryContactsRemarkListByContactsIdForDetail(contactsId);
+        return contactsRemarkList;
+    }
+
+    @RequestMapping("/workbench/contacts/saveCreateContactsRemark.do")
+    @ResponseBody
+    public Object saveCreateContactsRemark(ContactsRemark contactsRemark, HttpSession session){
+        //封装数据
+        contactsRemark.setId(UUIDUtils.getUUID());
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        contactsRemark.setCreateBy(loginUser.getId());
+        contactsRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+        contactsRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，新增一条联系人备注
+            int count = contactsRemarkService.createAContactsRemark(contactsRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("保存联系人备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("保存联系人备注失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/contacts/toContactsDetail.do")
     public String toContactsDetail(String id, HttpServletRequest request){
         //访问业务层，获取数据：联系人信息、联系人备注、交易、关联的市场活动
@@ -54,6 +91,9 @@ public class ContactsController {
         List<ContactsRemark> contactsRemarkList = contactsRemarkService.queryContactsRemarkListByContactsIdForDetail(id);
         List<Tran> tranList = tranService.queryTranByContactsIdForDetail(id);
         List<Activity> activityList = activityService.queryActivityListByContactsIdForDetail(id);
+        List<User> userList = userService.queryAllUser();
+        List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
+        List<DicValue> appellationList = dicValueService.queryDicValueByTypeCode("appellation");
 
         //查询交易阶段可能性数据
         ResourceBundle possibilityBundle = ResourceBundle.getBundle("possibility");
@@ -67,6 +107,9 @@ public class ContactsController {
         request.setAttribute("contactsRemarkList", contactsRemarkList);
         request.setAttribute("tranList", tranList);
         request.setAttribute("activityList", activityList);
+        request.setAttribute("userList", userList);
+        request.setAttribute("sourceList", sourceList);
+        request.setAttribute("appellationList", appellationList);
 
         //请求转发
         return "workbench/contacts/detail";

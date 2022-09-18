@@ -17,4 +17,9 @@ public class ContactsRemarkServiceImpl implements ContactsRemarkService {
     public List<ContactsRemark> queryContactsRemarkListByContactsIdForDetail(String contactsId) {
         return contactsRemarkMapper.selectContactsRemarkListByContactsIdForDetail(contactsId);
     }
+
+    @Override
+    public int createAContactsRemark(ContactsRemark contactsRemark) {
+        return contactsRemarkMapper.insertAContactsRemark(contactsRemark);
+    }
 }

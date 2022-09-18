@@ -32,28 +32,158 @@
 			$("#remarkDiv").css("height","90px");
 			cancelAndSaveBtnDefault = true;
 		});
-		
-		$(".remarkDiv").mouseover(function(){
+
+		$("#contactsRemarkListDiv").on("mouseover", ".remarkDiv", function () {
 			$(this).children("div").children("div").show();
 		});
-		
-		$(".remarkDiv").mouseout(function(){
+
+		/*$(".remarkDiv").mouseover(function(){
+			$(this).children("div").children("div").show();
+		});*/
+
+		$("#contactsRemarkListDiv").on("mouseout", ".remarkDiv", function () {
 			$(this).children("div").children("div").hide();
 		});
-		
-		$(".myHref").mouseover(function(){
+
+		/*$(".remarkDiv").mouseout(function(){
+			$(this).children("div").children("div").hide();
+		});*/
+
+		$("#contactsRemarkListDiv").on("mouseover", ".myHref", function () {
 			$(this).children("span").css("color","red");
 		});
-		
-		$(".myHref").mouseout(function(){
+
+		/*$(".myHref").mouseover(function(){
+			$(this).children("span").css("color","red");
+		});*/
+
+		$("#contactsRemarkListDiv").on("mouseout", ".myHref", function () {
 			$(this).children("span").css("color","#E6E6E6");
 		});
+		
+		/*$(".myHref").mouseout(function(){
+			$(this).children("span").css("color","#E6E6E6");
+		});*/
+
+		//给创建备注的 保存按钮 添加单击事件
+		$("#saveCreateContactsRemarkBtn").click(function () {
+			//收集参数
+			var noteContent = $.trim($("#remark").val());
+			if(noteContent == ""){
+				alert("请输入备注内容");
+				return;
+			}
+			var contactsId = $("#hidden-contactsId").val();
+
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/contacts/saveCreateContactsRemark.do",
+				data: {
+					"noteContent": noteContent,
+					"contactsId": contactsId
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//新增联系人备注成功
+						//刷新备注列表
+						showContactsRemarkList();
+						//清空备注输入框
+						$("#remark").val("");
+					}
+				}
+			});
+		});
+
+		//给修改联系人备注的 图标 添加单击事件
+		$("#contactsRemarkListDiv").on("click", "a[name='updateA']", function () {
+			//收集参数：备注的id，noteContent
+			var id = $(this).attr("remarkId");
+			var noteContent = $("#h5_"+id).text();
+			//把id保存到模态窗口中的隐藏标签中
+			$("#contactsRemarkId").val(id);
+			//把noteContent填到模态窗口的输入框中
+			$("#edit-noteContent").val(noteContent);
+			//打开修改联系人备注的模态窗口
+			$("#editRemarkModal").modal("show");
+		});
+
+
 	});
+
+	//展示联系人备注列表
+	function showContactsRemarkList() {
+		//清除原先的备注列表
+		$("#contactsRemarkListDiv div[class='remarkDiv']").remove();
+		//收集参数
+		var contactsId = $("#hidden-contactsId").val();
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/contacts/showContactsRemarkList.do",
+			data: {
+				"contactsId": contactsId
+			},
+			type: "post",
+			dataType: "json",
+			success: function (contactsRemarkList) {
+				//字符串拼接，组装html标签，展示联系人备注列表
+				var html = "";
+				$.each(contactsRemarkList, function (i, o) {
+					html += '<div class="remarkDiv" style="height: 60px;">';
+					html += '<img title="'+o.createBy+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+					html += '<div style="position: relative; top: -40px; left: 40px;" >';
+					html += '<h5 id="h5_'+o.id+'">'+o.noteContent+'</h5>';
+					html += '<font color="gray">联系人</font> <font color="gray">-</font> <b>${contacts.fullname}${contacts.appellation}-${contacts.customerId}</b> <small style="color: gray;"> ';
+					html += (o.editFlag == 0 ? o.createTime : o.editTime)+' 由'+(o.editFlag == 0 ? o.createBy : o.editBy)+(o.editFlag == 0 ? "创建" : "修改")+'</small>';
+					html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+					html += '<a class="myHref" name="updateA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+					html += '<a class="myHref" name="deleteA" remarkId="'+o.id+'" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>';
+					html += '</div>';
+					html += '</div>';
+					html += '</div>';
+				});
+				//展示联系人备注列表
+				$("#remarkDiv").before(html);
+			}
+		});
+	}
 	
 </script>
 
 </head>
 <body>
+	<!-- 修改联系人备注的模态窗口 -->
+	<div class="modal fade" id="editRemarkModal" role="dialog">
+		<%-- 备注的id --%>
+		<input type="hidden" id="contactsRemarkId">
+		<div class="modal-dialog" role="document" style="width: 40%;">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true">×</span>
+					</button>
+					<h4 class="modal-title" id="myRemarkModalLabel">修改备注</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<input type="hidden" id="edit-id">
+						<div class="form-group">
+							<label for="edit-noteContent" class="col-sm-2 control-label">内容</label>
+							<div class="col-sm-10" style="width: 81%;">
+								<textarea class="form-control" rows="3" id="edit-noteContent"></textarea>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- 解除联系人和市场活动关联的模态窗口 -->
 	<div class="modal fade" id="unbundActivityModal" role="dialog">
@@ -149,16 +279,22 @@
 							<label for="edit-contactsOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-contactsOwner">
-								  <option selected>zhangsan</option>
+								  <%--<option selected>zhangsan</option>
 								  <option>lisi</option>
-								  <option>wangwu</option>
+								  <option>wangwu</option>--%>
+									  <c:forEach items="${userList}" var="user">
+										  <option value="${user.id}">${user.name}</option>
+									  </c:forEach>
 								</select>
 							</div>
 							<label for="edit-clueSource" class="col-sm-2 control-label">来源</label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-clueSource">
 								  <option></option>
-								  <option selected>广告</option>
+									<c:forEach items="${sourceList}" var="source">
+										<option value="${source.id}">${source.value}</option>
+									</c:forEach>
+								  <%--<option selected>广告</option>
 								  <option>推销电话</option>
 								  <option>员工介绍</option>
 								  <option>外部介绍</option>
@@ -171,7 +307,7 @@
 								  <option>交易会</option>
 								  <option>web下载</option>
 								  <option>web调研</option>
-								  <option>聊天</option>
+								  <option>聊天</option>--%>
 								</select>
 							</div>
 						</div>
@@ -185,11 +321,14 @@
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-call">
 								  <option></option>
-								  <option selected>先生</option>
+									<c:forEach items="${appellationList}" var="appellation">
+										<option value="${appellation.id}">${appellation.value}</option>
+									</c:forEach>
+								  <%--<option selected>先生</option>
 								  <option>夫人</option>
 								  <option>女士</option>
 								  <option>博士</option>
-								  <option>教授</option>
+								  <option>教授</option>--%>
 								</select>
 							</div>
 						</div>
@@ -290,6 +429,8 @@
 
 	<!-- 详细信息 -->
 	<div style="position: relative; top: -70px;">
+		<%--保存该联系人的id到隐藏标签中--%>
+		<input type="hidden" id="hidden-contactsId" value="${contacts.id}">
 		<div style="position: relative; left: 40px; height: 30px;">
 			<div style="width: 300px; color: gray;">所有者</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${contacts.owner}</b></div>
@@ -366,7 +507,7 @@
         </div>
 	</div>
 	<!-- 备注 -->
-	<div style="position: relative; top: 20px; left: 40px;">
+	<div id="contactsRemarkListDiv" style="position: relative; top: 20px; left: 40px;">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
@@ -375,12 +516,12 @@
 			<div class="remarkDiv" style="height: 60px;">
 				<img title="${contactsRemark.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 				<div style="position: relative; top: -40px; left: 40px;" >
-					<h5>${contactsRemark.noteContent}</h5>
-					<font color="gray">联系人</font> <font color="gray">-</font> <b>${contacts.fullname}${contacts.appellation}-${contacts.customerId}</b> <small style="color: gray;"> ${contactsRemark.editFlag == "0" ? contactsRemark.createTime : contactsRemark.editTime} 由${contactsRemark.editFlag == "0" ? contactsRemark.createby : contactsRemark.editby}${contactsRemark.editFlag == "0" ? "创建" : "修改"}</small>
+					<h5 id="h5_${contactsRemark.id}">${contactsRemark.noteContent}</h5>
+					<font color="gray">联系人</font> <font color="gray">-</font> <b>${contacts.fullname}${contacts.appellation}-${contacts.customerId}</b> <small style="color: gray;"> ${contactsRemark.editFlag == "0" ? contactsRemark.createTime : contactsRemark.editTime} 由${contactsRemark.editFlag == "0" ? contactsRemark.createBy : contactsRemark.editby}${contactsRemark.editFlag == "0" ? "创建" : "修改"}</small>
 					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						<a class="myHref" name="updateA" remarkId="${contactsRemark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
+						<a class="myHref" name="deleteA" remarkId="${contactsRemark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 					</div>
 				</div>
 			</div>
@@ -419,7 +560,7 @@
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" id="saveCreateContactsRemarkBtn" class="btn btn-primary">保存</button>
 				</p>
 			</form>
 		</div>

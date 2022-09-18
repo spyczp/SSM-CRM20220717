@@ -7,6 +7,13 @@ import java.util.List;
 public interface ContactsRemarkMapper {
 
     /**
+     * 新增一条备注信息
+     * @param contactsRemark
+     * @return
+     */
+    int insertAContactsRemark(ContactsRemark contactsRemark);
+
+    /**
      * 根据联系人id查询联系人备注列表
      * @param contactsId
      * @return

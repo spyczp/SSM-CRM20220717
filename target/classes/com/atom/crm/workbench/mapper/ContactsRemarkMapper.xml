@@ -25,6 +25,20 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, contacts_id
   </sql>
 
+  <insert id="insertAContactsRemark" parameterType="ContactsRemark">
+    insert into tbl_contacts_remark
+    values(
+      #{id},
+      #{noteContent},
+      #{createBy},
+      #{createTime},
+      #{editBy},
+      #{editTime},
+      #{editFlag},
+      #{contactsId}
+          )
+  </insert>
+
   <select id="selectContactsRemarkListByContactsIdForDetail" parameterType="String" resultMap="BaseResultMap">
     select
       cr.id,
@@ -41,6 +55,7 @@
     left join tbl_user u2
     on cr.edit_by=u2.id
     where cr.contacts_id=#{contactsId}
+    order by cr.create_time
   </select>
 
   <delete id="deleteContactsRemarkByContactsIds" parameterType="String">
