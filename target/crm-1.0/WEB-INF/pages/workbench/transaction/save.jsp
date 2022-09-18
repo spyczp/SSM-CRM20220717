@@ -459,7 +459,7 @@
 			<div class="col-sm-10" style="width: 300px;">
 				<%--保存市场活动id，后面方便取得--%>
 				<input type="hidden" id="hidden-activityId">
-				<input type="text" class="form-control" id="create-activitySrc">
+				<input type="text" class="form-control" id="create-activitySrc" readonly>
 			</div>
 		</div>
 		
@@ -468,7 +468,7 @@
 			<div class="col-sm-10" style="width: 300px;">
 				<%--保存联系人id，后面方便取得--%>
 				<input type="hidden" id="hidden-contactsId">
-				<input type="text" class="form-control" id="create-contactsName">
+				<input type="text" class="form-control" id="create-contactsName" readonly>
 			</div>
 		</div>
 		

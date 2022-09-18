@@ -12,7 +12,7 @@ public interface TranService {
 
     void saveCreateTran(Map<String, Object> map);
 
-    int deleteTranById(String id);
+    void deleteTranById(String id);
 
     List<Tran> queryAllTranForIndex();
 

@@ -47,6 +47,40 @@ public class ContactsController {
     @Autowired
     private ActivityService activityService;
 
+    @RequestMapping("/workbench/contacts/showTranList.do")
+    @ResponseBody
+    public Object showTranList(String contactsId){
+        //访问业务层，根据联系人id获取交易列表
+        List<Tran> tranList = tranService.queryTranByContactsIdForDetail(contactsId);
+
+        //查询交易阶段可能性数据
+        ResourceBundle possibilityBundle = ResourceBundle.getBundle("possibility");
+        for(Tran tran: tranList){
+            String possibility = possibilityBundle.getString(tran.getStage());
+            tran.setPossibility(possibility);
+        }
+
+        return tranList;
+    }
+
+    @RequestMapping("/workbench/contacts/deleteTranById.do")
+    @ResponseBody
+    public Object deleteTranById(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，删除一条交易
+            tranService.deleteTranById(id);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除交易失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/contacts/deleteAContactsRemark.do")
     @ResponseBody
     public Object deleteAContactsRemark(String id){

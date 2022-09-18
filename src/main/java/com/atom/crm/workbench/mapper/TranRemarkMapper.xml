@@ -25,6 +25,11 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, tran_id
   </sql>
 
+  <delete id="deleteTranRemarkByTranId" parameterType="String">
+    delete from tbl_tran_remark
+    where tran_id=#{tranId}
+  </delete>
+
   <select id="selectTranRemarkListByTranId" parameterType="String" resultMap="BaseResultMap">
     select
       tr.id,

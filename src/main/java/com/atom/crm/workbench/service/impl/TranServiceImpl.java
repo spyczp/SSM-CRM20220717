@@ -10,6 +10,7 @@ import com.atom.crm.workbench.bean.TranHistory;
 import com.atom.crm.workbench.mapper.CustomerMapper;
 import com.atom.crm.workbench.mapper.TranHistoryMapper;
 import com.atom.crm.workbench.mapper.TranMapper;
+import com.atom.crm.workbench.mapper.TranRemarkMapper;
 import com.atom.crm.workbench.service.TranService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class TranServiceImpl implements TranService {
 
     @Autowired
     private TranHistoryMapper tranHistoryMapper;
+
+    @Autowired
+    private TranRemarkMapper tranRemarkMapper;
 
     @Override
     public List<Tran> queryTranByCustomerId(String customerId) {
@@ -72,8 +76,14 @@ public class TranServiceImpl implements TranService {
     }
 
     @Override
-    public int deleteTranById(String id) {
-        return tranMapper.deleteTranById(id);
+    public void deleteTranById(String id) {
+        /*
+        * 1.删除交易备注
+        * 2.删除交易
+        * */
+        tranRemarkMapper.deleteTranRemarkByTranId(id);
+
+        tranMapper.deleteTranById(id);
     }
 
     @Override

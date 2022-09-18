@@ -129,13 +129,8 @@ public class CustomerController {
 
         try {
             //调用业务层，根据id删除交易
-            int count = tranService.deleteTranById(id);
-            if(count > 0){
-                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
-            }else{
-                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
-                returnObject.setMessage("删除交易失败");
-            }
+            tranService.deleteTranById(id);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
         }catch (Exception e){
             e.printStackTrace();
             returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);

@@ -162,7 +162,65 @@
 				});
 			}
 		});
+
+		//给交易的 删除按钮 添加单击事件
+		$("#tranListTB").on("click", "a[name='deleteTranA']", function () {
+			if(confirm("确定要删除这条交易吗？")){
+				//收集参数：交易id
+				var id = $(this).attr("tranId");
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/contacts/deleteTranById.do",
+					data: {
+						"id": id
+					},
+					type: "post",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//删除交易成功
+							//刷新交易列表
+							showTranList();
+						}else{
+							alert(response.message);
+						}
+					}
+				});
+			}
+		});
 	});
+
+	//展示交易列表
+	function showTranList(){
+		//获取参数：联系人id
+		var contactsId = $("#hidden-contactsId").val();
+		//向后端发起请求
+		$.ajax({
+			url: "workbench/contacts/showTranList.do",
+			data: {
+				"contactsId":contactsId
+			},
+			type: "post",
+			dataType: "json",
+			success: function (tranList) {
+				//字符串拼接，组装html标签，展示交易列表
+				var html = "";
+				$.each(tranList, function(i, o){
+					html += '<tr>';
+					html += '<td><a href="workbench/transaction/toTranDetail.do?id='+o.id+'" style="text-decoration: none;">'+o.name+'</a></td>';
+					html += '<td>'+o.money+'</td>';
+					html += '<td>'+o.stage+'</td>';
+					html += '<td>'+o.possibility+'</td>';
+					html += '<td>'+o.expectedDate+'</td>';
+					html += '<td>'+o.type+'</td>';
+					html += '<td><a name="deleteTranA" tranId="'+o.id+'" href="javascript:void(0);" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>';
+					html += '</tr>';
+				});
+				//展示交易列表
+				$("#tranListTB").html(html);
+			}
+		});
+	}
 
 	//展示联系人备注列表
 	function showContactsRemarkList() {
@@ -637,16 +695,16 @@
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="tranListTB">
 						<c:forEach items="${tranList}" var="tran">
 							<tr>
-								<td><a href="transaction/detail.html" style="text-decoration: none;">${tran.name}</a></td>
+								<td><a href="workbench/transaction/toTranDetail.do?id=${tran.id}" style="text-decoration: none;">${tran.name}</a></td>
 								<td>${tran.money}</td>
 								<td>${tran.stage}</td>
 								<td>${tran.possibility}</td>
 								<td>${tran.expectedDate}</td>
 								<td>${tran.type}</td>
-								<td><a href="javascript:void(0);" data-toggle="modal" data-target="#unbundModal" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
+								<td><a name="deleteTranA" tranId="${tran.id}" href="javascript:void(0);" style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>删除</a></td>
 							</tr>
 						</c:forEach>
 						<%--<tr>
@@ -663,7 +721,7 @@
 			</div>
 			
 			<div>
-				<a href="transaction/save.html" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建交易</a>
+				<a href="workbench/transaction/toTranSave.do" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>新建交易</a>
 			</div>
 		</div>
 	</div>
