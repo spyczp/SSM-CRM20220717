@@ -9,4 +9,8 @@ public interface ContactsRemarkService {
     List<ContactsRemark> queryContactsRemarkListByContactsIdForDetail(String contactsId);
 
     int createAContactsRemark(ContactsRemark contactsRemark);
+
+    int saveEditAContactsRemark(ContactsRemark contactsRemark);
+
+    int deleteAContactsRemark(String id);
 }

@@ -7,6 +7,20 @@ import java.util.List;
 public interface ContactsRemarkMapper {
 
     /**
+     * 根据联系人备注的id删除一条联系人备注
+     * @param id
+     * @return
+     */
+    int deleteAContactsRemark(String id);
+
+    /**
+     * 修改一条联系人备注
+     * @param contactsRemark
+     * @return
+     */
+    int updateAContactsRemark(ContactsRemark contactsRemark);
+
+    /**
      * 新增一条备注信息
      * @param contactsRemark
      * @return

@@ -22,4 +22,14 @@ public class ContactsRemarkServiceImpl implements ContactsRemarkService {
     public int createAContactsRemark(ContactsRemark contactsRemark) {
         return contactsRemarkMapper.insertAContactsRemark(contactsRemark);
     }
+
+    @Override
+    public int saveEditAContactsRemark(ContactsRemark contactsRemark) {
+        return contactsRemarkMapper.updateAContactsRemark(contactsRemark);
+    }
+
+    @Override
+    public int deleteAContactsRemark(String id) {
+        return contactsRemarkMapper.deleteAContactsRemark(id);
+    }
 }

@@ -109,7 +109,59 @@
 			$("#editRemarkModal").modal("show");
 		});
 
-		
+		//给 修改联系人的模态窗口中的 更新按钮 添加单击事件
+		$("#updateContactsRemarkBtn").click(function () {
+			//收集参数：备注的id，noteContent
+			var id = $("#contactsRemarkId").val();
+			var noteContent = $("#edit-noteContent").val();
+			//向后端发起请求
+			$.ajax({
+				url: "workbench/contacts/saveEditAContactsRemark.do",
+				data: {
+					"id": id,
+					"noteContent": noteContent
+				},
+				type: "post",
+				dataType: "json",
+				success: function (response) {
+					if(response.code == "1"){
+						//修改联系人备注成功
+						//刷新备注列表
+						showContactsRemarkList();
+						//关闭模态窗口
+						$("#editRemarkModal").modal("hide");
+					}else{
+						alert(response.message);
+					}
+				}
+			});
+		});
+
+		//给 联系人备注的 删除图标 添加单击事件
+		$("#contactsRemarkListDiv").on("click", "a[name='deleteA']", function () {
+			if(confirm("确定要删除这条备注吗？")){
+				//收集参数：备注的id
+				var id = $(this).attr("remarkId");
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/contacts/deleteAContactsRemark.do",
+					data: {
+						"id": id
+					},
+					type: "post",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//删除联系人备注成功
+							//刷新联系人备注列表
+							showContactsRemarkList();
+						}else{
+							alert(response.message);
+						}
+					}
+				});
+			}
+		});
 	});
 
 	//展示联系人备注列表
@@ -179,7 +231,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
+					<button type="button" class="btn btn-primary" id="updateContactsRemarkBtn">更新</button>
 				</div>
 			</div>
 		</div>
@@ -517,7 +569,7 @@
 				<img title="${contactsRemark.createBy}" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 				<div style="position: relative; top: -40px; left: 40px;" >
 					<h5 id="h5_${contactsRemark.id}">${contactsRemark.noteContent}</h5>
-					<font color="gray">联系人</font> <font color="gray">-</font> <b>${contacts.fullname}${contacts.appellation}-${contacts.customerId}</b> <small style="color: gray;"> ${contactsRemark.editFlag == "0" ? contactsRemark.createTime : contactsRemark.editTime} 由${contactsRemark.editFlag == "0" ? contactsRemark.createBy : contactsRemark.editby}${contactsRemark.editFlag == "0" ? "创建" : "修改"}</small>
+					<font color="gray">联系人</font> <font color="gray">-</font> <b>${contacts.fullname}${contacts.appellation}-${contacts.customerId}</b> <small style="color: gray;"> ${contactsRemark.editFlag == "0" ? contactsRemark.createTime : contactsRemark.editTime} 由${contactsRemark.editFlag == "0" ? contactsRemark.createBy : contactsRemark.editBy}${contactsRemark.editFlag == "0" ? "创建" : "修改"}</small>
 					<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
 						<a class="myHref" name="updateA" remarkId="${contactsRemark.id}" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
 						&nbsp;&nbsp;&nbsp;&nbsp;

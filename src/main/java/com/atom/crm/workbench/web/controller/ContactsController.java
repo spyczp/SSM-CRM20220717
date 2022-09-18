@@ -47,6 +47,58 @@ public class ContactsController {
     @Autowired
     private ActivityService activityService;
 
+    @RequestMapping("/workbench/contacts/deleteAContactsRemark.do")
+    @ResponseBody
+    public Object deleteAContactsRemark(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，删除一条联系人备注
+            int count = contactsRemarkService.deleteAContactsRemark(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除联系人备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除联系人备注失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/contacts/saveEditAContactsRemark.do")
+    @ResponseBody
+    public Object saveEditAContactsRemark(ContactsRemark contactsRemark, HttpSession session){
+        //封装数据
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        contactsRemark.setEditBy(loginUser.getId());
+        contactsRemark.setEditTime(DateUtils.formatDateTime(new Date()));
+        contactsRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_YES_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，修改一条联系人备注
+            int count = contactsRemarkService.saveEditAContactsRemark(contactsRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("修改联系人备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改联系人备注失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/contacts/showContactsRemarkList.do")
     @ResponseBody
     public Object showContactsRemarkList(String contactsId){
