@@ -8,10 +8,7 @@ import com.atom.crm.settings.bean.DicValue;
 import com.atom.crm.settings.bean.User;
 import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
-import com.atom.crm.workbench.bean.Activity;
-import com.atom.crm.workbench.bean.Contacts;
-import com.atom.crm.workbench.bean.ContactsRemark;
-import com.atom.crm.workbench.bean.Tran;
+import com.atom.crm.workbench.bean.*;
 import com.atom.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,6 +43,81 @@ public class ContactsController {
 
     @Autowired
     private ActivityService activityService;
+
+    @Autowired
+    private ContactsActivityRelationService contactsActivityRelationService;
+
+    @RequestMapping("/workbench/contacts/unbundContactsActivityRelation.do")
+    @ResponseBody
+    public Object unbundContactsActivityRelation(ContactsActivityRelation contactsActivityRelation){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，解除一条联系人和市场活动的关联关系
+            int count = contactsActivityRelationService.deleteContactsActivityRelationByActivityIdAndContactsId(contactsActivityRelation);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("解除关联失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("解除关联失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/contacts/showActivityListForDetail.do")
+    @ResponseBody
+    public Object showActivityListForDetail(String contactsId){
+        List<Activity> activityList = activityService.queryActivityListByContactsIdForDetail(contactsId);
+        return activityList;
+    }
+
+    @RequestMapping("/workbench/contacts/saveCreateContactsActivityRelation.do")
+    @ResponseBody
+    public Object saveCreateContactsActivityRelation(String contactsId, String[] activityId){
+        //封装数据
+        List<ContactsActivityRelation> carList = new ArrayList<>();
+        ContactsActivityRelation car = null;
+        for(String aid: activityId){
+            car = new ContactsActivityRelation();
+            car.setId(UUIDUtils.getUUID());
+            car.setContactsId(contactsId);
+            car.setActivityId(aid);
+            carList.add(car);
+        }
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，新增联系人和市场活动关联关系。
+            int count = contactsActivityRelationService.createContactsActivityRelation(carList);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("关联市场活动失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("关联市场活动失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/contacts/searchActivityListForContactsActivityRelation.do")
+    @ResponseBody
+    public Object searchActivityListForContactsActivityRelation(@RequestParam Map<String, Object> map){
+        //访问业务层，查询未被关联的市场活动
+        List<Activity> activityList = activityService.queryActivityHasNotRelateWithTheContacts(map);
+        return activityList;
+    }
 
     @RequestMapping("/workbench/contacts/showTranList.do")
     @ResponseBody

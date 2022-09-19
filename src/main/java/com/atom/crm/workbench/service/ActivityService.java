@@ -35,4 +35,6 @@ public interface ActivityService {
     List<Activity> queryActivityListByName(String name);
 
     List<Activity> queryActivityListByContactsIdForDetail(String contactsId);
+
+    List<Activity> queryActivityHasNotRelateWithTheContacts(Map<String, Object> map);
 }

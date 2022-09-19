@@ -1,11 +1,19 @@
 package com.atom.crm.workbench.mapper;
 
 import com.atom.crm.workbench.bean.Activity;
+import com.atom.crm.workbench.bean.ContactsActivityRelation;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ActivityMapper {
+
+    /**
+     * 使用联系人id，查询尚未和这个联系人建立联接的市场活动
+     * @param map
+     * @return
+     */
+    List<Activity> selectActivityHasNotRelateWithTheContacts(Map<String, Object> map);
 
     /**
      * 根据联系人id查询市场活动列表

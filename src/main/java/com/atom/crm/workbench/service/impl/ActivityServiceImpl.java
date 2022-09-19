@@ -88,4 +88,9 @@ public class ActivityServiceImpl implements ActivityService {
     public List<Activity> queryActivityListByContactsIdForDetail(String contactsId) {
         return activityMapper.selectActivityListByContactsIdForDetail(contactsId);
     }
+
+    @Override
+    public List<Activity> queryActivityHasNotRelateWithTheContacts(Map<String, Object> map) {
+        return activityMapper.selectActivityHasNotRelateWithTheContacts(map);
+    }
 }

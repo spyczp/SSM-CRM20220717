@@ -7,6 +7,13 @@ import java.util.List;
 public interface ContactsActivityRelationMapper {
 
     /**
+     * 根据联系人id和市场活动id删除一条关联关系
+     * @param contactsActivityRelation
+     * @return
+     */
+    int deleteContactsActivityRelationByActivityIdAndContactsId(ContactsActivityRelation contactsActivityRelation);
+
+    /**
      * 根据数个联系人id删除数个联系人市场活动关联关系
      * @param contactsIds
      * @return
