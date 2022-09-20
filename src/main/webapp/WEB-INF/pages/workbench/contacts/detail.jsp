@@ -333,7 +333,7 @@
 				var html = "";
 				$.each(activityList, function (i, o) {
 					html += '<tr>';
-					html += '<td><a href="activity/detail.html" style="text-decoration: none;">'+o.name+'</a></td>';
+					html += '<td><a href="workbench/activity/queryActivityForDetailById.do?id='+o.id+'" style="text-decoration: none;">'+o.name+'</a></td>';
 					html += '<td>'+o.startDate+'</td>';
 					html += '<td>'+o.endDate+'</td>';
 					html += '<td>'+o.owner+'</td>';
@@ -904,7 +904,7 @@
 					<tbody id="showActivityListTB">
 						<c:forEach items="${activityList}" var="activity">
 							<tr>
-								<td><a href="activity/detail.html" style="text-decoration: none;">${activity.name}</a></td>
+								<td><a href="workbench/activity/queryActivityForDetailById.do?id=${activity.id}" style="text-decoration: none;">${activity.name}</a></td>
 								<td>${activity.startDate}</td>
 								<td>${activity.endDate}</td>
 								<td>${activity.owner}</td>

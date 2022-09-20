@@ -13,13 +13,11 @@ import com.atom.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -49,6 +47,32 @@ public class TranController {
 
     @Autowired
     private TranHistoryService tranHistoryService;
+
+    @RequestMapping("/workbench/transaction/toEditTranPage.do")
+    public String toEditTranPage(String id, HttpServletRequest request){
+        //访问业务层，获取数据：交易
+        Tran tran = tranService.queryTranById(id);
+        //获取数据，填充页面的下拉列表
+        List<User> userList = userService.queryAllUser();
+        List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
+        List<DicValue> transactionTypeList = dicValueService.queryDicValueByTypeCode("transactionType");
+        List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
+
+        //获取交易阶段的可能性数据
+        ResourceBundle possibilityBundle = ResourceBundle.getBundle("possibility");
+        String possibility = possibilityBundle.getString(tran.getStage());
+        tran.setPossibility(possibility);
+
+        //保存数据到请求域中
+        request.setAttribute("tran", tran);
+        request.setAttribute("userList", userList);
+        request.setAttribute("stageList", stageList);
+        request.setAttribute("transactionTypeList", transactionTypeList);
+        request.setAttribute("sourceList", sourceList);
+
+        //请求转发到 编辑页面
+        return "workbench/transaction/edit";
+    }
 
     @RequestMapping("/workbench/transaction/showTranHistoryList.do")
     @ResponseBody

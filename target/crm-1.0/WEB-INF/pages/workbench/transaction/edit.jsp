@@ -1,15 +1,17 @@
-<!DOCTYPE html>
+<%@page contentType="text/html; charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-<meta charset="UTF-8">
+	<base href="${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
+	<meta charset="UTF-8">
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 </head>
 <body>
@@ -127,25 +129,28 @@
 			<label for="create-transactionOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
 				<select class="form-control" id="create-transactionOwner">
-				  <option>zhangsan</option>
+					<c:forEach items="${userList}" var="user">
+						<option value="${user.id}" ${user.name == tran.owner ? "selected" : ""}>${user.name}</option>
+					</c:forEach>
+				  <%--<option>zhangsan</option>
 				  <option>lisi</option>
-				  <option>wangwu</option>
+				  <option>wangwu</option>--%>
 				</select>
 			</div>
 			<label for="create-amountOfMoney" class="col-sm-2 control-label">金额</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-amountOfMoney">
+				<input type="text" class="form-control" id="create-amountOfMoney" value="${tran.money}">
 			</div>
 		</div>
 		
 		<div class="form-group">
 			<label for="create-transactionName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-transactionName">
+				<input type="text" class="form-control" id="create-transactionName" value="${tran.name}">
 			</div>
 			<label for="create-expectedClosingDate" class="col-sm-2 control-label">预计成交日期<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-expectedClosingDate">
+				<input type="text" class="form-control" id="create-expectedClosingDate" value="${tran.expectedDate}">
 			</div>
 		</div>
 		
@@ -158,7 +163,10 @@
 			<div class="col-sm-10" style="width: 300px;">
 			  <select class="form-control" id="create-transactionStage">
 			  	<option></option>
-			  	<option>资质审查</option>
+				  <c:forEach items="${stageList}" var="stage">
+					  <option value="${stage.id}" ${stage.value == tran.stage ? "selected": ""}>${stage.value}</option>
+				  </c:forEach>
+			  	<%--<option>资质审查</option>
 			  	<option>需求分析</option>
 			  	<option>价值建议</option>
 			  	<option>确定决策者</option>
@@ -166,7 +174,7 @@
 			  	<option>谈判/复审</option>
 			  	<option>成交</option>
 			  	<option>丢失的线索</option>
-			  	<option>因竞争丢失关闭</option>
+			  	<option>因竞争丢失关闭</option>--%>
 			  </select>
 			</div>
 		</div>
@@ -176,13 +184,16 @@
 			<div class="col-sm-10" style="width: 300px;">
 				<select class="form-control" id="create-transactionType">
 				  <option></option>
-				  <option>已有业务</option>
-				  <option>新业务</option>
+					<c:forEach items="${transactionTypeList}" var="type">
+						<option value="${type.id}" ${type.value == tran.type ? "selected" : ""}>${type.value}</option>
+					</c:forEach>
+				  <%--<option>已有业务</option>
+				  <option>新业务</option>--%>
 				</select>
 			</div>
 			<label for="create-possibility" class="col-sm-2 control-label">可能性</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-possibility">
+				<input type="text" class="form-control" id="create-possibility" value="${tran.possibility}">
 			</div>
 		</div>
 		
@@ -191,7 +202,10 @@
 			<div class="col-sm-10" style="width: 300px;">
 				<select class="form-control" id="create-clueSource">
 				  <option></option>
-				  <option>广告</option>
+					<c:forEach items="${sourceList}" var="source">
+						<option value="${source.id}" ${source.value == tran.source ? "selected" : ""}>${source.value}</option>
+					</c:forEach>
+				  <%--<option>广告</option>
 				  <option>推销电话</option>
 				  <option>员工介绍</option>
 				  <option>外部介绍</option>
@@ -204,7 +218,7 @@
 				  <option>交易会</option>
 				  <option>web下载</option>
 				  <option>web调研</option>
-				  <option>聊天</option>
+				  <option>聊天</option>--%>
 				</select>
 			</div>
 			<label for="create-activitySrc" class="col-sm-2 control-label">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#findMarketActivity"><span class="glyphicon glyphicon-search"></span></a></label>

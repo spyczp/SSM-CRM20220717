@@ -19,6 +19,18 @@
 <script type="text/javascript">
 
 	$(function(){
+
+		//给 全选复选框 和 单选框 添加单击事件
+		$("#qx").click(function () {
+			$("#tranListTB input").prop("checked", this.checked);
+		});
+		$("#tranListTB").on("click", "input", function () {
+			if($("#tranListTB input").size() == $("#tranListTB input:checked").size()){
+				$("#qx").prop("checked" , true);
+			}else{
+				$("#qx").prop("checked" , false);
+			}
+		});
 		
 		//展示交易列表
 		showTranList(1, 2);
@@ -26,6 +38,21 @@
 		//给 创建 按钮添加单击事件
 		$("#createTranBtn").click(function () {
 			window.location.href = "workbench/transaction/toTranSave.do";
+		});
+
+		//给 修改按钮 添加单击事件
+		$("#editTranBtn").click(function () {
+			//获取用户打勾的交易
+			var checkedBox = $("#tranListTB input:checked");
+			if(checkedBox.size() != 1){
+				alert("每次必须且只能选择一个交易进行修改");
+				return;
+			}
+			//收集参数：交易的id
+			var id = checkedBox[0].value;
+
+			//发起请求
+			window.location.href = "workbench/transaction/toEditTranPage.do?id=" + id;
 		});
 	});
 
@@ -61,7 +88,7 @@
 				var html = "";
 				$.each(response.tranList, function (i, o) {
 					html += '<tr>';
-					html += '<td><input type="checkbox" /></td>';
+					html += '<td><input type="checkbox" value="'+o.id+'"/></td>';
 					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/transaction/toTranDetail.do?id='+o.id+'\';">'+o.name+'</a></td>';
 					html += '<td>'+o.customerId+'</td>';
 					html += '<td>'+o.stage+'</td>';
@@ -217,7 +244,7 @@
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 10px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="createTranBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" onclick="window.location.href='edit.html';"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-default" id="editTranBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
@@ -227,7 +254,7 @@
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="qx"/></td>
 							<td>名称</td>
 							<td>客户名称</td>
 							<td>阶段</td>
