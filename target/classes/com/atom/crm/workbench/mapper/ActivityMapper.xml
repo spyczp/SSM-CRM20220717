@@ -38,6 +38,12 @@
         edit_by
   </sql>
 
+  <select id="selectActivityNameById" parameterType="String" resultType="String">
+    select name
+    from tbl_activity
+    where id=#{id}
+  </select>
+
   <select id="selectActivityHasNotRelateWithTheContacts" parameterType="map" resultMap="BaseResultMap">
     select
       a.id,

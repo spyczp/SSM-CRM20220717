@@ -22,6 +22,12 @@
     id, value, text, order_no, type_code
   </sql>
 
+  <select id="selectValueById" parameterType="String" resultType="String">
+    select value
+    from tbl_dic_value
+    where id=#{id}
+  </select>
+
   <!--根据typeCode查询数据字典-->
   <select id="selectDicValueByTypeCode" resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />

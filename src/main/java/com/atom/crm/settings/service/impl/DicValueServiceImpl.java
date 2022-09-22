@@ -18,4 +18,9 @@ public class DicValueServiceImpl implements DicValueService {
     public List<DicValue> queryDicValueByTypeCode(String typeCode) {
         return dicValueMapper.selectDicValueByTypeCode(typeCode);
     }
+
+    @Override
+    public String queryValueById(String id) {
+        return dicValueMapper.selectValueById(id);
+    }
 }

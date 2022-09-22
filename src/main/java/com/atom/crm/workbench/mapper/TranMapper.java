@@ -9,6 +9,13 @@ import java.util.Map;
 public interface TranMapper {
 
     /**
+     * 修改一条交易的数据
+     * @param tran
+     * @return
+     */
+    int updateATran(Tran tran);
+
+    /**
      * 根据联系人id查询交易列表
      * @param contactsId
      * @return

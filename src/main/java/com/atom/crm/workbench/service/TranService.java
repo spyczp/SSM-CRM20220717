@@ -22,6 +22,8 @@ public interface TranService {
 
     Tran queryTranById(String id);
 
+    Tran queryTranById02(String id);
+
     void editATranStage(Map<String, Object> map);
 
     List<FunnelVO> queryStageNameAndCountList();
@@ -29,4 +31,6 @@ public interface TranService {
     List<String> queryTranStageNameList();
 
     List<Tran> queryTranByContactsIdForDetail(String contactsId);
+
+    void saveEditTran(Map<String, Object> map);
 }

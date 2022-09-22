@@ -7,4 +7,6 @@ import java.util.List;
 public interface DicValueService {
 
     List<DicValue> queryDicValueByTypeCode(String typeCode);
+
+    String queryValueById(String id);
 }

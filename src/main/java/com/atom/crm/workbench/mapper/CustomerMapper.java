@@ -8,6 +8,13 @@ import java.util.Map;
 public interface CustomerMapper {
 
     /**
+     * 根据id查询客户名称
+     * @param id
+     * @return
+     */
+    String selectCustomerNameById(String id);
+
+    /**
      * 根据客户名称查询一条客户信息，客户名称是不重复的
      * @param name
      * @return

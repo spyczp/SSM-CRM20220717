@@ -8,6 +8,13 @@ import java.util.Map;
 public interface ContactsMapper {
 
     /**
+     * 根据id查询联系人名称
+     * @param id
+     * @return
+     */
+    String selectContactsNameById(String id);
+
+    /**
      * 根据数个id删除数个联系人信息
      * @param ids
      * @return

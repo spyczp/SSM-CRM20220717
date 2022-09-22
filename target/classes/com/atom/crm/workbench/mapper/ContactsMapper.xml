@@ -36,6 +36,12 @@
     address
   </sql>
 
+  <select id="selectContactsNameById" parameterType="String" resultType="String">
+    select fullname
+    from tbl_contacts
+    where id=#{id}
+  </select>
+
   <select id="selectContactsByIdForDetail" parameterType="String" resultMap="BaseResultMap">
     select
       con.id,

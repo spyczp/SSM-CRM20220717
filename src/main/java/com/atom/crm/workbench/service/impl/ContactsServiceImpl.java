@@ -143,4 +143,9 @@ public class ContactsServiceImpl implements ContactsService {
     public Contacts queryContactsByIdForDetail(String id) {
         return contactsMapper.selectContactsByIdForDetail(id);
     }
+
+    @Override
+    public String queryContactsNameById(String id) {
+        return contactsMapper.selectContactsNameById(id);
+    }
 }

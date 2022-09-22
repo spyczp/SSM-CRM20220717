@@ -9,6 +9,13 @@ import java.util.Map;
 public interface ActivityMapper {
 
     /**
+     * 根据id查询市场活动名称
+     * @param id
+     * @return
+     */
+    String selectActivityNameById(String id);
+
+    /**
      * 使用联系人id，查询尚未和这个联系人建立联接的市场活动
      * @param map
      * @return

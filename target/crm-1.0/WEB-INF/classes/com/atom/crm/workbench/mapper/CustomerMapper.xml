@@ -31,6 +31,12 @@
     next_contact_time, description, address
   </sql>
 
+  <select id="selectCustomerNameById" parameterType="String" resultType="String">
+    select name
+    from tbl_customer
+    where id=#{id}
+  </select>
+
   <select id="selectCustomerByName" parameterType="String" resultMap="BaseResultMap">
     select
       id,

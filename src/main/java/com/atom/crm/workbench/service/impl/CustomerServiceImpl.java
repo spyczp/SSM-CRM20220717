@@ -59,4 +59,9 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer queryCustomerByName(String name) {
         return customerMapper.selectCustomerByName(name);
     }
+
+    @Override
+    public String queryCustomerNameById(String id) {
+        return customerMapper.selectCustomerNameById(id);
+    }
 }

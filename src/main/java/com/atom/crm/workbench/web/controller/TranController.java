@@ -13,6 +13,7 @@ import com.atom.crm.workbench.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,19 +49,57 @@ public class TranController {
     @Autowired
     private TranHistoryService tranHistoryService;
 
+    @RequestMapping("/workbench/transaction/saveEditTran.do")
+    @ResponseBody
+    public Object saveEditTran(@RequestParam Map<String, Object> map, HttpSession session){
+        //封装数据
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+        map.put("loginUser", loginUser);
+
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，修改交易数据
+            tranService.saveEditTran(map);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改交易失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/transaction/getPossibilityByStageName.do")
+    @ResponseBody
+    public Object getPossibilityByStageName(String stageName){
+        ResourceBundle possibilityList = ResourceBundle.getBundle("possibility");
+        String possibility = possibilityList.getString(stageName);
+        return possibility;
+    }
+
     @RequestMapping("/workbench/transaction/toEditTranPage.do")
     public String toEditTranPage(String id, HttpServletRequest request){
         //访问业务层，获取数据：交易
-        Tran tran = tranService.queryTranById(id);
+        Tran tran = tranService.queryTranById02(id);
         //获取数据，填充页面的下拉列表
         List<User> userList = userService.queryAllUser();
         List<DicValue> stageList = dicValueService.queryDicValueByTypeCode("stage");
         List<DicValue> transactionTypeList = dicValueService.queryDicValueByTypeCode("transactionType");
         List<DicValue> sourceList = dicValueService.queryDicValueByTypeCode("source");
 
+        /**
+         * 查询一些数据的名称：客户名称、市场活动源、联系人名称、阶段
+         */
+        String customerName = customerService.queryCustomerNameById(tran.getCustomerId());
+        String activityName = activityService.queryActivityNameById(tran.getActivityId());
+        String contactsName = contactsService.queryContactsNameById(tran.getContactsId());
+        String stageName = dicValueService.queryValueById(tran.getStage());
+
         //获取交易阶段的可能性数据
         ResourceBundle possibilityBundle = ResourceBundle.getBundle("possibility");
-        String possibility = possibilityBundle.getString(tran.getStage());
+        String possibility = possibilityBundle.getString(stageName);
         tran.setPossibility(possibility);
 
         //保存数据到请求域中
@@ -69,6 +108,9 @@ public class TranController {
         request.setAttribute("stageList", stageList);
         request.setAttribute("transactionTypeList", transactionTypeList);
         request.setAttribute("sourceList", sourceList);
+        request.setAttribute("customerName", customerName);
+        request.setAttribute("activityName", activityName);
+        request.setAttribute("contactsName", contactsName);
 
         //请求转发到 编辑页面
         return "workbench/transaction/edit";
