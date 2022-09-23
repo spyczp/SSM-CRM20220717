@@ -25,6 +25,35 @@
     id, note_content, create_by, create_time, edit_by, edit_time, edit_flag, tran_id
   </sql>
 
+  <delete id="deleteTranRemarkById" parameterType="String">
+    delete from tbl_tran_remark
+    where id=#{id}
+  </delete>
+
+  <update id="updateATranRemark" parameterType="TranRemark">
+    update tbl_tran_remark
+    set
+      note_content=#{noteContent},
+      edit_by=#{editBy},
+      edit_time=#{editTime},
+      edit_flag=#{editFlag}
+    where id=#{id}
+  </update>
+
+  <insert id="insertATranRemark" parameterType="TranRemark">
+    insert into tbl_tran_remark
+    values(
+      #{id},
+      #{noteContent},
+      #{createBy},
+      #{createTime},
+      #{editBy},
+      #{editTime},
+      #{editFlag},
+      #{tranId}
+          )
+  </insert>
+
   <delete id="deleteTranRemarkByTranIds" parameterType="String">
     delete from tbl_tran_remark
     where tran_id in
@@ -54,6 +83,7 @@
     left join tbl_user u2
     on tr.edit_by=u2.id
     where tr.tran_id=#{tranId}
+    order by tr.create_time
   </select>
 
   <insert id="insertTranRemark" parameterType="TranRemark">

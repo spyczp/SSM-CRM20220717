@@ -10,6 +10,7 @@ import com.atom.crm.settings.service.DicValueService;
 import com.atom.crm.settings.service.UserService;
 import com.atom.crm.workbench.bean.*;
 import com.atom.crm.workbench.service.*;
+import jdk.nashorn.internal.ir.ReturnNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,96 @@ public class TranController {
 
     @Autowired
     private TranHistoryService tranHistoryService;
+
+    @RequestMapping("/workbench/transaction/deleteTranRemarkById.do")
+    @ResponseBody
+    public Object deleteTranRemarkById(String id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //访问业务层，删除一条交易备注
+            int count = tranRemarkService.deleteTranRemarkById(id);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else {
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("删除交易备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除交易备注失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/transaction/saveEditATranRemark.do")
+    @ResponseBody
+    public Object saveEditATranRemark(TranRemark tranRemark, HttpSession session){
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+
+        //封装数据
+        tranRemark.setEditBy(loginUser.getId());
+        tranRemark.setEditTime(DateUtils.formatDateTime(new Date()));
+        tranRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_YES_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+        try{
+            //访问业务层，修改一条交易备注
+            int count = tranRemarkService.saveEditATranRemark(tranRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("修改交易备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("修改交易备注失败");
+        }
+
+        return returnObject;
+    }
+
+    @RequestMapping("/workbench/transaction/showTranRemarkList.do")
+    @ResponseBody
+    public Object showTranRemarkList(String tranId){
+        List<TranRemark> tranRemarkList = tranRemarkService.queryTranRemarkListByTranId(tranId);
+        return tranRemarkList;
+    }
+
+    @RequestMapping("/workbench/transaction/saveCreateATranRemark.do")
+    @ResponseBody
+    public Object saveCreateATranRemark(TranRemark tranRemark, HttpSession session){
+
+        User loginUser = (User) session.getAttribute(Contants.SESSION_USER);
+
+        //封装数据
+        tranRemark.setId(UUIDUtils.getUUID());
+        tranRemark.setCreateBy(loginUser.getId());
+        tranRemark.setCreateTime(DateUtils.formatDateTime(new Date()));
+        tranRemark.setEditFlag(Contants.REMARK_EDIT_FLAG_NO_EDITED);
+
+        ReturnObject returnObject = new ReturnObject();
+        try{
+            //访问业务层，新增一条交易备注
+            int count = tranRemarkService.saveCreateATranRemark(tranRemark);
+            if(count > 0){
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+                returnObject.setMessage("保存交易备注失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("保存交易备注失败");
+        }
+
+        return returnObject;
+    }
 
     @RequestMapping("/workbench/transaction/deleteTranByIds.do")
     @ResponseBody

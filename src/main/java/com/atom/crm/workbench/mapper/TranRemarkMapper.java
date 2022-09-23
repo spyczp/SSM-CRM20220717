@@ -7,6 +7,27 @@ import java.util.List;
 public interface TranRemarkMapper {
 
     /**
+     * 根据交易备注id删除交易备注
+     * @param id
+     * @return
+     */
+    int deleteTranRemarkById(String id);
+
+    /**
+     * 修改一条交易备注
+     * @param tranRemark
+     * @return
+     */
+    int updateATranRemark(TranRemark tranRemark);
+
+    /**
+     * 新增一条交易备注
+     * @param tranRemark
+     * @return
+     */
+    int insertATranRemark(TranRemark tranRemark);
+
+    /**
      * 根据一系列交易id删除交易备注
      * @param tranIds
      * @return

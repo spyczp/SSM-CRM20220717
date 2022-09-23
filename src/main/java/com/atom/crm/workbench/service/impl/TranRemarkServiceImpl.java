@@ -18,4 +18,19 @@ public class TranRemarkServiceImpl implements TranRemarkService {
     public List<TranRemark> queryTranRemarkListByTranId(String tranId) {
         return tranRemarkMapper.selectTranRemarkListByTranId(tranId);
     }
+
+    @Override
+    public int saveCreateATranRemark(TranRemark tranRemark) {
+        return tranRemarkMapper.insertATranRemark(tranRemark);
+    }
+
+    @Override
+    public int saveEditATranRemark(TranRemark tranRemark) {
+        return tranRemarkMapper.updateATranRemark(tranRemark);
+    }
+
+    @Override
+    public int deleteTranRemarkById(String id) {
+        return tranRemarkMapper.deleteTranRemarkById(id);
+    }
 }
