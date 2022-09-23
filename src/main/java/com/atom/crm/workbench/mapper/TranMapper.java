@@ -9,6 +9,13 @@ import java.util.Map;
 public interface TranMapper {
 
     /**
+     * 根据一系列交易id删除交易
+     * @param ids
+     * @return
+     */
+    int deleteTranByIds(String[] ids);
+
+    /**
      * 修改一条交易的数据
      * @param tran
      * @return

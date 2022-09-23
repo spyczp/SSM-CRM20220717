@@ -33,4 +33,6 @@ public interface TranService {
     List<Tran> queryTranByContactsIdForDetail(String contactsId);
 
     void saveEditTran(Map<String, Object> map);
+
+    void deleteTranByIds(String[] ids);
 }

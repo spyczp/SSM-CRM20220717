@@ -217,4 +217,16 @@ public class TranServiceImpl implements TranService {
         //访问数据库，修改交易数据
         tranMapper.updateATran(tran);
     }
+
+    @Override
+    public void deleteTranByIds(String[] ids) {
+        /*
+         * 1.删除交易备注
+         * 2.删除交易
+         *
+         * */
+        tranRemarkMapper.deleteTranRemarkByTranIds(ids);
+
+        tranMapper.deleteTranByIds(ids);
+    }
 }

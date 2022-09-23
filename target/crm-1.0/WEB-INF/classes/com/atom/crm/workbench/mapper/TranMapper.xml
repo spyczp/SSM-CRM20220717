@@ -37,6 +37,35 @@
     next_contact_time
   </sql>
 
+  <delete id="deleteTranByIds" parameterType="String">
+    delete from tbl_tran
+    where id in
+    <foreach collection="array" open="(" close=")" separator="," item="id">
+      #{id}
+    </foreach>
+  </delete>
+
+  <update id="updateATran" parameterType="Tran">
+    update tbl_tran
+    set
+      owner=#{owner},
+      money=#{money},
+      name=#{name},
+      expected_date=#{expectedDate},
+      customer_id=#{customerId},
+      stage=#{stage},
+      type=#{type},
+      source=#{source},
+      activity_id=#{activityId},
+      contacts_id=#{contactsId},
+      edit_by=#{editBy},
+      edit_time=#{editTime},
+      description=#{description},
+      contact_summary=#{contactSummary},
+      next_contact_time=#{nextContactTime}
+    where id=#{id}
+  </update>
+
   <select id="selectTranByContactsIdForDetail" parameterType="String" resultMap="BaseResultMap">
     select
       t.id,

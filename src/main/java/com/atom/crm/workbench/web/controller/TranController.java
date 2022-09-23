@@ -49,6 +49,24 @@ public class TranController {
     @Autowired
     private TranHistoryService tranHistoryService;
 
+    @RequestMapping("/workbench/transaction/deleteTranByIds.do")
+    @ResponseBody
+    public Object deleteTranByIds(String[] id){
+        ReturnObject returnObject = new ReturnObject();
+
+        try{
+            //调用业务层，根据一系列交易id删除交易
+            tranService.deleteTranByIds(id);
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_SUCCESS);
+        }catch (Exception e){
+            e.printStackTrace();
+            returnObject.setCode(Contants.RETURN_OBJECT_CODE_FAIL);
+            returnObject.setMessage("删除交易失败");
+        }
+
+        return returnObject;
+    }
+
     @RequestMapping("/workbench/transaction/saveEditTran.do")
     @ResponseBody
     public Object saveEditTran(@RequestParam Map<String, Object> map, HttpSession session){

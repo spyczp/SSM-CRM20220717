@@ -37,6 +37,14 @@
     next_contact_time
   </sql>
 
+  <delete id="deleteTranByIds" parameterType="String">
+    delete from tbl_tran
+    where id in
+    <foreach collection="array" open="(" close=")" separator="," item="id">
+      #{id}
+    </foreach>
+  </delete>
+
   <update id="updateATran" parameterType="Tran">
     update tbl_tran
     set

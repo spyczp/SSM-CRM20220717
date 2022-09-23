@@ -54,6 +54,68 @@
 			//发起请求
 			window.location.href = "workbench/transaction/toEditTranPage.do?id=" + id;
 		});
+
+		//给 删除按钮 添加单击事件
+		$("#deleteTranBtn").click(function () {
+			if(confirm("确定要删除选中的交易吗？")){
+				//收集参数：交易id
+				var checkedBox = $("#tranListTB input:checked");
+				//字符串拼接，组装请求参数
+				var param = "";
+				$.each(checkedBox, function () {
+					param += "id=" + this.value + "&";
+				});
+				param = param.substr(0, param.length - 1);
+				//向后端发起请求
+				$.ajax({
+					url: "workbench/transaction/deleteTranByIds.do",
+					data: param,
+					type: "get",
+					dataType: "json",
+					success: function (response) {
+						if(response.code == "1"){
+							//删除成功，刷新交易列表
+							showTranList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+						}else{
+							alert(response.message);
+						}
+					}
+				});
+			}
+		});
+
+		//给 查询按钮 添加单击事件
+		/*
+		* <input type="hidden" id="hidden-searchOwner">
+			<input type="hidden" id="hidden-searchName">
+			<input type="hidden" id="hidden-searchCustomerName">
+			<input type="hidden" id="hidden-searchStage">
+			<input type="hidden" id="hidden-searchType">
+			<input type="hidden" id="hidden-searchSource">
+			<input type="hidden" id="hidden-searchContactsName">
+		* */
+		$("#searchTranBtn").click(function () {
+			//收集参数
+			var owner = $.trim($("#search-owner").val());
+			var name = $.trim($("#search-name").val());
+			var customerName = $.trim($("#search-customerName").val());
+			var stage = $("#search-stage").val();
+			var type = $("#search-type").val();
+			var source = $("#search-source").val();
+			var contactsName = $.trim($("#search-contactsName").val());
+
+			//把数据保存到隐藏标签中
+			$("#hidden-searchOwner").val(owner);
+			$("#hidden-searchName").val(name);
+			$("#hidden-searchCustomerName").val(customerName);
+			$("#hidden-searchStage").val(stage);
+			$("#hidden-searchType").val(type);
+			$("#hidden-searchSource").val(source);
+			$("#hidden-searchContactsName").val(contactsName);
+
+			//调用方法，重新展示交易列表
+			showTranList(1, $("#paginationDiv").bs_pagination('getOption', 'rowsPerPage'));
+		});
 	});
 
 	//展示交易列表
@@ -149,21 +211,21 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">所有者</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-owner">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">客户名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-customerName">
 				    </div>
 				  </div>
 				  
@@ -172,7 +234,7 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">阶段</div>
-					  <select class="form-control">
+					  <select class="form-control" id="search-stage">
 					  	<option></option>
 					  	<%--<option>资质审查</option>
 					  	<option>需求分析</option>
@@ -193,7 +255,7 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">类型</div>
-					  <select class="form-control">
+					  <select class="form-control" id="search-type">
 					  	<option></option>
 					  	<%--<option>已有业务</option>
 					  	<option>新业务</option>--%>
@@ -207,7 +269,7 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">来源</div>
-				      <select class="form-control" id="create-clueSource">
+				      <select class="form-control" id="search-source">
 						  <option></option>
 						  <%--<option>广告</option>
 						  <option>推销电话</option>
@@ -233,11 +295,11 @@
 				  <div class="form-group">
 				    <div class="input-group">
 				      <div class="input-group-addon">联系人名称</div>
-				      <input class="form-control" type="text">
+				      <input class="form-control" type="text" id="search-contactsName">
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button type="button" class="btn btn-default" id="searchTranBtn">查询</button>
 				  
 				</form>
 			</div>
@@ -245,7 +307,7 @@
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="createTranBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" id="editTranBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteTranBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 				
